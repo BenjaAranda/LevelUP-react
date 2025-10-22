@@ -1,7 +1,4 @@
-// En: src/components/AppNavbar.jsx
-
 import React from 'react';
-// ¡OJO! Ya no importamos Form.Select, solo Form, Button
 import { Form, Button } from 'react-bootstrap'; 
 import { Link } from 'react-router-dom';
 
@@ -14,20 +11,25 @@ function AppNavbar() {
         </Link>
 
         <Form className="buscador">
-          {/* --- ESTE ES EL CAMBIO --- */}
-          {/* Hemos reemplazado <Form.Select> por un <select> normal */}
-          <select className="form-select">
+          <Form.Select aria-label="Selector de categorías">
             <option value="0">Categorías</option>
             <option value="1">Juegos</option>
             <option value="2">Hardware</option>
-          </select>
-          {/* --- FIN DEL CAMBIO --- */}
+          </Form.Select>
+
           <Form.Control type="text" placeholder="Buscar..." />
         </Form>
 
-        <div className="iconos">
-          <Button>Iniciar Sesión</Button>
-          <Button>Carrito</Button>
+        <div className="iconos"> 
+          <Link to="/login">
+            <Button>Iniciar Sesión</Button>
+          </Link>
+          <Link>
+            <Link to="/carrito">
+              <Button>Carrito</Button>
+            </Link>
+          </Link>
+          
         </div>
       </div>
 
@@ -38,6 +40,7 @@ function AppNavbar() {
           <li><Link to="/productos">Productos</Link></li>
           <li><Link to="/ofertas">Ofertas</Link></li>
           <li><Link to="/nosotros">Nosotros</Link></li>
+          <li><Link to="/contacto">Contacto</Link></li>
         </ul>
         <Button className="btn-tiendas">Tiendas/Eventos</Button>
       </nav>
