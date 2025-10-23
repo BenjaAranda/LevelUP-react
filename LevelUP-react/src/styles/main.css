@@ -400,3 +400,46 @@ body {
         gap: 15px;
     }
 }
+/* ============================================================
+  CORRECCIÓN BOTONES DE TARJETA DE PRODUCTO
+============================================================
+  Estos estilos se añaden al final del archivo.
+  Usamos '.producto .btn-carrito' para ser específicos
+  y no romper otros botones del sitio.
+*/
+
+/* 1. Hacemos que el botón principal ocupe todo el ancho 
+     DENTRO de la tarjeta.
+*/
+.producto .btn-carrito {
+  display: block;  /* Ocupa su propia línea */
+  width: 100%;     /* Ocupa todo el ancho de la tarjeta */
+  margin-bottom: 8px; /* Espacio entre los botones */
+  text-align: center; 
+}
+
+/* 2. Creamos el estilo para el botón "Ver detalle" (que es un Link)
+*/
+.producto .btn-detalle {
+  display: block; /* Ocupa su propia línea */
+  width: 100%;    /* Ocupa todo el ancho */
+  padding: 8px 15px; /* Un poco menos de padding que el botón principal */
+  border-radius: 8px;
+  
+  /* Estilo de botón "secundario" o "fantasma" */
+  background-color: transparent; /* Fondo transparente */
+  border: 2px solid #39ff14;   /* Borde verde neón */
+  color: #39ff14;              /* Texto verde neón */
+  
+  text-align: center;
+  text-decoration: none; /* ¡Importante! Quita el subrayado del link */
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+/* 3. Efecto hover para el botón de detalle 
+*/
+.producto .btn-detalle:hover {
+  background-color: #39ff14; /* Fondo verde al pasar el mouse */
+  color: #111;              /* Texto oscuro */
+}
