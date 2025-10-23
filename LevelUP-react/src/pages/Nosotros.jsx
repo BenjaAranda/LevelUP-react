@@ -1,12 +1,11 @@
 // En: src/pages/Nosotros.jsx
 
 import React from 'react';
-// Importamos los estilos específicos de esta página
+// Importamos los estilos (que ahora tienes)
 import '../styles/nosotros.css'; 
 
 const Nosotros = () => {
   return (
-    // Usamos un Fragment (<>) para agrupar las secciones
     <>
       {/* --- Banner --- */}
       <section className="banner-nosotros">
@@ -15,7 +14,6 @@ const Nosotros = () => {
       </section>
 
       {/* --- Contenido Nosotros --- */}
-      {/* Cambiamos <main> por <div> para no duplicar el <main> de App.jsx */}
       <div className="nosotros">
         <section className="quienes-somos">
           <h2>¿Quiénes somos?</h2>
@@ -51,17 +49,18 @@ const Nosotros = () => {
           <h2>Conoce a nuestro equipo</h2>
           <div className="grid-equipo">
             <div className="miembro">
-              <img src="/img_nosotros/equipo1.png" alt="Miembro 1" />
+              {/* Esta ruta de imagen es clave */}
+              <img src="/public/rigby.jpg" alt="Miembro 1" />
               <h4>Benjamín Aranda</h4>
               <p>Desarrollador Fullstack</p>
             </div>
             <div className="miembro">
-              <img src="/img_nosotros/equipo2.png" alt="Miembro 2" />
+              <img src="/public/rigby.jpg" alt="Miembro 2" />
               <h4>Joaquin Robles</h4>
               <p>Desarrollador Fullstack</p>
             </div>
             <div className="miembro">
-              <img src="/img_nosotros/equipo3.png" alt="Miembro 3" />
+              <img src="/public/rigby.jpg" alt="Miembro 3" />
               <h4>#######</h4>
               <p>Soporte Técnico</p>
             </div>

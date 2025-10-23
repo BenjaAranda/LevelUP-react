@@ -4,30 +4,31 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
-// Estilos
+// --- ESTILOS ---
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './styles/main.css';
-import './styles/productos.css'; // (Asegúrate que todos tus CSS estén aquí)
-import './styles/detalle-producto.css';
+// Importamos el archivo CSS principal que contiene TODOS los estilos
+import './styles/main.css'; 
 import './index.css';
 
-// Contexto
+// --- CONTEXTO ---
 import { CartProvider } from './hooks/useCart.jsx';
 
-// Layout
+// --- LAYOUT ---
 import App from './App.jsx';
 
-// --- Páginas ---
+// --- PÁGINAS ---
 import Home from './pages/Home.jsx';
 import Productos from './pages/Productos.jsx';
 import DetalleProducto from './pages/DetalleProducto.jsx';
-// (Aquí puedes crear archivos placeholder para las nuevas páginas)
-// import Nosotros from './pages/Nosotros.jsx';
-// import Contacto from './pages/Contacto.jsx';
-// import Blog from './pages/Blog.jsx';
-// import Login from './pages/Login.jsx';
+import Nosotros from './pages/Nosotros.jsx';
+import Contacto from './pages/Contacto.jsx'; 
+import Blog from './pages/Blog.jsx'; // <-- 1. IMPORTAMOS LA PÁGINA BLOG
 
-// Configuración del Router
+// (Placeholders para las páginas restantes)
+// import Login from './pages/Login.jsx';
+// import Carrito from './pages/Carrito.jsx';
+
+// --- CONFIGURACIÓN DEL ROUTER ---
 const router = createBrowserRouter([
   {
     path: '/',
@@ -36,25 +37,20 @@ const router = createBrowserRouter([
       { path: '/', element: <Home /> },
       { path: '/productos', element: <Productos /> },
       { path: '/producto/:codigo', element: <DetalleProducto /> },
+      { path: '/nosotros', element: <Nosotros /> },
+      { path: '/contacto', element: <Contacto /> }, 
       
-      // --- NUEVAS RUTAS AÑADIDAS ---
-      // (Estos componentes aún no existen, pero las rutas ya están listas)
-      
-      // { path: '/nosotros', element: <Nosotros /> },
-      // { path: '/contacto', element: <Contacto /> },
-      // { path: '/blog', element: <Blog /> },
-      // { path: '/login', element: <Login /> },
+      // --- 2. RUTA ACTUALIZADA ---
+      { path: '/blog', element: <Blog /> }, // <-- Reemplaza el placeholder
 
-      // (Ruta temporal para que no se rompa)
-      { path: '/nosotros', element: <div><h1>Página Nosotros (en construcción)</h1></div> },
-      { path: '/contacto', element: <div><h1>Página Contacto (en construcción)</h1></div> },
-      { path: '/blog', element: <div><h1>Página Blog (en construcción)</h1></div> },
+      // (Rutas placeholder temporales para los links del Navbar/Footer)
       { path: '/login', element: <div><h1>Página Login (en construcción)</h1></div> },
+      { path: '/carrito', element: <div><h1>Página Carrito (en construcción)</h1></div> },
     ],
   },
 ]);
 
-// Renderizado de la aplicación
+// --- RENDERIZADO ---
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <CartProvider>
