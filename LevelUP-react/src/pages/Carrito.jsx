@@ -2,16 +2,16 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-// --- 1. Importamos el hook del carrito ---
+// 1. Importamos el hook y los estilos
 import { useCart } from '../hooks/useCart.jsx';
 import '../styles/carrito.css'; 
 
 const Carrito = () => {
-  // --- 2. Obtenemos todo del Contexto ---
+  // 2. Obtenemos todo del Contexto usando los nombres correctos
   const { 
     carritoItems, 
     restarDelCarrito, 
-    agregarAlCarrito, // Para el botón ➕
+    agregarAlCarrito, 
     eliminarDelCarrito, 
     vaciarCarrito, 
     totalPrecio 
@@ -22,7 +22,6 @@ const Carrito = () => {
       <h1>Tu Canasta</h1>
 
       <div id="listaCarrito">
-        {/* --- 3. Renderizamos desde el Contexto --- */}
         {carritoItems.length === 0 ? (
           <p>Tu carrito está vacío.</p>
         ) : (
@@ -31,8 +30,9 @@ const Carrito = () => {
               <h3>{producto.nombre}</h3>
               <p>
                 <span className="texto-label">Unidades:</span>
-                <span className="texto-valor">{producto.unidades}</span>
-                {/* --- 4. Conectamos los botones a las funciones del Contexto --- */}
+                {/* 3. Usamos 'unidades' */}
+                <span className="texto-valor">{producto.unidades}</span> 
+                {/* 4. Conectamos los botones a las funciones */}
                 <button className="btn-carrito accion" onClick={() => agregarAlCarrito(producto)}>➕</button>
                 <button className="btn-carrito accion" onClick={() => restarDelCarrito(producto.codigo)}>➖</button>
                 <button className="btn-carrito eliminar" onClick={() => eliminarDelCarrito(producto.codigo)}>🗑️</button>
@@ -43,24 +43,32 @@ const Carrito = () => {
               </p>
               <p>
                 <span className="texto-label">Subtotal:</span>
-                <span className="texto-valor">${(producto.unidades * producto.precio).toLocaleString('es-CL')}</span>
+                {/* 5. Usamos 'unidades' */}
+                <span className="texto-valor">${(producto.unidades * producto.precio).toLocaleString('es-CL')}</span> 
               </p>
             </div>
           ))
         )}
       </div>
 
-      <div className="acciones">
-        <button className="btn-vaciar" onClick={vaciarCarrito}>Vaciar Carrito</button>
-      </div>
+      {/* Botón Vaciar Carrito */}
+      {carritoItems.length > 0 && ( // Solo se muestra si hay items
+        <div className="acciones">
+          <button className="btn-vaciar" onClick={vaciarCarrito}>Vaciar Carrito</button>
+        </div>
+      )}
 
+      {/* Resumen y Finalizar Compra */}
       <div className="resumen">
         <h2>
           <span className="texto-label">Total: </span>
-          {/* --- 5. Total desde el Contexto --- */}
-          <span className="texto-valor">$ {totalPrecio.toLocaleString('es-CL')}</span>
+          {/* 6. Usamos 'totalPrecio' */}
+          <span className="texto-valor">$ {totalPrecio.toLocaleString('es-CL')}</span> 
         </h2>
-        <button className="btn-finalizar">Finalizar Compra</button>
+        {/* Enlazamos al futuro checkout (por ahora, placeholder) */}
+        <Link to="/checkout" className="btn-finalizar">
+          Finalizar Compra
+        </Link>
       </div>
     </div>
   );

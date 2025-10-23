@@ -1,66 +1,94 @@
 // En: src/hooks/useCart.jsx
 
-import React, { useState, createContext, useContext } from 'react';
+import React, { useState, useEffect, createContext, useContext } from 'react';
 
 // 1. Crear el Contexto
 const CartContext = createContext();
 
+// Función para cargar el carrito desde localStorage
+const cargarCarritoDesdeStorage = () => {
+  const carritoGuardado = localStorage.getItem('carrito');
+  return carritoGuardado ? JSON.parse(carritoGuardado) : [];
+};
+
 // 2. Crear el Proveedor del Contexto
-// Este componente envolverá a toda nuestra aplicación
 export function CartProvider({ children }) {
-  const [cart, setCart] = useState([]); // El estado del carrito
+  const [carritoItems, setCarritoItems] = useState(cargarCarritoDesdeStorage);
 
-  // Función para agregar un producto al carrito
+  // Guardar en localStorage cada vez que el carrito cambie
+  useEffect(() => {
+    localStorage.setItem('carrito', JSON.stringify(carritoItems));
+  }, [carritoItems]);
+
+  // --- Funciones del Carrito ---
+
+  // Agrega un producto o incrementa su cantidad
   const agregarAlCarrito = (producto) => {
-    // Revisar si el producto ya está en el carrito
-    const productoEnCarritoIndex = cart.findIndex(item => item.codigo === producto.codigo);
-
-    if (productoEnCarritoIndex >= 0) {
-      // Si ya está, creamos una copia del carrito
-      const newCart = [...cart];
-      // Y aumentamos la cantidad de ese producto
-      newCart[productoEnCarritoIndex].cantidad += 1;
-      setCart(newCart);
-    } else {
-      // Si no está, lo agregamos al carrito con cantidad 1
-      setCart(prevCart => [
-        ...prevCart,
-        { ...producto, cantidad: 1 }
-      ]);
-    }
+    setCarritoItems(prevItems => {
+      const itemExistente = prevItems.find(item => item.codigo === producto.codigo);
+      if (itemExistente) {
+        return prevItems.map(item =>
+          item.codigo === producto.codigo
+            ? { ...item, unidades: item.unidades + 1 }
+            : item
+        );
+      } else {
+        return [...prevItems, { ...producto, unidades: 1 }];
+      }
+    });
   };
 
-  // Función para eliminar un producto del carrito
+  // Resta una unidad o elimina si llega a cero
+  const restarDelCarrito = (codigo) => {
+    setCarritoItems(prevItems => {
+      const itemExistente = prevItems.find(item => item.codigo === codigo);
+      if (!itemExistente) return prevItems; // No debería pasar, pero por seguridad
+
+      if (itemExistente.unidades === 1) {
+        return prevItems.filter(item => item.codigo !== codigo);
+      } else {
+        return prevItems.map(item =>
+          item.codigo === codigo
+            ? { ...item, unidades: item.unidades - 1 }
+            : item
+        );
+      }
+    });
+  };
+
+  // Elimina un producto completamente
   const eliminarDelCarrito = (codigo) => {
-    setCart(prevCart => prevCart.filter(item => item.codigo !== codigo));
+    setCarritoItems(prevItems => prevItems.filter(item => item.codigo !== codigo));
   };
 
-  // Función para limpiar el carrito
-  const limpiarCarrito = () => {
-    setCart([]);
+  // Vacía el carrito
+  const vaciarCarrito = () => {
+    setCarritoItems([]);
   };
 
-  // 3. Exponemos el estado y las funciones a los componentes hijos
-  return (
-    <CartContext.Provider value={{
-      cart,
-      agregarAlCarrito,
-      eliminarDelCarrito,
-      limpiarCarrito
-    }}>
-      {children}
-    </CartContext.Provider>
-  );
+  // --- Valores Derivados ---
+  const totalItems = carritoItems.reduce((acc, item) => acc + item.unidades, 0);
+  const totalPrecio = carritoItems.reduce((acc, item) => acc + (item.precio * item.unidades), 0);
+
+  // 3. Valor que proveerá el Contexto
+  const value = {
+    carritoItems,
+    agregarAlCarrito,
+    restarDelCarrito,
+    eliminarDelCarrito,
+    vaciarCarrito,
+    totalItems,
+    totalPrecio
+  };
+
+  return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }
 
-// 4. Crear un "hook" personalizado para usar el contexto fácilmente
-// Esto es lo que importa tu archivo Productos.jsx
+// 4. Hook personalizado para usar el contexto
 export function useCart() {
   const context = useContext(CartContext);
-  
   if (context === undefined) {
     throw new Error('useCart debe ser usado dentro de un CartProvider');
   }
-  
   return context;
 }
