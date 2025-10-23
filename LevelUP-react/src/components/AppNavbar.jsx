@@ -1,9 +1,7 @@
 // En: src/components/AppNavbar.jsx
 
 import React from 'react';
-// 1. CORREGIDO: Se eliminó el guion bajo antes de 'from'
 import { Form, Button } from 'react-bootstrap'; 
-// 2. CORREGIDO: Se eliminó el guion bajo antes de 'from'
 import { Link } from 'react-router-dom';
 
 // 3. IMPORTAMOS LOS ICONOS (Asegúrate de haber corrido: npm install react-icons)
