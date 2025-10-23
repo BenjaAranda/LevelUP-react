@@ -6,8 +6,12 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 // --- ESTILOS ---
 import 'bootstrap/dist/css/bootstrap.min.css';
-// Importamos el archivo CSS principal que contiene TODOS los estilos
 import './styles/main.css'; 
+import './styles/productos.css';
+import './styles/detalle-producto.css';
+import './styles/nosotros.css';
+import './styles/contacto.css';
+import './styles/blog.css'; // <-- 1. IMPORTAMOS EL CSS DEL BLOG
 import './index.css';
 
 // --- CONTEXTO ---
@@ -22,11 +26,10 @@ import Productos from './pages/Productos.jsx';
 import DetalleProducto from './pages/DetalleProducto.jsx';
 import Nosotros from './pages/Nosotros.jsx';
 import Contacto from './pages/Contacto.jsx'; 
-import Blog from './pages/Blog.jsx'; // <-- 1. IMPORTAMOS LA PÁGINA BLOG
+import Blog from './pages/Blog.jsx'; // <-- 2. IMPORTAMOS LA PÁGINA
 
-// (Placeholders para las páginas restantes)
+// (Placeholders)
 // import Login from './pages/Login.jsx';
-// import Carrito from './pages/Carrito.jsx';
 
 // --- CONFIGURACIÓN DEL ROUTER ---
 const router = createBrowserRouter([
@@ -40,10 +43,10 @@ const router = createBrowserRouter([
       { path: '/nosotros', element: <Nosotros /> },
       { path: '/contacto', element: <Contacto /> }, 
       
-      // --- 2. RUTA ACTUALIZADA ---
-      { path: '/blog', element: <Blog /> }, // <-- Reemplaza el placeholder
+      // --- 3. RUTA ACTUALIZADA ---
+      { path: '/blog', element: <Blog /> }, 
 
-      // (Rutas placeholder temporales para los links del Navbar/Footer)
+      // (Rutas placeholder temporales)
       { path: '/login', element: <div><h1>Página Login (en construcción)</h1></div> },
       { path: '/carrito', element: <div><h1>Página Carrito (en construcción)</h1></div> },
     ],
