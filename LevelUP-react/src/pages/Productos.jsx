@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-// Importamos los datos de nuestro "simulador de DB"
 import { productos as todosLosProductos } from '../data/productos.js';
 import { useCart } from '../hooks/useCart.jsx';
+import ProductCard from '../components/ProductCard.jsx'; // <-- 1. USAMOS EL COMPONENTE
 import '../styles/productos.css'; // Estilos
 
 // (Modal simple para feedback)
@@ -22,36 +22,31 @@ const ModalFeedback = ({ producto, show, onHide }) => {
 };
 
 const Productos = () => {
-  // --- Hooks y Contexto ---
   const [searchParams] = useSearchParams();
   const { agregarAlCarrito } = useCart();
 
-  // --- Estado para Filtros (de tu productos.js) ---
   const [orden, setOrden] = useState('default');
   const [categoria, setCategoria] = useState(searchParams.get('categoria') || 'todas');
   const [precioMin, setPrecioMin] = useState(0);
   const [precioMax, setPrecioMax] = useState(2000000);
   
-  // --- Estado para la lista de productos que se muestra ---
   const [productosMostrados, setProductosMostrados] = useState([]);
   
-  // --- Estado para el modal de "Agregado" (de tu productos.js) ---
+  // --- 2. Estado para las categorías dinámicas ---
+  const [categorias, setCategorias] = useState([]);
+  
   const [modalShow, setModalShow] = useState(false);
   const [productoAgregado, setProductoAgregado] = useState(null);
 
-  // --- Lógica de Filtros (de tu productos.js) ---
   useEffect(() => {
     let lista = [...todosLosProductos];
 
-    // 1. Filtrar por Categoría
     if (categoria && categoria !== "todas") {
       lista = lista.filter(p => p.categoria === categoria);
     }
 
-    // 2. Filtrar por Precio
     lista = lista.filter(p => p.precio >= precioMin && p.precio <= precioMax);
 
-    // 3. Ordenar
     switch (orden) {
       case "precioMayor":
         lista.sort((a, b) => b.precio - a.precio);
@@ -66,15 +61,19 @@ const Productos = () => {
         lista.sort((a, b) => b.nombre.localeCompare(a.nombre));
         break;
       default:
-        // Sin orden o 'default'
         break;
     }
     
     setProductosMostrados(lista);
 
-  }, [orden, categoria, precioMin, precioMax]); // Se ejecuta cada vez que un filtro cambia
+    // --- 3. Generamos la lista de categorías dinámicamente ---
+    if (categorias.length === 0) {
+      const allCategories = [...new Set(todosLosProductos.map(p => p.categoria))].sort();
+      setCategorias(allCategories);
+    }
 
-  // --- Manejador del botón "Agregar al carrito" ---
+  }, [orden, categoria, precioMin, precioMax, categorias.length]);
+
   const handleAgregarCarrito = (producto) => {
     agregarAlCarrito(producto);
     setProductoAgregado(producto);
@@ -86,7 +85,6 @@ const Productos = () => {
       <ModalFeedback producto={productoAgregado} show={modalShow} onHide={() => setModalShow(false)} />
 
       <div className="productos-page">
-        {/* --- Filtros (de tu productos.html) --- */}
         <aside className="filtros">
           <h3>Filtros</h3>
           <label htmlFor="ordenar">Ordenar</label>
@@ -99,44 +97,29 @@ const Productos = () => {
           </select>
 
           <label htmlFor="categoria-filtro">Categoría</label>
+          {/* --- 4. Renderizamos las categorías dinámicamente --- */}
           <select id="categoria-filtro" value={categoria} onChange={(e) => setCategoria(e.target.value)}>
             <option value="todas">Todas</option>
-            <option value="Juegos de Mesa">Juegos de Mesa</option>
-            <option value="Accesorios">Accesorios</option>
-            <option value="Consolas">Consolas</option>
-            <option value="Computadores Gamers">Computadores Gamers</option>
-            <option value="Sillas Gamers">Sillas Gamers</option>
-            <option value="Mouse">Mouse</option>
-            <option value="Mousepad">Mousepad</option>
-            <option value="Poleras Personalizadas">Poleras Personalizadas</option>
-            <option value="Polerones Gamers Personalizados">Polerones Gamers Personalizados</option>
+            {categorias.map(cat => (
+              <option key={cat} value={cat}>{cat}</option>
+            ))}
           </select>
 
           <label htmlFor="precioMin">Precio mínimo</label>
           <input type="number" id="precioMin" value={precioMin} onChange={(e) => setPrecioMin(e.target.valueAsNumber || 0)} />
           <label htmlFor="precioMax">Precio máximo</label>
           <input type="number" id="precioMax" value={precioMax} onChange={(e) => setPrecioMax(e.target.valueAsNumber || 2000000)} />
-
-          {/* El botón de filtrar ya no es necesario, se filtra solo */}
         </aside>
 
-        {/* --- Lista de productos (de tu productos.html) --- */}
         <section className="lista-productos" id="listaProductos">
           {productosMostrados.length > 0 ? (
+            // --- 5. Usamos el componente ProductCard ---
             productosMostrados.map(prod => (
-              <div className="producto" key={prod.codigo}>
-                <img src={prod.imagen} alt={prod.nombre} />
-                <h3>{prod.nombre}</h3>
-                <p><strong>Categoría:</strong> {prod.categoria}</p>
-                <p className="precio">${prod.precio.toLocaleString("es-CL")} CLP</p>
-                <button className="btn-carrito" onClick={() => handleAgregarCarrito(prod)}>
-                  Agregar al carrito
-                </button>
-                {/* --- Link a la página de detalle --- */}
-                <Link to={`/producto/${prod.codigo}`} className="btn-detalle">
-                  Ver detalle
-                </Link>
-              </div>
+              <ProductCard 
+                key={prod.codigo} 
+                producto={prod} 
+                onAgregarAlCarrito={handleAgregarCarrito}
+              />
             ))
           ) : (
             <p>No se encontraron productos con esos filtros.</p>

@@ -1,195 +1,158 @@
-/* 🎮 Estilos para Productos */
+/* En: src/styles/productos.css */
 
-/* Layout principal */
+/*
+ * Layout principal de la página de productos
+ * Usamos CSS Grid para un control perfecto de las columnas
+ */
 .productos-page {
-  display: flex;
-  padding: 20px;
+  display: grid;
+  grid-template-columns: 280px 1fr; /* Columna de filtro (280px) y el resto para productos */
   gap: 30px;
-  background-color: #0a0a0a;
   color: #fff;
-  min-height: 100vh;
+  padding: 20px 0;
 }
 
-/* Panel de filtros */
+/*
+ * Sidebar de Filtros
+ */
 .filtros {
-  background: #1a1a1a;
+  background-color: #1a1a1a;
   padding: 20px;
   border-radius: 12px;
-  color: #fff;
-  width: 260px;
-  box-shadow: 0px 0px 15px #8000ff55;
+  box-shadow: 0px 0px 15px #8000ff44;
+  height: fit-content; /* Para que la altura se ajuste al contenido */
 }
 
 .filtros h3 {
-  margin-bottom: 15px;
-  color: #39ff14;
-  text-align: center;
+  color: #8000ff;
+  font-weight: bold;
+  border-bottom: 2px solid #39ff14;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
 }
 
 .filtros label {
   display: block;
-  margin: 10px 0 5px;
   font-weight: bold;
-  color: #9b30ff;
+  margin-top: 15px;
+  margin-bottom: 5px;
+  color: #d3d3d3;
 }
 
+/* Estilos para los <select> e <input> para que coincidan con el tema "gamer" */
 .filtros select,
-.filtros input {
-  width: 100%;
-  padding: 8px;
-  border-radius: 6px;
-  border: none;
-  margin-bottom: 15px;
-  background: #2a2a2a;
-  color: #fff;
-  outline: none;
-  transition: 0.3s;
-}
-
-.filtros select:focus,
-.filtros input:focus {
-  border: 2px solid #39ff14;
-}
-
-/* Botón Filtrar */
-#btnFiltrar {
+.filtros input[type="number"] {
   width: 100%;
   padding: 10px;
-  background: #8000ff;
-  border: none;
-  border-radius: 8px;
+  background-color: #0d0d0d;
+  border: 1px solid #8000ff;
   color: #fff;
-  font-weight: bold;
-  cursor: pointer;
-  transition: 0.3s;
+  border-radius: 5px;
+  outline: none;
 }
 
-#btnFiltrar:hover {
-  background: #39ff14;
-  color: #111;
+.filtros input[type="number"] {
+  /* Ocultar las flechas por defecto en inputs de número */
+  -moz-appearance: textfield;
+}
+.filtros input::-webkit-outer-spin-button,
+.filtros input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
-/* Lista de productos */
+
+/*
+ * Sección de la Lista de Productos
+ */
 .lista-productos {
-  flex: 1;
+  /* Usamos grid para las tarjetas de producto */
   display: grid;
+  /* El 'auto-fill' es clave para la reactividad.
+     Crea tantas columnas como quepan, con un mínimo de 220px */
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 20px;
 }
 
-/* Tarjetas de producto */
-.producto {
-  background: #111;
-  padding: 15px;
-  border-radius: 12px;
+.lista-productos .producto {
+  /* Reutilizamos los estilos de 'main.css' pero aseguramos el color de fondo */
+  background-color: #1a1a1a; 
+}
+
+/* Mensaje de "No se encontraron productos" */
+.lista-productos > p {
+  color: #d3d3d3;
+  font-size: 1.2rem;
+  grid-column: 1 / -1; /* Ocupa todo el ancho de la grid */
   text-align: center;
-  box-shadow: 0px 0px 12px #8000ff55;
-  transition: transform 0.3s, box-shadow 0.3s;
+  padding: 40px;
 }
 
-.producto:hover {
-  transform: scale(1.03);
-  box-shadow: 0px 0px 20px #39ff1480;
+
+/*
+ * Modal de Feedback (Añadido al Carrito)
+ */
+.modal-carrito-feedback {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
 }
 
-.producto h3 {
+.modal-contenido {
+  background: #1c1c1c;
+  padding: 30px;
+  border-radius: 10px;
+  text-align: center;
+  border: 1px solid #39ff14;
+  box-shadow: 0px 0px 20px #39ff1455;
+}
+
+.modal-contenido h2 {
   color: #39ff14;
   margin-bottom: 10px;
 }
 
-.producto p {
-  margin: 5px 0;
-}
-
-.producto .precio {
+.modal-contenido p span {
+  color: #8000ff;
   font-weight: bold;
-  font-size: 1.1rem;
-  color: #ffea00;
-  margin: 10px 0;
 }
 
-/* Botón agregar al carrito */
-.producto button {
-  margin-top: 10px;
-  background-color: #9b30ff;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 8px;
+.modal-contenido button {
+  background-color: #8000ff;
   color: white;
-  font-weight: bold;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
   cursor: pointer;
+  font-weight: bold;
   transition: 0.3s;
+  margin-top: 20px;
+}
+.modal-contenido button:hover {
+  background-color: #62017a;
 }
 
-.producto button:hover {
-  background-color: #39ff14;
-  color: #111;
-}
 
-/* 📱 Responsivo */
-@media (max-width: 992px) {
+/*
+ * --- RESPONSIVIDAD (Móvil) ---
+ * (Requerimiento clave de la evaluación)
+ */
+@media (max-width: 768px) {
   .productos-page {
-    flex-direction: column;
+    /* En pantallas pequeñas, apilamos los filtros y productos (1 columna) */
+    grid-template-columns: 1fr;
   }
 
   .filtros {
-    width: 100%;
+    /* El sidebar de filtros ahora ocupa el ancho completo */
+    height: auto;
   }
-
-  .lista-productos {
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  }
-}
-
-/* Estilos para la página de detalle del producto */
-
-.detalle-producto {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 40px;
-}
-
-.producto-detalle-card {
-  display: flex;
-  gap: 30px;
-  background: #1a1a1a;
-  padding: 25px;
-  border-radius: 12px;
-  box-shadow: 0 0 20px #8000ff55;
-}
-
-.producto-detalle-card img {
-  width: 300px;
-  height: auto;
-  border-radius: 10px;
-  object-fit: contain;
-}
-
-.producto-detalle-card h2 {
-  color: #39ff14;
-  margin-bottom: 15px;
-}
-
-.producto-detalle-card .precio {
-  font-size: 1.5rem;
-  color: #ff00ff;
-  margin-bottom: 20px;
-}
-
-.btn-detalle {
-  margin-top: 10px;
-  background-color: #ff00ff;
-  border: none;
-  padding: 8px 15px;
-  border-radius: 8px;
-  color: #fff;
-  font-weight: bold;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.btn-detalle:hover {
-  background-color: #39ff14;
-  color: #111;
 }
