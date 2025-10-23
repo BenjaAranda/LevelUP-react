@@ -444,26 +444,111 @@ body {
   color: #111;              /* Texto oscuro */
 }
 
-/* --- Estilos para el nuevo botón del Buscador --- */
 
-/* Ajuste para que el input se pegue al botón */
+/* --- BLOQUE DEL BUSCADOR CON BOTÓN INTERNO --- */
+
+/* Contenedor principal del buscador */
+.buscador {
+  display: flex;         /* Necesario para flex: 1 */
+  flex: 1;               /* Ocupa espacio */
+  max-width: 600px;      /* Ancho máximo */
+  position: relative;    /* Clave para posicionar el botón interno */
+}
+
+
+
+/* Input de Texto (Ocupa todo el espacio) */
 .buscador input {
-  margin-right: 0;
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
+  /* Ocupa todo el ancho del contenedor .buscador */
+  width: 100%; 
+  
+  padding: 10px 40px 10px 15px; /* Padding: 10px arriba/abajo, 40px DERECHA (espacio para botón), 15px IZQUIERDA */
+  border: 1px solid #ccc; /* Borde gris claro */
+  border-radius: 8px;    /* Redondeo */
+  background-color: #000000; 
+  color: #7b7676;         /* Texto oscuro */
+  outline: none;
+  font-size: 1rem; 
+}
+.buscador input::placeholder { 
+  color: #999; 
+}
+.buscador input:focus {
+  border-color: #aaa; /* Borde un poco más oscuro al enfocar */
+  box-shadow: 0 0 5px rgba(0,0,0,0.1); /* Sombra sutil */
 }
 
-/* Botón de búsqueda (lupa) */
-.buscador .btn-busqueda {
-  background-color: #8000ff; /* Morado de tu tema */
-  border: none;
-  color: white;
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
-  transition: 0.3s;
+
+/* Botón de Búsqueda (Lupa - Interno a la Derecha) */
+/* CAMBIAMOS LA CLASE A .btn-busqueda-interno para evitar conflictos */
+.buscador .btn-busqueda-interno { 
+  /* --- Posicionamiento Absoluto --- */
+  position: absolute; /* Se posiciona relativo al .buscador */
+  right: 0;           /* Pegado a la derecha */
+  top: 0;             /* Pegado arriba */
+  height: 100%;         /* Misma altura que el input */
+  
+  /* Tamaño y estilo */
+  padding: 0 12px;    /* Padding horizontal para centrar ícono */
+  font-size: 1.2rem;  /* Tamaño ícono */
+
+  /* Estilos visuales */
+  background-color: transparent; /* Fondo transparente */
+  border: none;             /* Sin borde */
+  color: #ffffff;             /* Color del ícono gris oscuro */
+  cursor: pointer;
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  transition: color 0.2s; /* Transición solo para el color */
 }
 
-.buscador .btn-busqueda:hover {
-  background-color: #39ff14; /* Verde de tu tema */
-  color: #111;
+.buscador .btn-busqueda-interno:hover {
+  color: #101010; /* Ícono negro al pasar el mouse */
+}
+
+/* --- FIN BLOQUE BUSCADOR CON BOTÓN INTERNO --- */
+
+/* --- Estilos Dropdown Recomendaciones (Adaptados) --- */
+.recomendaciones-dropdown {
+  position: absolute;
+  top: 100%; 
+  left: 0;
+  /* Hacemos que tenga el mismo ancho que el input */
+  width: 100%; 
+  z-index: 1050; 
+  background-color: #0000006b; 
+  border: 1px solid #000000; 
+  border-top: none; 
+  border-radius: 0 0 8px 8px; 
+  max-height: 300px; 
+  overflow-y: auto; 
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1); 
+}
+/* ... (Estilos internos del dropdown: .recomendacion-item, etc. se mantienen igual) ... */
+.recomendacion-item { 
+  color: #dcdcdc; 
+  padding: 10px 15px;
+  display: flex; 
+  align-items: center;
+  cursor: pointer; 
+  border-bottom: 1px solid #000000; 
+}
+.recomendacion-item:last-child {
+  border-bottom: none; 
+}
+.recomendacion-item img {
+  width: 30px; 
+  height: 30px;
+  object-fit: contain; 
+  margin-right: 10px;
+  border-radius: 3px; 
+}
+.recomendacion-item:hover {
+  background-color: #000000; 
+}
+.recomendacion-item .text-muted {
+  color: #d8d8d8 !important; 
+  font-size: 0.9em;
+  margin-left: auto; 
 }

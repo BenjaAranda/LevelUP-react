@@ -4,10 +4,10 @@ import React, { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { productos as todosLosProductos } from '../data/productos.js';
 import { useCart } from '../hooks/useCart.jsx';
-import ProductCard from '../components/ProductCard.jsx'; // <-- 1. USAMOS EL COMPONENTE
-import '../styles/productos.css'; // Estilos
+import ProductCard from '../components/ProductCard.jsx';
+import '../styles/productos.css';
 
-// (Modal simple para feedback)
+// (Componente ModalFeedback - sin cambios)
 const ModalFeedback = ({ producto, show, onHide }) => {
   if (!show) return null;
   return (
@@ -29,17 +29,21 @@ const Productos = () => {
   const [categoria, setCategoria] = useState(searchParams.get('categoria') || 'todas');
   const [precioMin, setPrecioMin] = useState(0);
   const [precioMax, setPrecioMax] = useState(2000000);
-  
+  const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '');
+
   const [productosMostrados, setProductosMostrados] = useState([]);
-  
-  // --- 2. Estado para las categorías dinámicas ---
-  const [categorias, setCategorias] = useState([]);
-  
+  const [categorias, setCategorias] = useState([]); // Estado para las categorías dinámicas
   const [modalShow, setModalShow] = useState(false);
   const [productoAgregado, setProductoAgregado] = useState(null);
 
   useEffect(() => {
     let lista = [...todosLosProductos];
+
+    if (searchTerm) {
+      lista = lista.filter(p =>
+        p.nombre.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
 
     if (categoria && categoria !== "todas") {
       lista = lista.filter(p => p.categoria === categoria);
@@ -48,31 +52,23 @@ const Productos = () => {
     lista = lista.filter(p => p.precio >= precioMin && p.precio <= precioMax);
 
     switch (orden) {
-      case "precioMayor":
-        lista.sort((a, b) => b.precio - a.precio);
-        break;
-      case "precioMenor":
-        lista.sort((a, b) => a.precio - b.precio);
-        break;
-      case "a-z":
-        lista.sort((a, b) => a.nombre.localeCompare(b.nombre));
-        break;
-      case "z-a":
-        lista.sort((a, b) => b.nombre.localeCompare(a.nombre));
-        break;
-      default:
-        break;
+      case "precioMayor": lista.sort((a, b) => b.precio - a.precio); break;
+      case "precioMenor": lista.sort((a, b) => a.precio - b.precio); break;
+      case "a-z": lista.sort((a, b) => a.nombre.localeCompare(b.nombre)); break;
+      case "z-a": lista.sort((a, b) => b.nombre.localeCompare(a.nombre)); break;
+      default: break;
     }
-    
+
     setProductosMostrados(lista);
 
-    // --- 3. Generamos la lista de categorías dinámicamente ---
+    // Generamos la lista de categorías únicas si aún no se ha hecho
     if (categorias.length === 0) {
+      // Usamos Set para obtener valores únicos y sort para ordenar
       const allCategories = [...new Set(todosLosProductos.map(p => p.categoria))].sort();
       setCategorias(allCategories);
     }
 
-  }, [orden, categoria, precioMin, precioMax, categorias.length]);
+  }, [orden, categoria, precioMin, precioMax, searchTerm, categorias.length]);
 
   const handleAgregarCarrito = (producto) => {
     agregarAlCarrito(producto);
@@ -87,6 +83,13 @@ const Productos = () => {
       <div className="productos-page">
         <aside className="filtros">
           <h3>Filtros</h3>
+          {searchTerm && (
+            <div className="mb-3">
+              <p>Buscando: <strong>"{searchTerm}"</strong></p>
+              <button className="btn btn-outline-light btn-sm" onClick={() => setSearchTerm('')}>Limpiar búsqueda</button>
+            </div>
+          )}
+
           <label htmlFor="ordenar">Ordenar</label>
           <select id="ordenar" value={orden} onChange={(e) => setOrden(e.target.value)}>
             <option value="default">Por defecto</option>
@@ -97,13 +100,17 @@ const Productos = () => {
           </select>
 
           <label htmlFor="categoria-filtro">Categoría</label>
-          {/* --- 4. Renderizamos las categorías dinámicamente --- */}
+          {/* --- SELECT DE CATEGORÍAS CORREGIDO --- */}
+          {/* Ahora renderiza las opciones dinámicamente desde el estado 'categorias' */}
           <select id="categoria-filtro" value={categoria} onChange={(e) => setCategoria(e.target.value)}>
             <option value="todas">Todas</option>
+            {/* Mapeamos el array 'categorias' para crear cada <option> */}
             {categorias.map(cat => (
               <option key={cat} value={cat}>{cat}</option>
             ))}
           </select>
+          {/* --- FIN DE LA CORRECCIÓN --- */}
+
 
           <label htmlFor="precioMin">Precio mínimo</label>
           <input type="number" id="precioMin" value={precioMin} onChange={(e) => setPrecioMin(e.target.valueAsNumber || 0)} />
@@ -113,11 +120,10 @@ const Productos = () => {
 
         <section className="lista-productos" id="listaProductos">
           {productosMostrados.length > 0 ? (
-            // --- 5. Usamos el componente ProductCard ---
             productosMostrados.map(prod => (
-              <ProductCard 
-                key={prod.codigo} 
-                producto={prod} 
+              <ProductCard
+                key={prod.codigo}
+                producto={prod}
                 onAgregarAlCarrito={handleAgregarCarrito}
               />
             ))
