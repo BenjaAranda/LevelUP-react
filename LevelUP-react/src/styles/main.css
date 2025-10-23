@@ -443,3 +443,27 @@ body {
   background-color: #39ff14; /* Fondo verde al pasar el mouse */
   color: #111;              /* Texto oscuro */
 }
+
+/* --- Estilos para el nuevo botón del Buscador --- */
+
+/* Ajuste para que el input se pegue al botón */
+.buscador input {
+  margin-right: 0;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+/* Botón de búsqueda (lupa) */
+.buscador .btn-busqueda {
+  background-color: #8000ff; /* Morado de tu tema */
+  border: none;
+  color: white;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  transition: 0.3s;
+}
+
+.buscador .btn-busqueda:hover {
+  background-color: #39ff14; /* Verde de tu tema */
+  color: #111;
+}
