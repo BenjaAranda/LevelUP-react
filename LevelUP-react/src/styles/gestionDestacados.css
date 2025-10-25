@@ -1,0 +1,29 @@
+/* En: src/styles/gestionDestacados.css */
+
+.lista-gestion {
+  max-height: 60vh;
+  overflow-y: auto;
+  border: 1px solid #444;
+}
+
+.item-gestion {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background-color: #333;
+  color: #fff;
+  border-bottom: 1px solid #444;
+}
+
+.item-gestion img {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.item-gestion span {
+  flex-grow: 1;
+  font-size: 0.9rem;
+}

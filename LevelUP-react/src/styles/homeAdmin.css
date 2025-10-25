@@ -1,0 +1,12 @@
+/* En: src/styles/homeAdmin.css */
+
+.admin-home .card-header {
+  background-color: #ffc107; /* Amarillo advertencia */
+  color: #212529;
+}
+
+.admin-actions {
+  display: flex;
+  gap: 20px;
+  margin-top: 20px;
+}

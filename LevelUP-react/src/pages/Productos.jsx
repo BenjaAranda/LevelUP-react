@@ -2,12 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { productos as todosLosProductos } from '../data/productos.js';
 import { useCart } from '../hooks/useCart.jsx';
 import ProductCard from '../components/ProductCard.jsx';
 import '../styles/productos.css';
 
-// (Componente ModalFeedback - sin cambios)
+// (Componente ModalFeedback)
 const ModalFeedback = ({ producto, show, onHide }) => {
   if (!show) return null;
   return (
@@ -25,32 +24,39 @@ const Productos = () => {
   const [searchParams] = useSearchParams();
   const { agregarAlCarrito } = useCart();
 
+  // --- Tus Estados (los de la foto) ---
+  const [todosLosProductos, setTodosLosProductos] = useState([]); 
   const [orden, setOrden] = useState('default');
   const [categoria, setCategoria] = useState(searchParams.get('categoria') || 'todas');
   const [precioMin, setPrecioMin] = useState(0);
   const [precioMax, setPrecioMax] = useState(2000000);
-  const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '');
-
+const searchTerm = searchParams.get('q') || '';  
   const [productosMostrados, setProductosMostrados] = useState([]);
-  const [categorias, setCategorias] = useState([]); // Estado para las categorías dinámicas
+  const [categorias, setCategorias] = useState([]);
   const [modalShow, setModalShow] = useState(false);
   const [productoAgregado, setProductoAgregado] = useState(null);
 
+  // Efecto para cargar productos desde localStorage (Fuente de la Verdad)
   useEffect(() => {
-    let lista = [...todosLosProductos];
+    const productosGuardados = JSON.parse(localStorage.getItem("productos")) || [];
+    setTodosLosProductos(productosGuardados);
+    
+    const allCategories = [...new Set(productosGuardados.map(p => p.categoria))].sort();
+    setCategorias(allCategories);
+  }, []); 
+
+  // Efecto para filtrar CADA VEZ que un filtro o la lista de productos cambie
+  useEffect(() => {
+    let lista = [...todosLosProductos]; 
 
     if (searchTerm) {
-      lista = lista.filter(p =>
-        p.nombre.toLowerCase().includes(searchTerm.toLowerCase())
-      );
+      lista = lista.filter(p => p.nombre.toLowerCase().includes(searchTerm.toLowerCase()));
     }
-
     if (categoria && categoria !== "todas") {
       lista = lista.filter(p => p.categoria === categoria);
     }
-
     lista = lista.filter(p => p.precio >= precioMin && p.precio <= precioMax);
-
+    
     switch (orden) {
       case "precioMayor": lista.sort((a, b) => b.precio - a.precio); break;
       case "precioMenor": lista.sort((a, b) => a.precio - b.precio); break;
@@ -58,17 +64,10 @@ const Productos = () => {
       case "z-a": lista.sort((a, b) => b.nombre.localeCompare(a.nombre)); break;
       default: break;
     }
-
+    
     setProductosMostrados(lista);
 
-    // Generamos la lista de categorías únicas si aún no se ha hecho
-    if (categorias.length === 0) {
-      // Usamos Set para obtener valores únicos y sort para ordenar
-      const allCategories = [...new Set(todosLosProductos.map(p => p.categoria))].sort();
-      setCategorias(allCategories);
-    }
-
-  }, [orden, categoria, precioMin, precioMax, searchTerm, categorias.length]);
+  }, [orden, categoria, precioMin, precioMax, searchTerm, todosLosProductos]);
 
   const handleAgregarCarrito = (producto) => {
     agregarAlCarrito(producto);
@@ -83,13 +82,10 @@ const Productos = () => {
       <div className="productos-page">
         <aside className="filtros">
           <h3>Filtros</h3>
-          {searchTerm && (
-            <div className="mb-3">
-              <p>Buscando: <strong>"{searchTerm}"</strong></p>
-              <button className="btn btn-outline-light btn-sm" onClick={() => setSearchTerm('')}>Limpiar búsqueda</button>
-            </div>
-          )}
+          {/* (Input de búsqueda, puedes agregarlo si lo necesitas) */}
 
+          {/* --- ¡AQUÍ SE USAN LOS SETTERS! --- */}
+          
           <label htmlFor="ordenar">Ordenar</label>
           <select id="ordenar" value={orden} onChange={(e) => setOrden(e.target.value)}>
             <option value="default">Por defecto</option>
@@ -100,22 +96,20 @@ const Productos = () => {
           </select>
 
           <label htmlFor="categoria-filtro">Categoría</label>
-          {/* --- SELECT DE CATEGORÍAS CORREGIDO --- */}
-          {/* Ahora renderiza las opciones dinámicamente desde el estado 'categorias' */}
           <select id="categoria-filtro" value={categoria} onChange={(e) => setCategoria(e.target.value)}>
             <option value="todas">Todas</option>
-            {/* Mapeamos el array 'categorias' para crear cada <option> */}
             {categorias.map(cat => (
               <option key={cat} value={cat}>{cat}</option>
             ))}
           </select>
-          {/* --- FIN DE LA CORRECCIÓN --- */}
-
 
           <label htmlFor="precioMin">Precio mínimo</label>
           <input type="number" id="precioMin" value={precioMin} onChange={(e) => setPrecioMin(e.target.valueAsNumber || 0)} />
+          
           <label htmlFor="precioMax">Precio máximo</label>
           <input type="number" id="precioMax" value={precioMax} onChange={(e) => setPrecioMax(e.target.valueAsNumber || 2000000)} />
+          
+           {/* (Tu código de 'searchTerm' también iría aquí) */}
         </aside>
 
         <section className="lista-productos" id="listaProductos">

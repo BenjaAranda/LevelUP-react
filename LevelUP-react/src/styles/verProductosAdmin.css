@@ -1,0 +1,26 @@
+/* En: src/styles/verProductosAdmin.css */
+
+.admin-producto-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.admin-producto-img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+}
+
+.admin-producto-info {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-producto-stock {
+  min-width: 200px;
+}

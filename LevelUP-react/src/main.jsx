@@ -13,18 +13,22 @@ import './styles/nosotros.css';
 import './styles/contacto.css';
 import './styles/blog.css';
 import './styles/login.css'; 
-import './styles/carrito.css'; // <-- 1. IMPORTAMOS CSS CARRITO
+import './styles/carrito.css';
+import './styles/homeAdmin.css';
+import './styles/crearProducto.css';
+import './styles/verProductosAdmin.css';
+import './styles/gestionDestacados.css'; // (Añadido por si acaso)
 import './index.css';
 
 // --- CONTEXTO ---
-import { CartProvider } from './hooks/useCart.jsx';
+import { CartProvider } from './context/CartProvider.jsx'; 
 import { AuthProvider } from './context/AuthProvider.jsx'; 
 
 // --- LAYOUT Y COMPONENTES ---
 import App from './App.jsx';
 import RutaProtegida from './components/RutaProtegida.jsx';
 
-// --- PÁGINAS ---
+// --- PÁGINAS (ESTO ES LO QUE TE FALTA) ---
 import Home from './pages/Home.jsx';
 import Productos from './pages/Productos.jsx';
 import DetalleProducto from './pages/DetalleProducto.jsx';
@@ -33,7 +37,13 @@ import Contacto from './pages/Contacto.jsx';
 import Blog from './pages/Blog.jsx';
 import Login from './pages/Login.jsx'; 
 import Perfil from './pages/Perfil.jsx'; 
-import Carrito from './pages/Carrito.jsx'; // <-- 2. IMPORTAMOS CARRITO
+import Carrito from './pages/Carrito.jsx'; 
+import AdminLogin from './pages/AdminLogin.jsx';
+import HomeAdmin from './pages/HomeAdmin.jsx';
+import CrearProducto from './pages/CrearProducto.jsx';
+import VerProductosAdmin from './pages/VerProductosAdmin.jsx';
+import GestionDestacados from './pages/GestionDestacados.jsx';
+
 
 // --- CONFIGURACIÓN DEL ROUTER ---
 const router = createBrowserRouter([
@@ -41,14 +51,17 @@ const router = createBrowserRouter([
     path: '/',
     element: <App />, 
     children: [
+      // --- Rutas Públicas ---
       { path: '/', element: <Home /> },
       { path: '/productos', element: <Productos /> },
       { path: '/producto/:codigo', element: <DetalleProducto /> },
       { path: '/nosotros', element: <Nosotros /> },
       { path: '/contacto', element: <Contacto /> }, 
       { path: '/blog', element: <Blog /> },
-      { path: '/blog/:slug', element: <div><h1>Detalle Blog (WIP)</h1></div> }, 
       { path: '/login', element: <Login /> },
+      { path: '/carrito', element: <Carrito /> },
+      
+      // --- Rutas de Cliente Protegidas ---
       { 
         path: '/perfil', 
         element: (
@@ -57,11 +70,44 @@ const router = createBrowserRouter([
           </RutaProtegida>
         ) 
       },
-      // --- 3. RUTA CARRITO AÑADIDA ---
-      { path: '/carrito', element: <Carrito /> }, 
       
-      // (Placeholder para checkout)
-      { path: '/checkout', element: <div><h1>Página Checkout (en construcción)</h1></div> },
+      // --- Rutas de Admin Protegidas ---
+      { 
+        path: '/admin-login', 
+        element: <AdminLogin /> // <-- Esta es tu línea 36 (aprox)
+      },
+      { 
+        path: '/admin/home', 
+        element: (
+          <RutaProtegida requireAdmin={true}>
+            <HomeAdmin />
+          </RutaProtegida>
+        ) 
+      },
+      { 
+        path: '/admin/crear-producto', 
+        element: (
+          <RutaProtegida requireAdmin={true}>
+            <CrearProducto />
+          </RutaProtegida>
+        ) 
+      },
+      { 
+        path: '/admin/ver-productos', 
+        element: (
+          <RutaProtegida requireAdmin={true}>
+            <VerProductosAdmin />
+          </RutaProtegida>
+        ) 
+      },
+      { 
+        path: '/admin/gestionar-destacados', 
+        element: (
+          <RutaProtegida requireAdmin={true}>
+            <GestionDestacados />
+          </RutaProtegida>
+        ) 
+      }
     ],
   },
 ]);

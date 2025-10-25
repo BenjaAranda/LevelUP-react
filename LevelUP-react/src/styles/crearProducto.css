@@ -1,0 +1,9 @@
+/* En: src/styles/crearProducto.css */
+
+/* Oculta los spinners en los inputs de tipo número con la clase 'no-spinners' */
+.no-spinners::-webkit-outer-spin-button,
+.no-spinners::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
