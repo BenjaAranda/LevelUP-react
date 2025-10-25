@@ -1,29 +1,123 @@
-/* En: src/styles/gestionDestacados.css */
+/* En: src/styles/gestionDestacados.css (Con #root para especificidad) */
 
-.lista-gestion {
-  max-height: 60vh;
-  overflow-y: auto;
-  border: 1px solid #444;
+/* Contenedor general */
+#root .gestion-destacados-container {
+  max-width: 900px;
+  margin: 40px auto;
 }
 
-.item-gestion {
+#root .gestion-destacados-container .card {
+  background-color: #1a1a1a;
+  border: 1px solid #39ff14; /* Borde verde */
+  border-radius: 12px;
+  box-shadow: 0 0 20px #39ff1455; /* Sombra verde */
+  color: #fff;
+}
+
+#root .gestion-destacados-container .card-header {
+  background-color: #39ff14; /* Fondo verde */
+  color: #111; /* Texto oscuro */
+  font-weight: bold;
+  font-size: 1.5rem;
+  text-align: center;
+  border-bottom: 3px solid #8000ff; /* Borde morado */
+}
+
+#root .gestion-destacados-container .card-body {
+  padding: 30px;
+}
+
+/* Títulos de las columnas */
+#root .gestion-destacados-container h3 {
+    color: #fff;
+    font-weight: bold;
+    margin-bottom: 15px;
+    font-size: 1.3rem;
+    text-align: center;
+}
+
+
+/* Lista scrollable */
+#root .lista-gestion {
+  max-height: 60vh; 
+  overflow-y: auto; 
+  border: 1px solid #444; 
+  border-radius: 8px; 
+  margin-bottom: 20px; 
+}
+
+/* Cada item en la lista */
+#root .item-gestion {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
-  background-color: #333;
-  color: #fff;
-  border-bottom: 1px solid #444;
+  gap: 15px; 
+  background-color: #2a2a2a; 
+  color: #eee; 
+  padding: 10px 15px; 
+  border-bottom: 1px solid #444; 
+}
+#root .item-gestion:last-child {
+  border-bottom: none; 
 }
 
-.item-gestion img {
-  width: 40px;
-  height: 40px;
+/* Imagen miniatura */
+#root .item-gestion img {
+  width: 45px; 
+  height: 45px;
   object-fit: cover;
   border-radius: 4px;
 }
 
-.item-gestion span {
-  flex-grow: 1;
-  font-size: 0.9rem;
+/* Nombre del producto */
+#root .item-gestion span {
+  flex-grow: 1; 
+  font-size: 0.95rem; 
+  margin: 0 10px; /* Espacio alrededor del nombre */
+}
+
+/* Botones de acción */
+#root .item-gestion .btn {
+  font-size: 0.8rem; 
+  padding: 5px 10px;
+  flex-shrink: 0; 
+  font-weight: bold;
+}
+
+/* Botón Añadir (Verde) */
+#root .item-gestion .btn-success {
+  background-color: #39ff14;
+  border-color: #39ff14;
+  color: #111;
+}
+#root .item-gestion .btn-success:hover {
+  background-color: #2aaa0f;
+  border-color: #2aaa0f;
+}
+
+/* Botón Quitar (Rojo) */
+#root .item-gestion .btn-danger {
+  background-color: #dc3545;
+  border-color: #dc3545;
+}
+#root .item-gestion .btn-danger:hover {
+  background-color: #bb2d3b;
+  border-color: #b02a37;
+}
+
+/* Estilos para Alert (Bootstrap adaptado) */
+#root .gestion-destacados-container .alert-success {
+  background-color: #0c4a00; 
+  border-color: #39ff14;
+  color: #c8ffc8; 
+}
+/* Estilo botón volver */
+#root .gestion-destacados-container .btn-outline-secondary {
+    color: #aaa;
+    border-color: #555;
+}
+#root .gestion-destacados-container .btn-outline-secondary:hover {
+    color: #fff;
+    background-color: #555;
+    border-color: #555;
 }

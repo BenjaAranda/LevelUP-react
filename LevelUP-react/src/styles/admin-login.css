@@ -1,0 +1,105 @@
+/* En: src/styles/admin-login.css */
+
+/* Contenedor principal que centra la tarjeta */
+/* Usamos un ID o una clase más única para el contenedor padre */
+#admin-login-page { /* Lo asignaremos al <Container> en AdminLogin.jsx */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - var(--navbar-height, 100px)); /* Ajusta a la altura restante, asumiendo un navbar */
+  padding: 40px 20px;
+  width: 100%; /* Asegura que el contenedor ocupe todo el ancho */
+  box-sizing: border-box; /* Incluye padding en el ancho/alto */
+}
+
+/* Estilo para la tarjeta (Card) de react-bootstrap */
+#admin-login-page .card {
+  background-color: #1a1a1a; /* Fondo oscuro */
+  border: 1px solid #8000ff;   /* Borde morado */
+  border-radius: 12px;
+  box-shadow: 0 0 20px #8000ff55; /* Sombra morada */
+  color: #fff; /* Texto blanco por defecto dentro de la tarjeta */
+  width: 100%; /* La tarjeta debe ocupar todo el ancho disponible en su columna */
+  max-width: 400px; /* Limita el ancho máximo de la tarjeta */
+}
+
+#admin-login-page .card-body {
+  padding: 30px; /* Más espacio interno */
+}
+
+/* Título "Acceso Administrador" */
+#admin-login-page h2 {
+  color: #8000ff; /* Morado */
+  font-weight: bold;
+  text-align: center; /* Centrar el título */
+  margin-bottom: 25px; /* Espacio debajo del título */
+}
+
+/* Etiquetas de formulario */
+#admin-login-page .form-label {
+  color: #d3d3d3; /* Gris claro */
+  font-weight: bold;
+  display: block; /* Asegura que la etiqueta esté en su propia línea */
+  margin-bottom: 8px; /* Espacio entre label e input */
+}
+
+/* Inputs de formulario */
+#admin-login-page .form-control {
+  background-color: #0d0d0d; /* Fondo muy oscuro */
+  border: 1px solid #555;   /* Borde gris oscuro */
+  color: #fff;             /* Texto blanco */
+  padding: 10px 15px; /* Ajusta padding */
+  width: 100%; /* Asegura que el input ocupe todo el ancho disponible */
+  box-sizing: border-box; /* Incluye padding en el ancho/alto */
+  margin-bottom: 20px; /* Espacio debajo de cada input */
+}
+#admin-login-page .form-control:focus {
+  background-color: #0d0d0d;
+  color: #fff;
+  border-color: #39ff14; /* Borde verde al enfocar */
+  box-shadow: 0 0 10px #39ff1455; /* Sombra verde */
+}
+/* Placeholder color */
+#admin-login-page .form-control::placeholder {
+  color: #777;
+}
+
+/* Botón de Ingresar (variant="warning") - Le damos estilo gamer */
+#admin-login-page .btn-warning {
+  background-color: #8000ff; /* Morado */
+  border-color: #8000ff;
+  color: #fff; /* Texto blanco */
+  font-weight: bold;
+  padding: 12px; /* Más padding para el botón */
+  transition: 0.3s;
+  width: 100%; /* Ocupa todo el ancho */
+  margin-top: 20px; /* Espacio encima del botón */
+}
+#admin-login-page .btn-warning:hover {
+  background-color: #39ff14; /* Verde al pasar el mouse */
+  border-color: #39ff14;
+  color: #111; /* Texto oscuro */
+}
+
+/* Alerta de error (variant="danger") */
+#admin-login-page .alert-danger {
+  background-color: #4d0000; /* Fondo rojo oscuro */
+  border-color: #ff4d4d;   /* Borde rojo brillante */
+  color: #fea7a7;       /* Texto rojo claro */
+  margin-bottom: 20px; /* Espacio debajo de la alerta */
+}
+
+/* Ocultar el ícono del candado que no se ve bien */
+/* Esto asume que el candado es generado por algún pseudoelemento o input type=password */
+#admin-login-page .form-control[type="password"]::-ms-reveal,
+#admin-login-page .form-control[type="password"]::-ms-clear {
+    display: none;
+}
+#admin-login-page .form-control[type="password"] {
+    /* Puedes añadir font-family: 'FontAwesome' si usas iconos en los inputs */
+    /* Pero por ahora, solo aseguramos que el input se vea limpio */
+    /* Y removemos el padding-left excesivo si es que hay un icono de candado ahí */
+    padding-left: 15px; 
+    padding-right: 15px;
+    background-image: none !important; /* Elimina cualquier imagen de fondo si es un icono */
+}

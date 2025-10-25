@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Form, Button, Container, Row, Col, Alert, Card } from 'react-bootstrap';
 import { useAuth } from '../hooks/useAuth.jsx'; 
+import '../styles/admin-login.css'; 
 
 const AdminLogin = () => {
   const [email, setEmail] = useState('');
@@ -16,21 +17,21 @@ const AdminLogin = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     setError('');
-    const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
-    const usuario = usuarios.find(u => u.email === email && u.password === password);
+    const adminEmail = "admin@levelup.com";
+    const adminPass = "admin123";
 
-    if (usuario && usuario.isAdmin) {
-      login(usuario);
-      navigate('/admin/home'); // <-- ¡CAMBIO AQUÍ!
+    if (email === adminEmail && password === adminPass) {
+      login({ email: adminEmail, nombre: "Admin", isAdmin: true }); 
+      navigate('/admin/home'); 
     } else {
       setError('Credenciales de administrador incorrectas.');
     }
   };
 
-  // ... (el resto de tu return JSX se queda igual)
   return (
-    <Container className="my-5">
-      <Row className="justify-content-center">
+    // --- AÑADIMOS id="admin-login-page" Y QUITAMOS my-5 ---
+    <Container id="admin-login-page"> 
+      <Row className="justify-content-center w-100"> {/* w-100 para que Row ocupe el ancho completo */}
         <Col md={6} lg={4}>
           <Card>
             <Card.Body>
@@ -55,4 +56,4 @@ const AdminLogin = () => {
   );
 };
 
-export default AdminLogin;
+export default AdminLogin;  

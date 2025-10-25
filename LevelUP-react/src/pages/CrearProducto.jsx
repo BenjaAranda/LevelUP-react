@@ -13,7 +13,7 @@ const CrearProducto = () => {
   const [nombre, setNombre] = useState('');
   const [precio, setPrecio] = useState(0);
   const [descripcion, setDescripcion] = useState('');
-  const [stock, setStock] = useState(0); // Inicia en 0
+  const [stock, setStock] = useState(0); 
   const [imagen, setImagen] = useState('');
   
   const [error, setError] = useState('');
@@ -24,7 +24,6 @@ const CrearProducto = () => {
     setError('');
     setExito('');
 
-    // Validación simple
     if (!codigo || !nombre || precio <= 0 || stock < 0 || !imagen) {
       setError('Por favor, completa todos los campos obligatorios.');
       return;
@@ -36,16 +35,7 @@ const CrearProducto = () => {
       return;
     }
 
-    const nuevoProducto = {
-      codigo,
-      categoria,
-      nombre,
-      precio,
-      descripcion,
-      stock, 
-      imagen
-    };
-
+    const nuevoProducto = { codigo, categoria, nombre, precio, descripcion, stock, imagen };
     productos.push(nuevoProducto);
     localStorage.setItem("productos", JSON.stringify(productos));
 
@@ -56,7 +46,8 @@ const CrearProducto = () => {
   };
 
   return (
-    <Container className="my-5">
+    // --- CLASE AÑADIDA AQUÍ ---
+    <Container className="crear-producto-container my-5"> 
       <Card>
         <Card.Header as="h2">Crear Nuevo Producto</Card.Header>
         <Card.Body>
@@ -64,6 +55,7 @@ const CrearProducto = () => {
             {error && <Alert variant="danger">{error}</Alert>}
             {exito && <Alert variant="success">{exito}</Alert>}
 
+            {/* Resto del formulario sin cambios... */}
             <Form.Group className="mb-3" controlId="codigo">
               <Form.Label>Código (SKU) *</Form.Label>
               <Form.Control type="text" value={codigo} onChange={(e) => setCodigo(e.target.value)} />
@@ -93,12 +85,11 @@ const CrearProducto = () => {
               <Form.Control type="number" min="0" value={precio} onChange={(e) => setPrecio(Number(e.target.value))} />
             </Form.Group>
             
-            {/* --- CAMPO STOCK CORREGIDO --- */}
             <Form.Group className="mb-3" controlId="stock">
               <Form.Label>Stock *</Form.Label>
               <Form.Control
                 type="number" 
-                min="0"     
+                min="0"    
                 value={stock} 
                 onChange={(e) => {
                   const inputValue = e.target.value; 
@@ -118,14 +109,13 @@ const CrearProducto = () => {
                     e.target.select();
                   }
                 }}
-                className="no-spinners" // Clase CSS para ocultar botones
+                className="no-spinners" 
               />
             </Form.Group>
-            {/* --- FIN CAMPO STOCK --- */}
             
             <Form.Group className="mb-3" controlId="imagen">
               <Form.Label>URL de Imagen *</Form.Label>
-              <Form.Control type="text" value={imagen} onChange={(e) => setImagen(e.target.value)} placeholder="/img_productos/mi-producto.png" />
+              <Form.Control type="text" value={imagen} onChange={(e) => setImagen(e.target.value)} placeholder="/ruta/a/tu/imagen.png" />
             </Form.Group>
             
             <Form.Group className="mb-3" controlId="descripcion">

@@ -1,20 +1,26 @@
 // En: src/components/AppNavbar.jsx
 
 import React, { useState, useEffect } from 'react';
-import { Form, Button } from 'react-bootstrap';
+// Importamos solo Form y Button de react-bootstrap
+import { Form, Button } from 'react-bootstrap'; 
 import { Link, useNavigate } from 'react-router-dom';
+// Importamos los iconos necesarios
 import { FaUser, FaShoppingCart, FaSearch, FaUserCircle, FaSignOutAlt } from 'react-icons/fa';
+// Importamos el hook de autenticación
 import { useAuth } from '../hooks/useAuth.jsx';
+// Importamos los productos para las recomendaciones
 import { productos } from '../data/productos.js';
 
 function AppNavbar() {
   const { usuario, logout } = useAuth();
   const navigate = useNavigate();
 
+  // Estados para la búsqueda
   const [searchTerm, setSearchTerm] = useState('');
   const [recomendaciones, setRecomendaciones] = useState([]);
   const [showRecomendaciones, setShowRecomendaciones] = useState(false);
 
+  // Lógica de recomendaciones (busca en todos los productos)
   useEffect(() => {
     if (searchTerm.trim().length > 1) {
       const coincidencias = productos.filter(p =>
@@ -28,18 +34,21 @@ function AppNavbar() {
     }
   }, [searchTerm]);
 
+  // Manejar envío de búsqueda (solo envía el término 'q')
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     setShowRecomendaciones(false);
     navigate(`/productos?q=${encodeURIComponent(searchTerm)}`);
   };
 
+  // Clic en recomendación
   const handleRecommendationClick = (codigo) => {
     setShowRecomendaciones(false);
     setSearchTerm('');
     navigate(`/producto/${codigo}`);
   };
 
+  // Logout
   const handleLogout = () => {
     logout();
     navigate('/');
@@ -54,22 +63,19 @@ function AppNavbar() {
         </Link>
 
         {/* --- FORMULARIO DE BÚSQUEDA CON BOTÓN INTERNO --- */}
-        {/* Usamos 'position-relative' para el botón y el dropdown */}
         <Form className="buscador position-relative" onSubmit={handleSearchSubmit}>
-          {/* 1. SE ELIMINÓ EL Form.Select */}
-
           {/* Input de Búsqueda */}
           <Form.Control
             type="text"
-            placeholder="Busque productos aquí..." // Placeholder como en la imagen
+            placeholder="Busque productos aquí..." 
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             onBlur={() => setTimeout(() => setShowRecomendaciones(false), 150)}
             onFocus={() => searchTerm.trim().length > 1 && setShowRecomendaciones(true)}
-            // Añadimos padding a la derecha para que el texto no quede debajo del botón
+            // Padding a la derecha para dejar espacio al botón interno
             style={{ paddingRight: '40px' }} 
           />
-          {/* Botón Lupa (Ahora posicionado absolutamente) */}
+          {/* Botón Lupa Interno (clase CSS específica) */}
           <Button type="submit" className="btn-busqueda-interno">
             <FaSearch />
           </Button>
@@ -92,8 +98,8 @@ function AppNavbar() {
         </Form>
         {/* --- FIN FORMULARIO BÚSQUEDA --- */}
 
-        {/* Iconos (sin cambios) */}
-        <div className="iconos">
+        {/* Iconos Dinámicos */}
+        <div className="iconos"> 
           {usuario ? (
             <>
               <Link to="/perfil"><Button title={`Mi Perfil - ${usuario.nombre}`}> <FaUserCircle /> </Button></Link>
@@ -106,7 +112,7 @@ function AppNavbar() {
         </div>
       </div>
 
-      {/* Navegación (sin cambios) */}
+      {/* Navegación Principal */}
       <nav className="navegacion">
         <ul>
           <li><Link to="/">Home</Link></li>

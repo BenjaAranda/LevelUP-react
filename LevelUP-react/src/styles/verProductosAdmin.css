@@ -1,26 +1,144 @@
-/* En: src/styles/verProductosAdmin.css */
+/* En: src/styles/verProductosAdmin.css (Con #root y estilos de tabla) */
 
-.admin-producto-item {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  flex-wrap: wrap;
+/* Contenedor general */
+#root .ver-productos-admin-container {
+  margin: 40px auto;
+  max-width: 1200px; 
 }
 
-.admin-producto-img {
-  width: 60px;
-  height: 60px;
+#root .ver-productos-admin-container .card {
+  background-color: #1a1a1a;
+  border: 1px solid #555; 
+  border-radius: 12px;
+  color: #fff;
+}
+
+#root .ver-productos-admin-container .card-header {
+  background-color: #333; 
+  color: #fff;
+  font-weight: bold;
+  font-size: 1.5rem;
+  text-align: center;
+  border-bottom: 3px solid #8000ff; 
+}
+
+#root .ver-productos-admin-container .card-body {
+  padding: 20px;
+}
+
+/* Estilos específicos para la Tabla (variant="dark") */
+#root .ver-productos-admin-container .table-dark {
+  --bs-table-bg: #1c1c1c; /* Fondo de celdas */
+  --bs-table-border-color: #444; /* Color de bordes */
+  --bs-table-color: #eee; /* Color de texto */
+  --bs-table-striped-bg: #2a2a2a; /* Fondo de filas alternas */
+  --bs-table-hover-bg: #3a3a3a; /* Fondo al pasar el mouse */
+}
+
+/* Cabecera de la tabla */
+#root .ver-productos-admin-container thead th {
+  color: #39ff14; /* Texto cabecera verde */
+  border-bottom-width: 2px; /* Borde inferior más grueso */
+  text-align: center;
+  vertical-align: middle;
+  font-size: 0.9rem;
+}
+
+/* Celdas del cuerpo de la tabla */
+#root .ver-productos-admin-container tbody td {
+  vertical-align: middle; 
+  text-align: center; 
+  font-size: 0.9rem;
+}
+/* Nombre alineado a la izquierda */
+#root .ver-productos-admin-container tbody td:nth-child(2) { 
+  text-align: left;
+  font-weight: bold;
+}
+/* Código SKU más discreto */
+#root .ver-productos-admin-container tbody td:nth-child(3) { 
+  color: #aaa;
+  font-size: 0.8rem;
+}
+
+
+/* Imagen miniatura en la tabla */
+#root .admin-producto-img-tabla {
+  width: 50px;
+  height: 50px;
   object-fit: cover;
   border-radius: 5px;
-  border: 1px solid #ddd;
+  border: 1px solid #555;
+  background-color: #0d0d0d; 
+  display: block; /* Centrar imagen */
+  margin: 0 auto;
 }
 
-.admin-producto-info {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
+/* Grupo de input de stock */
+#root .admin-producto-stock .input-group {
+    max-width: 150px; /* Limita ancho del grupo */
+    margin: 0 auto; /* Centra el grupo */
+}
+#root .admin-producto-stock .form-control {
+    background-color: #0d0d0d;
+    border-color: #555;
+    color: #fff;
+    text-align: center;
+}
+#root .admin-producto-stock .btn-outline-success {
+    border-color: #39ff14;
+    color: #39ff14;
+}
+#root .admin-producto-stock .btn-outline-success:hover {
+    background-color: #39ff14;
+    color: #111;
 }
 
-.admin-producto-stock {
-  min-width: 200px;
+/* Botones de acción (Editar/Eliminar) */
+#root .admin-producto-acciones .btn {
+  font-size: 0.9rem; /* Iconos un poco más grandes */
+  padding: 4px 8px;
+  margin: 0 4px; 
 }
+
+/* Botón Editar */
+#root .admin-producto-acciones .btn-warning {
+  background-color: #ffc107;
+  border-color: #ffc107;
+  color: #111;
+}
+#root .admin-producto-acciones .btn-warning:hover {
+  background-color: #8000ff;
+  border-color: #8000ff;
+  color: #fff;
+}
+
+/* Botón Eliminar */
+#root .admin-producto-acciones .btn-danger {
+   background-color: #dc3545;
+   border-color: #dc3545;
+}
+#root .admin-producto-acciones .btn-danger:hover {
+   background-color: #bb2d3b;
+   border-color: #b02a37;
+}
+
+/* Estilo botón volver */
+#root .ver-productos-admin-container .btn-outline-secondary {
+    color: #aaa;
+    border-color: #555;
+}
+#root .ver-productos-admin-container .btn-outline-secondary:hover {
+    color: #fff;
+    background-color: #555;
+    border-color: #555;
+}
+/* Estilo alerta éxito */
+#root .ver-productos-admin-container .alert-success {
+  background-color: #0c4a00; 
+  border-color: #39ff14;
+  color: #c8ffc8; 
+}
+
+/* Responsividad para la tabla (Scroll horizontal en móviles) */
+/* Bootstrap 5 ya incluye .table-responsive, no necesitamos CSS extra si usamos esa clase en el JSX */

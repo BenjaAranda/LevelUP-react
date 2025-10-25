@@ -1,9 +1,103 @@
-/* En: src/styles/crearProducto.css */
+/* En: src/styles/crearProducto.css (Con #root para especificidad) */
 
-/* Oculta los spinners en los inputs de tipo número con la clase 'no-spinners' */
-.no-spinners::-webkit-outer-spin-button,
-.no-spinners::-webkit-inner-spin-button {
+/* Contenedor principal de la página */
+#root .crear-producto-container {
+  max-width: 800px; 
+  margin: 40px auto;
+}
+
+/* Estilo para la tarjeta */
+#root .crear-producto-container .card {
+  background-color: #1a1a1a;
+  border: 1px solid #8000ff;
+  border-radius: 12px;
+  box-shadow: 0 0 20px #8000ff55;
+  color: #fff;
+}
+
+/* Cabecera de la tarjeta */
+#root .crear-producto-container .card-header {
+  background-color: #8000ff;
+  color: #fff;
+  font-weight: bold;
+  font-size: 1.5rem; 
+  text-align: center;
+  border-bottom: 3px solid #39ff14;
+}
+
+#root .crear-producto-container .card-body {
+  padding: 30px;
+}
+
+/* Estilos de formulario */
+#root .crear-producto-container .form-label {
+  color: #d3d3d3;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+#root .crear-producto-container .form-control,
+#root .crear-producto-container .form-select {
+  background-color: #0d0d0d;
+  border: 1px solid #555;
+  color: #fff;
+  padding: 10px 15px;
+  border-radius: 5px; 
+}
+#root .crear-producto-container .form-control:focus,
+#root .crear-producto-container .form-select:focus {
+  background-color: #0d0d0d;
+  color: #fff;
+  border-color: #39ff14;
+  box-shadow: 0 0 10px #39ff1455;
+}
+#root .crear-producto-container .form-control::placeholder {
+  color: #777;
+}
+
+/* Oculta spinners */
+#root .no-spinners::-webkit-outer-spin-button,
+#root .no-spinners::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+#root .no-spinners[type=number] { 
+  -moz-appearance: textfield;
+}
 
+/* Botón de Guardar/Crear */
+#root .crear-producto-container .btn-success {
+  background-color: #39ff14;
+  border-color: #39ff14;
+  color: #111;
+  font-weight: bold;
+  padding: 12px;
+  width: 100%;
+  margin-top: 20px;
+  transition: 0.3s;
+}
+#root .crear-producto-container .btn-success:hover {
+  background-color: #2aaa0f;
+  border-color: #2aaa0f;
+  color: #111;
+}
+
+/* Mensajes de error */
+#root .error-field {
+  color: #fea7a7;
+  font-size: 0.9rem;
+  margin-top: 5px;
+  display: block;
+}
+
+/* Estilos para Alert (Bootstrap adaptado) */
+#root .crear-producto-container .alert-danger {
+  background-color: #4d0000;
+  border-color: #ff4d4d;
+  color: #fea7a7;
+}
+#root .crear-producto-container .alert-success {
+  background-color: #0c4a00; /* Verde oscuro */
+  border-color: #39ff14;
+  color: #c8ffc8; /* Verde claro */
+}

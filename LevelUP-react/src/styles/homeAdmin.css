@@ -1,12 +1,114 @@
 /* En: src/styles/homeAdmin.css */
 
-.admin-home .card-header {
-  background-color: #ffc107; /* Amarillo advertencia */
-  color: #212529;
+/* Contenedor principal de la página Home Admin */
+.admin-home {
+  /* No necesita estilos específicos si Container hace el trabajo */
 }
 
+/* Estilo para la tarjeta principal (Card) */
+.admin-home .card {
+  background-color: #1a1a1a; /* Fondo oscuro */
+  border: 1px solid #8000ff;   /* Borde morado */
+  border-radius: 12px;
+  box-shadow: 0 0 20px #8000ff55; /* Sombra morada */
+  color: #fff; /* Texto blanco */
+}
+
+/* Cabecera de la tarjeta (Panel de Administración) */
+.admin-home .card-header {
+  background-color: #8000ff; /* Fondo morado (en lugar de amarillo) */
+  color: #fff;             /* Texto blanco */
+  font-weight: bold;
+  font-size: 1.8rem;      /* Tamaño más grande */
+  text-align: center;
+  border-bottom: 3px solid #39ff14; /* Borde inferior verde neón */
+}
+
+/* Cuerpo de la tarjeta */
+.admin-home .card-body {
+  padding: 30px;
+}
+
+/* Título de bienvenida */
+.admin-home .card-title {
+  color: #39ff14; /* Verde neón */
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+/* Texto introductorio */
+.admin-home .card-text {
+  color: #d3d3d3; /* Gris claro */
+  margin-bottom: 30px; /* Más espacio antes de los botones */
+}
+
+/* Contenedor de los botones de acción */
 .admin-actions {
-  display: flex;
-  gap: 20px;
+  display: flex; /* Elementos en línea */
+  gap: 20px;     /* Espacio entre botones */
   margin-top: 20px;
+  flex-wrap: wrap; /* Permite que los botones bajen en pantallas pequeñas */
+  justify-content: center; /* Centra los botones si se envuelven */
+}
+
+/* Estilo general para los botones dentro de .admin-actions */
+.admin-actions .btn {
+  font-weight: bold;
+  padding: 12px 25px; /* Botones más grandes */
+  border-radius: 8px;
+  transition: transform 0.2s, background-color 0.3s, color 0.3s;
+  flex-grow: 1; /* Permite que los botones crezcan para llenar espacio */
+  min-width: 200px; /* Ancho mínimo antes de envolver */
+  text-align: center;
+}
+.admin-actions .btn:hover {
+  transform: translateY(-3px); /* Efecto levantar */
+}
+
+/* Estilos específicos para cada botón (Bootstrap variants adaptados) */
+
+/* Botón Primary (Agregar Producto) */
+.admin-actions .btn-primary {
+  background-color: #8000ff; /* Morado */
+  border-color: #8000ff;
+}
+.admin-actions .btn-primary:hover {
+  background-color: #39ff14; /* Verde hover */
+  border-color: #39ff14;
+  color: #111; /* Texto oscuro */
+}
+
+/* Botón Secondary (Ver/Modificar) */
+.admin-actions .btn-secondary {
+  background-color: #333; /* Gris oscuro */
+  border-color: #555;
+  color: #eee;
+}
+.admin-actions .btn-secondary:hover {
+  background-color: #444;
+  border-color: #666;
+  color: #fff;
+}
+
+/* Botón Info (Gestionar Destacados) */
+.admin-actions .btn-info {
+  background-color: #0dcaf0; /* Azul claro (Bootstrap info) */
+  border-color: #0dcaf0;
+  color: #111;
+}
+.admin-actions .btn-info:hover {
+  background-color: #39ff14; /* Verde hover */
+  border-color: #39ff14;
+  color: #111;
+}
+
+/* Ajuste responsivo para los botones */
+@media (max-width: 768px) {
+  .admin-actions {
+    flex-direction: column; /* Apila los botones en móvil */
+    gap: 15px;
+  }
+  .admin-actions .btn {
+    width: 100%; /* Ocupan todo el ancho */
+  }
 }
