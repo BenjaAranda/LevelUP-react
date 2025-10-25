@@ -4,13 +4,15 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth.jsx';
 import { Container, Button, Card } from 'react-bootstrap';
-import '../styles/homeAdmin.css'; 
+// Importamos los estilos específicos
+import '../styles/homeAdmin.css';
 
 const HomeAdmin = () => {
   const { usuario } = useAuth();
 
   return (
-    <Container className="admin-home my-5">
+    // Añadimos la clase contenedora para aplicar los estilos de homeAdmin.css
+    <Container className="admin-home-container my-5">
       <Card>
         <Card.Header as="h1">Panel de Administración</Card.Header>
         <Card.Body>
@@ -18,7 +20,7 @@ const HomeAdmin = () => {
           <Card.Text>
             Selecciona una opción para gestionar la tienda.
           </Card.Text>
-          
+
           <div className="admin-actions">
             <Link to="/admin/crear-producto">
               <Button variant="primary" size="lg">
@@ -30,10 +32,15 @@ const HomeAdmin = () => {
                 📦 Ver/Modificar Productos
               </Button>
             </Link>
-            {/* --- ¡BOTÓN NUEVO! --- */}
             <Link to="/admin/gestionar-destacados">
               <Button variant="info" size="lg">
                 ⭐ Gestionar Destacados
+              </Button>
+            </Link>
+             {/* Botón Productos Críticos (añadido previamente) */}
+             <Link to="/admin/productos-criticos">
+              <Button variant="danger" size="lg"> 
+                ⚠️ Productos Críticos
               </Button>
             </Link>
           </div>

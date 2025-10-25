@@ -552,3 +552,32 @@ body {
   font-size: 0.9em;
   margin-left: auto; 
 }
+
+/* Estilo para tarjetas de productos agotados */
+.producto.agotado {
+  opacity: 0.6; /* Hacerla semi-transparente */
+  position: relative; /* Para el pseudo-elemento */
+}
+/* Opcional: Añadir una cinta "Agotado" */
+.producto.agotado::after {
+  content: 'AGOTADO';
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: rgba(220, 53, 69, 0.8); /* Rojo semi-transparente */
+  color: white;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+/* Estilo para mostrar el stock en la tarjeta y detalle */
+.stock-info {
+  font-size: 0.9rem;
+  color: #aaa; /* Gris claro */
+  margin-bottom: 10px;
+}
+.stock-info .text-danger { /* Estilo específico para "AGOTADO" */
+    color: #ff4d4d !important; /* Rojo brillante */
+}
