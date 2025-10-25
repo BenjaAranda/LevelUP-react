@@ -1,10 +1,10 @@
-// En: src/main.jsx (Versión Final Completa)
+// En: src/main.jsx
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
-// --- ESTILOS ---
+// Estilos...
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/main.css'; 
 import './styles/productos.css';
@@ -14,7 +14,6 @@ import './styles/contacto.css';
 import './styles/blog.css';
 import './styles/login.css'; 
 import './styles/carrito.css'; 
-// --- ESTILOS ADMIN ---
 import './styles/admin-login.css'; 
 import './styles/homeAdmin.css'; 
 import './styles/crearProducto.css';      
@@ -22,15 +21,15 @@ import './styles/gestionDestacados.css';
 import './styles/verProductosAdmin.css';  
 import './index.css'; 
 
-// --- CONTEXTO ---
+// Contexto...
 import { CartProvider } from './hooks/useCart.jsx'; 
 import { AuthProvider } from './context/AuthProvider.jsx'; 
 
-// --- LAYOUT Y COMPONENTES ---
+// Layout y Componentes...
 import App from './App.jsx';
 import RutaProtegida from './components/RutaProtegida.jsx';
 
-// --- PÁGINAS ---
+// Páginas...
 import Home from './pages/Home.jsx';
 import Productos from './pages/Productos.jsx';
 import DetalleProducto from './pages/DetalleProducto.jsx';
@@ -41,12 +40,12 @@ import DetalleBlog from './pages/DetalleBlog.jsx';
 import Login from './pages/Login.jsx'; 
 import Perfil from './pages/Perfil.jsx'; 
 import Carrito from './pages/Carrito.jsx'; 
-// --- PÁGINAS ADMIN ---
 import AdminLogin from './pages/AdminLogin.jsx'; 
 import HomeAdmin from './pages/HomeAdmin.jsx'; 
 import CrearProducto from './pages/CrearProducto.jsx'; 
 import VerProductosAdmin from './pages/VerProductosAdmin.jsx'; 
 import GestionDestacados from './pages/GestionDestacados.jsx'; 
+import EditarProducto from './pages/EditarProducto.jsx'; // <-- 1. IMPORTAMOS EditarProducto
 
 // --- CONFIGURACIÓN DEL ROUTER ---
 const router = createBrowserRouter([
@@ -56,11 +55,7 @@ const router = createBrowserRouter([
     children: [
       // Rutas Públicas...
       { path: '/', element: <Home /> },
-      { path: '/productos', element: <Productos /> },
-      { path: '/producto/:codigo', element: <DetalleProducto /> },
-      { path: '/nosotros', element: <Nosotros /> },
-      { path: '/contacto', element: <Contacto /> }, 
-      { path: '/blog', element: <Blog /> },
+      // ... (otras rutas públicas) ...
       { path: '/blog/:slug', element: <DetalleBlog /> }, 
       { path: '/login', element: <Login /> }, 
       { path: '/carrito', element: <Carrito /> },
@@ -68,12 +63,17 @@ const router = createBrowserRouter([
 
       // Rutas Cliente Protegidas...
       { path: '/perfil', element: ( <RutaProtegida> <Perfil /> </RutaProtegida> ) },
-
+      
       // --- Rutas Admin Protegidas ---
       { path: '/admin/home', element: ( <RutaProtegida requireAdmin={true}> <HomeAdmin /> </RutaProtegida> ) },
       { path: '/admin/crear-producto', element: ( <RutaProtegida requireAdmin={true}> <CrearProducto /> </RutaProtegida> ) },
       { path: '/admin/ver-productos', element: ( <RutaProtegida requireAdmin={true}> <VerProductosAdmin /> </RutaProtegida> ) },
       { path: '/admin/gestionar-destacados', element: ( <RutaProtegida requireAdmin={true}> <GestionDestacados /> </RutaProtegida> ) },
+      // --- 2. AÑADIMOS RUTA PARA EDITAR ---
+      { 
+        path: '/admin/editar-producto/:codigo', 
+        element: ( <RutaProtegida requireAdmin={true}> <EditarProducto /> </RutaProtegida> ) 
+      },
 
       // Placeholder...
       { path: '/checkout', element: <div><h1>Página Checkout (en construcción)</h1></div> },

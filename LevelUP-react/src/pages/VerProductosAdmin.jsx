@@ -2,19 +2,21 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-// 1. IMPORTAMOS Table y InputGroup de react-bootstrap
 import { Container, Card, Button, Form, InputGroup, Alert, Table } from 'react-bootstrap'; 
-import '../styles/verProductosAdmin.css'; // Asegúrate que el CSS esté importado
+// 1. IMPORTAMOS LAS FUNCIONES CRUD
+import { getProductos, actualizarProducto, eliminarProducto } from '../data/productos.js'; 
+import '../styles/verProductosAdmin.css'; 
 
 const VerProductosAdmin = () => {
   const [productos, setProductos] = useState([]);
   const [mensaje, setMensaje] = useState(''); 
 
+  // Cargar productos al inicio usando la función CRUD
   useEffect(() => {
-    const productosGuardados = JSON.parse(localStorage.getItem("productos")) || [];
-    setProductos(productosGuardados);
+    setProductos(getProductos());
   }, []);
 
+  // Manejar cambio local de stock (igual)
   const handleStockChange = (codigo, nuevoStock) => {
     const stockNum = Math.max(0, Number(nuevoStock));
     setProductos(prevProductos =>
@@ -24,32 +26,38 @@ const VerProductosAdmin = () => {
     );
   };
 
+  // Guardar stock usando la función CRUD
   const handleGuardarStock = (codigo) => {
-    const productosGuardados = JSON.parse(localStorage.getItem("productos")) || [];
     const productoActualizado = productos.find(p => p.codigo === codigo);
-    if (!productoActualizado) return;
-    const nuevaListaGuardada = productosGuardados.map(p =>
-      p.codigo === codigo ? productoActualizado : p
-    );
-    localStorage.setItem("productos", JSON.stringify(nuevaListaGuardada));
-    setMensaje(`Stock de "${productoActualizado.nombre}" actualizado a ${productoActualizado.stock}.`);
-    setTimeout(() => setMensaje(''), 3000);
+    if (!productoActualizado) return; 
+
+    try {
+      actualizarProducto(productoActualizado); // Usamos la función CRUD
+      setMensaje(`Stock de "${productoActualizado.nombre}" actualizado.`);
+      setTimeout(() => setMensaje(''), 3000); 
+    } catch (err) {
+       setMensaje(`Error al guardar stock: ${err.message}`);
+       // Opcional: Recargar los productos originales si falla el guardado
+       // setProductos(getProductos()); 
+    }
   };
   
-  // --- FUNCIÓN PARA ELIMINAR (NUEVO) ---
-  const handleEliminarProducto = (codigo) => {
-      if (window.confirm("¿Estás seguro de que quieres eliminar este producto? Esta acción no se puede deshacer.")) {
-          const productosGuardados = JSON.parse(localStorage.getItem("productos")) || [];
-          const nuevaLista = productosGuardados.filter(p => p.codigo !== codigo);
-          localStorage.setItem("productos", JSON.stringify(nuevaLista));
-          setProductos(nuevaLista); // Actualiza el estado local
-          setMensaje(`Producto con código "${codigo}" eliminado.`);
-          setTimeout(() => setMensaje(''), 3000);
+  // Eliminar producto usando la función CRUD
+  const handleEliminarProducto = (codigo, nombre) => {
+      // 2. AÑADIMOS CONFIRMACIÓN
+      if (window.confirm(`¿Estás seguro de que quieres eliminar "${nombre}"? Esta acción no se puede deshacer.`)) {
+          try {
+              const nuevaLista = eliminarProducto(codigo); // Usamos la función CRUD
+              setProductos(nuevaLista); // Actualiza el estado local con la nueva lista
+              setMensaje(`Producto "${nombre}" eliminado.`);
+              setTimeout(() => setMensaje(''), 3000);
+          } catch (err) {
+              setMensaje(`Error al eliminar: ${err.message}`);
+          }
       }
   };
 
   return (
-    // --- CLASE AÑADIDA AQUÍ ---
     <Container className="ver-productos-admin-container my-5"> 
       <Card>
         <Card.Header as="h2">Gestionar Productos</Card.Header>
@@ -58,9 +66,8 @@ const VerProductosAdmin = () => {
             <Button variant="outline-secondary" className="mb-3">← Volver al Panel</Button>
           </Link>
           
-          {mensaje && <Alert variant="success">{mensaje}</Alert>}
+          {mensaje && <Alert variant="success" onClose={() => setMensaje('')} dismissible>{mensaje}</Alert>}
           
-          {/* 2. USAMOS LA TABLA RESPONSIVA DE BOOTSTRAP */}
           <Table responsive striped bordered hover variant="dark" className="mt-3">
             <thead>
               <tr>
@@ -75,9 +82,7 @@ const VerProductosAdmin = () => {
             </thead>
             <tbody>
               {productos.length === 0 ? (
-                <tr>
-                  <td colSpan="7" className="text-center">No hay productos para mostrar.</td>
-                </tr>
+                <tr><td colSpan="7" className="text-center">No hay productos.</td></tr>
               ) : (
                 productos.map(prod => (
                   <tr key={prod.codigo}>
@@ -91,31 +96,26 @@ const VerProductosAdmin = () => {
                     <td>
                       <InputGroup size="sm">
                         <Form.Control
-                          type="number"
-                          min="0"
-                          value={prod.stock}
+                          type="number" min="0" value={prod.stock}
                           onChange={(e) => handleStockChange(prod.codigo, e.target.value)}
-                          style={{ maxWidth: '80px' }} // Ancho más pequeño
+                          style={{ maxWidth: '80px' }}
                         />
-                        <Button variant="outline-success" onClick={() => handleGuardarStock(prod.codigo)}>
-                          ✓ {/* Icono simple guardar */}
-                        </Button>
+                        <Button variant="outline-success" onClick={() => handleGuardarStock(prod.codigo)}>✓</Button>
                       </InputGroup>
                     </td>
                     <td className="admin-producto-acciones">
-                       {/* Botón Editar (lleva a una futura página de edición) */}
+                       {/* 3. CORREGIMOS EL LINK DE EDICIÓN */}
                        <Link to={`/admin/editar-producto/${prod.codigo}`}>
-                           <Button variant="warning" size="sm">✏️</Button>
+                           <Button variant="warning" size="sm" title="Editar">✏️</Button>
                        </Link>
-                       {/* Botón Eliminar */}
-                       <Button variant="danger" size="sm" onClick={() => handleEliminarProducto(prod.codigo)}>🗑️</Button>
+                       {/* 4. PASAMOS EL NOMBRE PARA LA CONFIRMACIÓN */}
+                       <Button variant="danger" size="sm" title="Eliminar" onClick={() => handleEliminarProducto(prod.codigo, prod.nombre)}>🗑️</Button>
                     </td>
                   </tr>
                 ))
               )}
             </tbody>
           </Table>
-          {/* --- FIN TABLA --- */}
           
         </Card.Body>
       </Card>
