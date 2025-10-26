@@ -1,191 +1,106 @@
-import React from 'react'
-import { describe, test, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import { CartProvider } from '../../context/CartProvider'
-import { useCart } from '../../hooks/useCart'
+// En: src/__tests__/cart/Cart.test.jsx (Versión Limpia)
 
-// Producto de prueba
-const productoTest = {
-  codigo: 'TEST001',
-  nombre: 'Producto Test',
-  precio: 1000,
-  descripcion: 'Producto para testing',
-  imagen: '/test.jpg'
-}
+import React from 'react';
+import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
+// Usamos nuestro render personalizado
+import { render, screen, fireEvent, waitFor } from '../utils/test-utils.jsx';
+import '@testing-library/jest-dom';
+import Carrito from '../../pages/Carrito.jsx';
+// Importamos los providers para poder mockearlos si es necesario
+import { AuthProvider } from '../../context/AuthProvider.jsx';
+import { CartProvider } from '../../context/CartProvider.jsx';
 
-// Componente de prueba que usa useCart
-const TestComponent = () => {
-    const { 
-    cart, 
-    addToCart, 
-    removeOne,
-    removeFromCart,
-    clearCart,
-    totalItems,
-    totalAmount
-  } = useCart()
+// Mockeamos la alerta global
+beforeEach(() => {
+  window.alert = vi.fn();
+});
+afterEach(() => {
+  vi.restoreAllMocks();
+  localStorage.clear(); // Limpiamos localStorage entre pruebas
+});
 
-  return (
-    <div>
-      <button onClick={() => addToCart(productoTest)}>
-        Agregar al carrito
-      </button>
-      
-      {cart.map(item => (
-        <div key={item.codigo} data-testid="item-carrito">
-          <span>{item.nombre} x{item.cantidad}</span>
-          <button onClick={() => removeOne(item.codigo)}>
-            Quitar uno
-          </button>
-          <button onClick={() => removeFromCart(item.codigo)}>
-            Eliminar
-          </button>
-        </div>
-      ))}
+// Mock de datos
+const mockProducto1 = { 
+  codigo: 'P001', nombre: 'Producto 1', precio: 100, unidades: 2, stock: 5,
+  img: '/img1.png', categoria: 'Cat1' 
+};
+const mockProducto2 = { 
+  codigo: 'P002', nombre: 'Producto 2', precio: 50, unidades: 1, stock: 5,
+  img: '/img2.png', categoria: 'Cat2'
+};
 
-      {cart.length > 0 && (
-        <>
-          <div>Total items: {totalItems}</div>
-          <div>Total precio: ${totalAmount}</div>
-          <button onClick={clearCart}>Vaciar carrito</button>
-        </>
-      )}
-    </div>
-  )
-}
+// Creamos un wrapper de renderizado específico para pruebas de carrito
+// que nos permita "pre-cargar" el estado del carrito en localStorage
+const renderCarritoConItems = (items) => {
+  localStorage.setItem('carrito', JSON.stringify(items));
+  // Renderizamos el componente Carrito
+  return render(<Carrito />);
+};
 
-describe('Carrito de compras', () => {
-  beforeEach(() => {
-    localStorage.clear()
-    vi.clearAllMocks()
-  })
 
-  test('agrega productos al carrito correctamente', async () => {
-    render(
-      <CartProvider>
-        <TestComponent />
-      </CartProvider>
-    )
+describe('Componente Carrito', () => {
 
-    // Agrega un producto
-    fireEvent.click(screen.getByText('Agregar al carrito'))
+  test('debe mostrar "Tu carrito está vacío" cuando no hay items', () => {
+    render(<Carrito />); // Renderiza con los providers por defecto (carrito vacío)
+    expect(screen.getByText('Tu carrito está vacío.')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Finalizar Compra/i })).toBeDisabled();
+  });
 
+  test('debe mostrar los items del carrito correctamente desde localStorage', () => {
+    // Pre-cargamos el localStorage con items
+    renderCarritoConItems([mockProducto1, mockProducto2]);
+
+    // Verifica que los productos están
+    expect(screen.getByText(mockProducto1.nombre)).toBeInTheDocument();
+    expect(screen.getByText(mockProducto2.nombre)).toBeInTheDocument();
+    // Verifica el total (P1: 2*100=200) + (P2: 1*50=50) = 250
+    expect(screen.getByText('$ 250')).toBeInTheDocument();
+    // Verifica que el botón Finalizar Compra esté habilitado
+    expect(screen.getByRole('button', { name: /Finalizar Compra/i })).toBeEnabled();
+  });
+
+  test('debe llamar a eliminarDelCarrito al hacer clic en 🗑️', () => {
+    renderCarritoConItems([mockProducto1]);
+    
+    expect(screen.getByText(mockProducto1.nombre)).toBeInTheDocument();
+    
+    const botonEliminar = screen.getByRole('button', { name: '🗑️' });
+    fireEvent.click(botonEliminar);
+
+    // Verificamos que el item desaparece
+    expect(screen.queryByText(mockProducto1.nombre)).not.toBeInTheDocument();
+    // Verificamos que ahora muestra carrito vacío
+    expect(screen.getByText('Tu carrito está vacío.')).toBeInTheDocument();
+  });
+  
+  test('debe llamar a vaciarCarrito al hacer clic', () => {
+    renderCarritoConItems([mockProducto1, mockProducto2]);
+
+    expect(screen.getByText(mockProducto1.nombre)).toBeInTheDocument();
+
+    const botonVaciar = screen.getByRole('button', { name: /Vaciar Carrito/i });
+    fireEvent.click(botonVaciar);
+
+    expect(screen.queryByText(mockProducto1.nombre)).not.toBeInTheDocument();
+    expect(screen.getByText('Tu carrito está vacío.')).toBeInTheDocument();
+  });
+
+  test('debe llamar a finalizarCompra y mostrar alerta de éxito', async () => {
+    // Pre-cargamos el producto en localStorage
+    localStorage.setItem('productos', JSON.stringify([mockProducto1]));
+    renderCarritoConItems([mockProducto1]);
+    
+    const botonFinalizar = screen.getByRole('button', { name: /Finalizar Compra/i });
+    fireEvent.click(botonFinalizar);
+
+    // Esperamos a que se resuelva la lógica asíncrona
     await waitFor(() => {
-      const items = screen.getAllByTestId('item-carrito')
-      expect(items).toHaveLength(1)
-      expect(screen.getByText('Producto Test x1')).toBeInTheDocument()
-      expect(screen.getByText('Total items: 1')).toBeInTheDocument()
-      expect(screen.getByText('Total precio: $1000')).toBeInTheDocument()
-    })
+      // Verificamos la alerta de éxito
+      expect(window.alert).toHaveBeenCalledWith(expect.stringContaining('¡Compra realizada con éxito!'));
+    });
+    
+    // Verificamos que el carrito se vació
+    expect(screen.getByText('Tu carrito está vacío.')).toBeInTheDocument();
+  });
 
-    // Agrega el mismo producto otra vez
-    fireEvent.click(screen.getByText('Agregar al carrito'))
-
-    await waitFor(() => {
-      expect(screen.getByText('Producto Test x2')).toBeInTheDocument()
-      expect(screen.getByText('Total items: 2')).toBeInTheDocument()
-      expect(screen.getByText('Total precio: $2000')).toBeInTheDocument()
-    })
-  })
-
-  test('resta y elimina productos del carrito', async () => {
-    render(
-      <CartProvider>
-        <TestComponent />
-      </CartProvider>
-    )
-
-    // Agrega dos unidades
-    fireEvent.click(screen.getByText('Agregar al carrito'))
-    fireEvent.click(screen.getByText('Agregar al carrito'))
-
-    // Verifica estado inicial
-    await waitFor(() => {
-      expect(screen.getByText('Producto Test x2')).toBeInTheDocument()
-    })
-
-    // Resta una unidad
-    fireEvent.click(screen.getByText('Quitar uno'))
-
-    await waitFor(() => {
-      expect(screen.getByText('Producto Test x1')).toBeInTheDocument()
-      expect(screen.getByText('Total items: 1')).toBeInTheDocument()
-      expect(screen.getByText('Total precio: $1000')).toBeInTheDocument()
-    })
-
-    // Elimina el producto
-    fireEvent.click(screen.getByText('Eliminar'))
-
-    await waitFor(() => {
-      expect(screen.queryByTestId('item-carrito')).not.toBeInTheDocument()
-    })
-  })
-
-  test('vacía el carrito completamente', async () => {
-    render(
-      <CartProvider>
-        <TestComponent />
-      </CartProvider>
-    )
-
-    // Agrega productos
-    fireEvent.click(screen.getByText('Agregar al carrito'))
-    fireEvent.click(screen.getByText('Agregar al carrito'))
-
-    // Verifica que hay productos
-    await waitFor(() => {
-      expect(screen.getByTestId('item-carrito')).toBeInTheDocument()
-    })
-
-    // Vacía el carrito
-    fireEvent.click(screen.getByText('Vaciar carrito'))
-
-    // Verifica que no hay productos
-    await waitFor(() => {
-      expect(screen.queryByTestId('item-carrito')).not.toBeInTheDocument()
-    })
-  })
-
-  test('persiste el carrito en localStorage', async () => {
-    render(
-      <CartProvider>
-        <TestComponent />
-      </CartProvider>
-    )
-
-    // Agrega un producto
-    fireEvent.click(screen.getByText('Agregar al carrito'))
-
-    await waitFor(() => {
-      const cartSaved = JSON.parse(localStorage.getItem('cart'))
-      expect(cartSaved).toHaveLength(1)
-      expect(cartSaved[0]).toMatchObject({
-        codigo: 'TEST001',
-        nombre: 'Producto Test',
-        cantidad: 1
-      })
-    })
-  })
-
-  test('restaura el carrito desde localStorage', async () => {
-    // Simula carrito guardado
-    const cartSaved = [{
-      ...productoTest,
-      cantidad: 2
-    }]
-    localStorage.setItem('cart', JSON.stringify(cartSaved))
-
-    render(
-      <CartProvider>
-        <TestComponent />
-      </CartProvider>
-    )
-
-    await waitFor(() => {
-      const items = screen.getAllByTestId('item-carrito')
-      expect(items).toHaveLength(1)
-      expect(screen.getByText('Total items: 2')).toBeInTheDocument()
-      expect(screen.getByText('Total precio: $2000')).toBeInTheDocument()
-    })
-  })
-})
+});

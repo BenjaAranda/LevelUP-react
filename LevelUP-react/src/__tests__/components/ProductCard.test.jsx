@@ -1,56 +1,92 @@
-import React from 'react'
-import { describe, test, expect, vi } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
-import { MemoryRouter } from 'react-router-dom'
-import ProductCard from '../../components/ProductCard'
-import { CartProvider } from '../../context/CartProvider'
+// En: src/components/__tests__/ProductCard.test.jsx
 
-describe('ProductCard', () => {
-  const mockProduct = {
-    codigo: 'PROD001',
-    nombre: 'Producto Test',
-    precio: 1000,
-    descripcion: 'Descripción de prueba',
-    imagen: '/test.jpg',
-    stock: 5
-  }
+import React from 'react';
+import { describe, test, expect, vi, afterEach } from 'vitest';
+// Usamos el render de test-utils
+import { render, screen, fireEvent } from '../utils/test-utils.jsx';
+import '@testing-library/jest-dom';
+// Corregimos la ruta al componente
+import ProductCard from '../../components/ProductCard.jsx'; 
 
-  const mockOnAgregarAlCarrito = vi.fn()
+// Datos de prueba (ejemplo)
+const mockProduct = {
+  codigo: "TEST001",
+  img: '/test-image.png',
+  nombre: 'Producto de Prueba',
+  categoria: 'Test Categoria',
+  precio: 10000,
+  stock: 5,
+  descripcion: "Descripción de prueba."
+};
 
-  const renderCard = () => {
-    return render(
-      <MemoryRouter>
-        <CartProvider>
-          <ProductCard 
-          producto={mockProduct}
-          onAgregarAlCarrito={mockOnAgregarAlCarrito}
-          />
-        </CartProvider>
-      </MemoryRouter>
-    )
-  }
+const mockProductAgotado = {
+    ...mockProduct,
+    stock: 0,
+    codigo: "TEST002"
+};
 
-  test('renderiza información del producto correctamente', () => {
-    renderCard()
+const mockOnAgregarAlCarrito = vi.fn();
 
-    expect(screen.getByText(mockProduct.nombre)).toBeInTheDocument()
-    // Precio formateado según la localización puede incluir separadores de miles
-    expect(screen.getByText(/1\.000|1000/)).toBeInTheDocument()
-    expect(screen.getByRole('img')).toHaveAttribute('src', mockProduct.imagen)
-    expect(screen.getByRole('img')).toHaveAttribute('alt', mockProduct.nombre)
-  })
+describe('Componente ProductCard', () => {
 
-  test('llama callback al agregar al carrito', () => {
-    renderCard()
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
 
-    fireEvent.click(screen.getByText(/Agregar al carrito/i))
-    expect(mockOnAgregarAlCarrito).toHaveBeenCalledWith(mockProduct)
-  })
+  test('debe renderizar correctamente la información del producto', () => {
+    render(
+      <ProductCard
+        producto={mockProduct}
+        onAgregarAlCarrito={mockOnAgregarAlCarrito}
+      />
+    );
 
-  test('tiene link al detalle del producto', () => {
-    renderCard()
+    expect(screen.getByAltText('Producto de Prueba')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Producto de Prueba' })).toBeInTheDocument();
+    
+    // --- CORRECCIÓN ---
+    // Usamos una función (Text Matcher) para encontrar el texto 
+    // aunque esté dividido en nodos <strong> y de texto.
+    expect(screen.getByText((content, element) => 
+      element.tagName.toLowerCase() === 'p' && 
+      element.textContent.includes('Categoría: Test Categoria')
+    )).toBeInTheDocument();
+    // --- FIN CORRECCIÓN ---
 
-    const detalleLink = screen.getByText(/Ver detalle/i)
-    expect(detalleLink).toHaveAttribute('href', `/producto/${mockProduct.codigo}`)
-  })
-})
+    // Asegurarse que el formato de precio coincida
+    expect(screen.getByText('$10.000 CLP')).toBeInTheDocument(); 
+    expect(screen.getByText('Stock: 5')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Agregar al carrito/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /Ver detalle/i })).toBeInTheDocument();
+  });
+
+  test('debe llamar a onAgregarAlCarrito al hacer clic en el botón', () => {
+    render(
+       <ProductCard
+         producto={mockProduct}
+         onAgregarAlCarrito={mockOnAgregarAlCarrito}
+       />
+    );
+
+    const botonAgregar = screen.getByRole('button', { name: /Agregar al carrito/i });
+    fireEvent.click(botonAgregar);
+
+    expect(mockOnAgregarAlCarrito).toHaveBeenCalledTimes(1);
+    expect(mockOnAgregarAlCarrito).toHaveBeenCalledWith(mockProduct);
+  });
+
+   test('debe mostrar "AGOTADO" y deshabilitar el botón si stock es 0', () => {
+    render(
+       <ProductCard
+         producto={mockProductAgotado}
+         onAgregarAlCarrito={mockOnAgregarAlCarrito}
+       />
+    );
+
+    expect(screen.getByText('AGOTADO')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Agotado/i })).toBeDisabled();
+    const productDiv = screen.getByText('AGOTADO').closest('.producto'); 
+    expect(productDiv).toHaveClass('agotado');
+  });
+
+});
