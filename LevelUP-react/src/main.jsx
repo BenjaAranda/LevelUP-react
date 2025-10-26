@@ -1,4 +1,4 @@
-// En: src/main.jsx
+// En: src/main.jsx (Versión Definitiva Completa)
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
@@ -19,7 +19,7 @@ import './styles/admin-login.css'; // Asegúrate que este exista
 import './styles/homeAdmin.css'; // CSS que proporcionaste
 import './styles/crearProducto.css';
 import './styles/gestionDestacados.css'; // Usado también por GestionCategorias
-import './styles/verProductosAdmin.css'; // Usado también por GestionUsuarios
+import './styles/verProductosAdmin.css'; // Usado también por GestionUsuarios y GestionOrdenes
 import './index.css'; // Estilos base de Vite
 
 // --- CONTEXTO ---
@@ -54,8 +54,10 @@ import GestionDestacados from './pages/GestionDestacados.jsx';
 import EditarProducto from './pages/EditarProducto.jsx';
 import ProductosCriticos from './pages/ProductosCriticos.jsx';
 import GestionCategorias from './pages/GestionCategorias.jsx';
-import GestionUsuarios from './pages/GestionUsuarios.jsx'; // Importación para GestionUsuarios
-import EditarUsuario from './pages/EditarUsuario.jsx';     // Importación para EditarUsuario
+import GestionUsuarios from './pages/GestionUsuarios.jsx';
+import EditarUsuario from './pages/EditarUsuario.jsx';
+// --- ¡IMPORTACIÓN AÑADIDA! ---
+import GestionOrdenes from './pages/GestionOrdenes.jsx';
 
 // --- CONFIGURACIÓN DEL ROUTER ---
 // Definimos todas las rutas de la aplicación
@@ -116,13 +118,18 @@ const router = createBrowserRouter([
         path: '/admin/gestionar-categorias',
         element: ( <RutaProtegida requireAdmin={true}> <GestionCategorias /> </RutaProtegida> )
       },
-      { // <-- Ruta para Gestionar Usuarios
+      {
         path: '/admin/gestionar-usuarios',
         element: ( <RutaProtegida requireAdmin={true}> <GestionUsuarios /> </RutaProtegida> )
       },
-      { // <-- Ruta para Editar Usuario
+      {
         path: '/admin/editar-usuario/:email', // Usamos email como parámetro
         element: ( <RutaProtegida requireAdmin={true}> <EditarUsuario /> </RutaProtegida> )
+      },
+      // --- ¡RUTA AÑADIDA! ---
+      {
+        path: '/admin/gestionar-ordenes',
+        element: ( <RutaProtegida requireAdmin={true}> <GestionOrdenes /> </RutaProtegida> )
       },
 
 
