@@ -15,39 +15,39 @@ const productoTest = {
 
 // Componente de prueba que usa useCart
 const TestComponent = () => {
-  const { 
-    carritoItems, 
-    agregarAlCarrito, 
-    restarDelCarrito,
-    eliminarDelCarrito,
-    vaciarCarrito,
+    const { 
+    cart, 
+    addToCart, 
+    removeOne,
+    removeFromCart,
+    clearCart,
     totalItems,
-    totalPrecio
+    totalAmount
   } = useCart()
 
   return (
     <div>
-      <button onClick={() => agregarAlCarrito(productoTest)}>
+      <button onClick={() => addToCart(productoTest)}>
         Agregar al carrito
       </button>
       
-      {carritoItems.map(item => (
+      {cart.map(item => (
         <div key={item.codigo} data-testid="item-carrito">
-          <span>{item.nombre} x{item.unidades}</span>
-          <button onClick={() => restarDelCarrito(item.codigo)}>
+          <span>{item.nombre} x{item.cantidad}</span>
+          <button onClick={() => removeOne(item.codigo)}>
             Quitar uno
           </button>
-          <button onClick={() => eliminarDelCarrito(item.codigo)}>
+          <button onClick={() => removeFromCart(item.codigo)}>
             Eliminar
           </button>
         </div>
       ))}
 
-      {carritoItems.length > 0 && (
+      {cart.length > 0 && (
         <>
           <div>Total items: {totalItems}</div>
-          <div>Total precio: ${totalPrecio}</div>
-          <button onClick={vaciarCarrito}>Vaciar carrito</button>
+          <div>Total precio: ${totalAmount}</div>
+          <button onClick={clearCart}>Vaciar carrito</button>
         </>
       )}
     </div>
@@ -157,23 +157,23 @@ describe('Carrito de compras', () => {
     fireEvent.click(screen.getByText('Agregar al carrito'))
 
     await waitFor(() => {
-      const carritoGuardado = JSON.parse(localStorage.getItem('carrito'))
-      expect(carritoGuardado).toHaveLength(1)
-      expect(carritoGuardado[0]).toMatchObject({
+      const cartSaved = JSON.parse(localStorage.getItem('cart'))
+      expect(cartSaved).toHaveLength(1)
+      expect(cartSaved[0]).toMatchObject({
         codigo: 'TEST001',
         nombre: 'Producto Test',
-        unidades: 1
+        cantidad: 1
       })
     })
   })
 
   test('restaura el carrito desde localStorage', async () => {
     // Simula carrito guardado
-    const carritoGuardado = [{
+    const cartSaved = [{
       ...productoTest,
-      unidades: 2
+      cantidad: 2
     }]
-    localStorage.setItem('carrito', JSON.stringify(carritoGuardado))
+    localStorage.setItem('cart', JSON.stringify(cartSaved))
 
     render(
       <CartProvider>
@@ -182,7 +182,8 @@ describe('Carrito de compras', () => {
     )
 
     await waitFor(() => {
-      expect(screen.getByText('Producto Test x2')).toBeInTheDocument()
+      const items = screen.getAllByTestId('item-carrito')
+      expect(items).toHaveLength(1)
       expect(screen.getByText('Total items: 2')).toBeInTheDocument()
       expect(screen.getByText('Total precio: $2000')).toBeInTheDocument()
     })

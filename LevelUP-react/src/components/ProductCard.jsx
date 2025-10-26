@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { useCart } from '../hooks/useCart'; // Importamos useCart para chequear stock
 
 const ProductCard = ({ producto, onAgregarAlCarrito }) => {
-  const { carritoItems } = useCart(); // Obtenemos carrito para comparar stock vs cantidad en carrito
+  const { cart } = useCart(); // Obtenemos carrito para comparar stock vs cantidad en carrito
 
   // Verificamos si los datos esenciales existen
   if (!producto || !producto.codigo || !producto.nombre || producto.precio === undefined || producto.stock === undefined) {
@@ -17,8 +17,8 @@ const ProductCard = ({ producto, onAgregarAlCarrito }) => {
   const stockDisponible = producto.stock > 0;
 
   // Calculamos cuántas unidades de este producto ya están en el carrito
-  const itemEnCarrito = carritoItems.find(item => item.codigo === producto.codigo);
-  const cantidadEnCarrito = itemEnCarrito ? itemEnCarrito.unidades : 0;
+  const itemEnCarrito = cart.find(item => item.codigo === producto.codigo);
+  const cantidadEnCarrito = itemEnCarrito ? itemEnCarrito.cantidad : 0;
   // Podemos agregar si el stock es > 0 Y la cantidad en carrito es menor al stock
   const puedeAgregar = stockDisponible && cantidadEnCarrito < producto.stock;
 

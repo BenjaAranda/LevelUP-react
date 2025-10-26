@@ -1,29 +1,56 @@
-// En: src/pages/GestionOrdenes.jsx (Versión Mejorada)
-
 import React, { useState, useEffect } from 'react';
+import { Container, Card, Table, Button, Form, Modal } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { Container, Card, Table, Button, Alert, Badge } from 'react-bootstrap';
-// Importamos la función para obtener órdenes
-import { getOrdenes } from '../data/ordenes.js'; // Asegúrate que la ruta sea correcta
-// Reutilizamos estilos de tabla
-import '../styles/verProductosAdmin.css'; 
-// Podríamos añadir estilos específicos si es necesario
+import '../styles/verProductosAdmin.css';
 // import '../styles/gestionOrdenes.css'; 
 
 const GestionOrdenes = () => {
   const [ordenes, setOrdenes] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [ordenes, setOrdenes] = useState([]);
+  const [filtroEstado, setFiltroEstado] = useState('');
+  const [ordenSeleccionada, setOrdenSeleccionada] = useState(null);
+  const [showDetalles, setShowDetalles] = useState(false);
 
-  // Cargar órdenes al inicio
+  // Simular carga de órdenes
   useEffect(() => {
-    setLoading(true);
-    setError('');
-    try {
-      setOrdenes(getOrdenes()); // getOrdenes ya las devuelve ordenadas
-    } catch (e) {
-      setError("Error al cargar las órdenes.");
-      console.error(e);
+    const mockOrdenes = [
+      {
+        id: "ORD001",
+        fecha: "2023-10-26",
+        cliente: {
+          nombre: "Usuario Test",
+          email: "test@test.com"
+        },
+        productos: [
+          {
+            nombre: "Catan",
+            cantidad: 1,
+            precio: 29990
+          }
+        ],
+        estado: "Pendiente",
+        total: 29990
+      },
+      {
+        id: "ORD002",
+        fecha: "2023-10-26",
+        cliente: {
+          nombre: "Usuario Test 2",
+          email: "test2@test.com"
+        },
+        productos: [
+          {
+            nombre: "Monopoly",
+            cantidad: 2,
+            precio: 24990
+          }
+        ],
+        estado: "Enviado",
+        total: 49980
+      }
+    ];
+    setOrdenes(mockOrdenes);
     } finally {
       setLoading(false);
     }

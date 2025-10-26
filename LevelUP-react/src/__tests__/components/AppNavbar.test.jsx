@@ -10,7 +10,7 @@ describe('AppNavbar', () => {
   const renderNavbar = (initialUser = null) => {
     // Mock localStorage para usuario
     if (initialUser) {
-      localStorage.setItem('usuarioActivo', JSON.stringify(initialUser))
+      localStorage.setItem('user', JSON.stringify(initialUser))
     }
 
     return render(
@@ -78,15 +78,15 @@ describe('AppNavbar', () => {
 
   test('muestra carrito con items', async () => {
     // Simula items en el carrito
-    localStorage.setItem('carrito', JSON.stringify([
-      { codigo: 'TEST1', nombre: 'Producto 1', unidades: 2 },
-      { codigo: 'TEST2', nombre: 'Producto 2', unidades: 1 }
+    localStorage.setItem('cart', JSON.stringify([
+      { codigo: 'TEST1', nombre: 'Producto 1', cantidad: 2 },
+      { codigo: 'TEST2', nombre: 'Producto 2', cantidad: 1 }
     ]))
 
     renderNavbar()
 
     // Verifica que existe enlace al carrito
-    expect(document.querySelector('a[href="/carrito"]')).toBeTruthy()
+    expect(screen.getByTestId('cart-icon')).toBeInTheDocument()
   })
 
   test('busca productos', () => {

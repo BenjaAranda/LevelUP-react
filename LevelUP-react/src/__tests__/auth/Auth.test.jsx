@@ -7,12 +7,12 @@ import { MemoryRouter } from 'react-router-dom'
 
 // Componente de prueba que usa el hook useAuth
 const TestComponent = () => {
-  const { usuario, login, logout } = useAuth()
+  const { user, login, logout } = useAuth()
   return (
     <div>
-      {usuario ? (
+      {user ? (
         <>
-          <span>Bienvenido {usuario.nombre}</span>
+          <span>Bienvenido {user.nombre}</span>
           <button onClick={logout}>Cerrar sesión</button>
         </>
       ) : (

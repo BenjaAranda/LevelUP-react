@@ -4,83 +4,91 @@ import { CartContext } from './CartContext';
 
 // Función para cargar el carrito desde localStorage
 const cargarCarritoDesdeStorage = () => {
-  const carritoGuardado = localStorage.getItem('carrito');
-  return carritoGuardado ? JSON.parse(carritoGuardado) : [];
+  try {
+    const carritoGuardado = localStorage.getItem('cart');
+    return carritoGuardado ? JSON.parse(carritoGuardado) : [];
+  } catch (error) {
+    console.error('Error al cargar el carrito:', error);
+    return [];
+  }
 };
 
 export const CartProvider = ({ children }) => {
   // El estado del carrito se inicializa con lo que haya en localStorage
-  const [carritoItems, setCarritoItems] = useState(cargarCarritoDesdeStorage);
+  const [cart, setCart] = useState(cargarCarritoDesdeStorage);
 
   // Efecto para guardar en localStorage CADA VEZ que el carrito cambie
   useEffect(() => {
-    localStorage.setItem('carrito', JSON.stringify(carritoItems));
-  }, [carritoItems]);
+    localStorage.setItem('cart', JSON.stringify(cart));
+  }, [cart]);
 
   // --- Funciones del Carrito ---
 
-  // Agrega un producto (lógica de tu productos.js y carrito.js combinada)
-  const agregarAlCarrito = (producto) => {
-    setCarritoItems(prevItems => {
-      // 1. Busca si el producto ya existe
-      const itemExistente = prevItems.find(item => item.codigo === producto.codigo);
+  const addToCart = (producto) => {
+    setCart(prevItems => {
+      const existingItem = prevItems.find(item => item.codigo === producto.codigo);
 
-      if (itemExistente) {
-        // 2. Si existe, actualiza la cantidad (inmutablemente)
+      if (existingItem) {
         return prevItems.map(item =>
           item.codigo === producto.codigo
-            ? { ...item, unidades: item.unidades + 1 }
+            ? { ...item, cantidad: (item.cantidad || 0) + 1 }
             : item
         );
       } else {
-        // 3. Si no existe, lo agrega al array con unidades: 1
-        return [...prevItems, { ...producto, unidades: 1 }];
+        return [...prevItems, { ...producto, cantidad: 1 }];
       }
     });
   };
 
-  // Resta una unidad (de tu carrito.js)
-  const restarDelCarrito = (codigo) => {
-    setCarritoItems(prevItems => {
-      const itemExistente = prevItems.find(item => item.codigo === codigo);
+  const removeOne = (codigo) => {
+    setCart(prevItems => {
+      const existingItem = prevItems.find(item => item.codigo === codigo);
 
-      if (itemExistente.unidades === 1) {
-        // Si la unidad es 1, lo elimina del carrito
+      if (existingItem?.cantidad === 1) {
+        // Si la cantidad es 1, lo elimina del carrito
         return prevItems.filter(item => item.codigo !== codigo);
       } else {
-        // Si es > 1, resta la unidad
+        // Si es > 1, resta la cantidad
         return prevItems.map(item =>
           item.codigo === codigo
-            ? { ...item, unidades: item.unidades - 1 }
+            ? { ...item, cantidad: item.cantidad - 1 }
             : item
         );
       }
     });
   };
 
-  // Elimina un producto (de tu carrito.js)
-  const eliminarDelCarrito = (codigo) => {
-    setCarritoItems(prevItems => prevItems.filter(item => item.codigo !== codigo));
+  // Elimina un producto
+  const removeFromCart = (codigo) => {
+    setCart(prevItems => prevItems.filter(item => item.codigo !== codigo));
   };
 
   // Vacía el carrito
-  const vaciarCarrito = () => {
-    setCarritoItems([]);
+  const clearCart = () => {
+    setCart([]);
   };
 
   // --- Valores Derivados (para mostrar en el resumen) ---
-  const totalItems = carritoItems.reduce((acc, item) => acc + item.unidades, 0);
-  const totalPrecio = carritoItems.reduce((acc, item) => acc + (item.precio * item.unidades), 0);
+  const totalItems = cart.reduce((acc, item) => acc + (item.cantidad || 0), 0);
+  const totalAmount = cart.reduce((acc, item) => acc + (item.precio * (item.cantidad || 0)), 0);
 
+  // Función para finalizar la compra
+  const finalizarCompraYActualizarStock = async () => {
+    // Aquí iría la lógica para actualizar el stock en el servidor
+    // Por ahora solo simulamos que fue exitoso
+    clearCart();
+    return true;
+  };
 
   const value = {
-    carritoItems,
-    agregarAlCarrito,
-    restarDelCarrito,
-    eliminarDelCarrito,
-    vaciarCarrito,
+    cart,
+    addToCart,
+    removeOne,
+    removeFromCart,
+    clearCart,
     totalItems,
-    totalPrecio
+    totalAmount,
+    finalizarCompraYActualizarStock
   };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

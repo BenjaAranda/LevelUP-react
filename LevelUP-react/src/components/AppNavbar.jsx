@@ -15,7 +15,7 @@ import { getProductos } from '../data/productos.js';
 
 
 function AppNavbar() {
-  const { usuario, logout } = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
 
   // Estados para la búsqueda
@@ -105,15 +105,29 @@ function AppNavbar() {
 
         {/* Iconos Dinámicos */}
         <div className="iconos">
-          {usuario ? (
+          {user ? (
             <>
-              <Link to="/perfil"><Button title={`Mi Perfil - ${usuario.nombre}`}> <FaUserCircle /> </Button></Link>
-              <Button onClick={handleLogout} title="Cerrar Sesión"> <FaSignOutAlt /> </Button>
+              <Link to="/perfil">
+                <Button data-testid="profile-button" title={user.isAdmin ? `Mi Perfil - ${user.nombre}` : "Mi Perfil"}>
+                  <FaUserCircle />
+                </Button>
+              </Link>
+              <Button onClick={handleLogout} title="Cerrar Sesión" data-testid="logout-button">
+                <FaSignOutAlt />
+              </Button>
             </>
           ) : (
-            <Link to="/login"><Button title="Iniciar Sesión"> <FaUser /> </Button></Link>
+            <Link to="/login">
+              <Button title="Iniciar Sesión" data-testid="login-button">
+                <FaUser />
+              </Button>
+            </Link>
           )}
-          <Link to="/carrito"><Button title="Carrito"> <FaShoppingCart /> </Button></Link>
+          <Link to="/carrito" data-testid="cart-icon">
+            <Button title="Carrito">
+              <FaShoppingCart />
+            </Button>
+          </Link>
         </div>
       </div>
 

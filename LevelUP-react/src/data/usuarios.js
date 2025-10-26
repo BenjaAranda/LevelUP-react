@@ -48,17 +48,26 @@ export const getUsuarios = () => {
     try {
       const parsed = JSON.parse(data);
       if (Array.isArray(parsed) && parsed.every(u => u && u.email)) {
-           // Asegurar que todos tengan isAdmin y descuento
-           parsed.forEach(u => {
-               if (u.isAdmin === undefined) { u.isAdmin = (u.email === "admin@levelup.com" || u.email === "exsairs@gmail.com"); } // Ajustado para ambos admins
-               if (u.descuento === undefined) { u.descuento = u.email.endsWith("@duocuc.cl"); }
-               if (u.edad === undefined && u.isAdmin) { u.edad = 99; } // Añadir edad a admins si falta
-           });
-           return parsed;
-       }
-    } catch (e) { console.error("Error parsing usuarios:", e); }
+        // Asegurar que todos tengan isAdmin y descuento
+        parsed.forEach(u => {
+          if (u.isAdmin === undefined) {
+            u.isAdmin = (u.email === "admin@levelup.com" || u.email === "exsairs@gmail.com");
+          }
+          if (u.descuento === undefined) {
+            u.descuento = u.email.endsWith("@duocuc.cl");
+          }
+          if (u.edad === undefined && u.isAdmin) {
+            u.edad = 99;
+          }
+        });
+        return parsed;
+      }
+    } catch (error) {
+      console.error('Error al parsear usuarios:', error);
+    }
   }
-  // Si no hay datos o están corruptos, inicializa con los de prueba
+  
+  // Si no hay datos válidos o están corruptos, inicializar con usuarios por defecto
   console.log("Inicializando usuarios en localStorage.");
   localStorage.setItem(USUARIOS_KEY, JSON.stringify(usuariosIniciales));
   return usuariosIniciales;

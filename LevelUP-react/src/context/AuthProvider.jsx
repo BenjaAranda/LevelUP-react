@@ -1,45 +1,59 @@
-// En: src/context/AuthProvider.jsx (Simplificado)
-
 import React, { useState, useEffect } from 'react';
 import { AuthContext } from './AuthContext';
-// 1. IMPORTAMOS funciones de usuarios y productos
-import { getUsuarios, saveUsuarios } from '../data/usuarios.js'; // <- Importa de usuarios.js
-import { getProductos } from '../data/productos.js'; // <- Solo getProductos
+import { getUsuarios, saveUsuarios } from '../data/usuarios.js';
+import { getProductos } from '../data/productos.js';
 
 export const AuthProvider = ({ children }) => {
-  const [usuario, setUsuario] = useState(null);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    // --- INICIALIZACIÓN DE DATOS ---
-    // Asegura que los usuarios iniciales existan (usa la lógica dentro de getUsuarios)
-    getUsuarios(); 
-    // Asegura que los productos iniciales existan (usa la lógica dentro de getProductos)
-    getProductos(); 
+    // Inicializar datos
+    getUsuarios();
+    getProductos();
     
-    // --- Cargar Usuario Activo ---
-    const usuarioGuardado = localStorage.getItem('usuarioActivo');
-    if (usuarioGuardado) {
-      try {
-        setUsuario(JSON.parse(usuarioGuardado));
-      } catch (error) {
-        console.error("Error al parsear usuario activo:", error);
-        localStorage.removeItem('usuarioActivo'); 
+    // Cargar usuario
+    try {
+      const savedUser = localStorage.getItem('usuarioActivo') || localStorage.getItem('user');
+      if (savedUser) {
+        const userData = JSON.parse(savedUser);
+        setUser(userData);
+        // Migrate old storage key to new one
+        if (localStorage.getItem('usuarioActivo')) {
+          localStorage.setItem('user', savedUser);
+          localStorage.removeItem('usuarioActivo');
+        }
       }
+    } catch (error) {
+      console.error("Error al parsear usuario:", error);
+      localStorage.removeItem('usuarioActivo');
+      localStorage.removeItem('user');
     }
-  }, []); // Se ejecuta solo una vez al inicio
+  }, []);
 
   const login = (userData) => {
-    setUsuario(userData);
+    setUser(userData);
     localStorage.setItem('usuarioActivo', JSON.stringify(userData));
+    localStorage.setItem('user', JSON.stringify(userData));
   };
 
   const logout = () => {
-    setUsuario(null);
+    setUser(null);
     localStorage.removeItem('usuarioActivo');
+    localStorage.removeItem('user');
   };
 
-  // 2. Ya no necesitamos pasar getUsuarios aquí, los componentes lo importan directo
-  const value = { usuario, login, logout }; 
+  const updateUser = (updatedData) => {
+    const newUserData = { ...user, ...updatedData };
+    setUser(newUserData);
+    localStorage.setItem('user', JSON.stringify(newUserData));
+  };
+
+  const value = { 
+    user, 
+    login, 
+    logout,
+    updateUser
+  };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
