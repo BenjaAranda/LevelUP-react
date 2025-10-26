@@ -121,3 +121,21 @@
     background-color: #555;
     border-color: #555;
 }
+/* Ajustes para el modo edición en GestionCategorias */
+#root .item-gestion input[type="text"] {
+  flex-grow: 1; /* Input ocupa espacio */
+  margin-right: 10px; /* Espacio antes de botones */
+  background-color: #eee; /* Fondo claro para destacar */
+  color: #333; /* Texto oscuro */
+  border: 1px solid #8000ff;
+}
+
+/* Espacio entre botones Guardar/Cancelar */
+#root .item-gestion .btn + .btn {
+  margin-left: 5px;
+}
+
+/* Contenedor para botones Editar/Eliminar en modo visualización */
+#root .item-gestion .ms-auto {
+  margin-left: auto; /* Asegura que se empujen a la derecha */
+}

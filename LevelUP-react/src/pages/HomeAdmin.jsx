@@ -4,7 +4,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth.jsx';
 import { Container, Button, Card } from 'react-bootstrap';
-// Importamos los estilos específicos
 import '../styles/homeAdmin.css';
 
 const HomeAdmin = () => {
@@ -23,24 +22,21 @@ const HomeAdmin = () => {
 
           <div className="admin-actions">
             <Link to="/admin/crear-producto">
-              <Button variant="primary" size="lg">
-                ➕ Agregar Producto
-              </Button>
+              <Button variant="primary" size="lg"> ➕ Agregar Producto </Button>
             </Link>
             <Link to="/admin/ver-productos">
-              <Button variant="secondary" size="lg">
-                📦 Ver/Modificar Productos
-              </Button>
+              <Button variant="secondary" size="lg"> 📦 Ver/Modificar Productos </Button>
             </Link>
-            <Link to="/admin/gestionar-destacados">
-              <Button variant="info" size="lg">
-                ⭐ Gestionar Destacados
-              </Button>
+             <Link to="/admin/gestionar-destacados">
+              <Button variant="info" size="lg"> ⭐ Gestionar Destacados </Button>
             </Link>
-             {/* Botón Productos Críticos (añadido previamente) */}
              <Link to="/admin/productos-criticos">
-              <Button variant="danger" size="lg"> 
-                ⚠️ Productos Críticos
+              <Button variant="danger" size="lg"> ⚠️ Productos Críticos </Button>
+            </Link>
+            {/* --- El Link a Gestionar Categorías está aquí y es correcto --- */}
+            <Link to="/admin/gestionar-categorias">
+              <Button variant="warning" size="lg" className="text-dark"> {/* Usamos warning y texto oscuro */}
+                🏷️ Gestionar Categorías
               </Button>
             </Link>
           </div>

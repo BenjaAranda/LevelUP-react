@@ -1,16 +1,16 @@
-// En: src/pages/Home.jsx
+// En: src/pages/Home.jsx (Corregido)
 
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Container } from 'react-bootstrap'; // Añadido Container si no estaba
+import { Container } from 'react-bootstrap'; 
 
-// 1. VERIFICA ESTA RUTA DE IMPORTACIÓN
-import { productos } from '../data/productos.js';
+// --- CORRECCIÓN ---
+// Importamos la FUNCIÓN getProductos
+import { getProductos } from '../data/productos.js'; 
 import ProductCard from '../components/ProductCard.jsx';
 import { useCart } from '../hooks/useCart.jsx';
+// --- FIN CORRECCIÓN ---
 
-// Log para verificar si los productos se importan
-console.log("Home.jsx - Productos importados:", productos); 
 
 const Home = () => {
   const [productosDestacados, setProductosDestacados] = useState([]);
@@ -18,11 +18,20 @@ const Home = () => {
 
   useEffect(() => {
     console.log("Home.jsx - useEffect ejecutándose");
-    // Simulamos carga y mostramos los primeros 8 (o todos si hay menos)
-    const destacados = productos.slice(0, 8);
-    console.log("Home.jsx - Productos a destacar:", destacados);
-    setProductosDestacados(destacados);
-  }, []); // El array vacío asegura que se ejecute solo una vez al montar
+    try {
+        // --- CORRECCIÓN ---
+        // Llamamos a getProductos() para obtener la lista actualizada
+        const todosLosProductos = getProductos(); 
+        console.log("Home.jsx - Productos cargados desde getProductos:", todosLosProductos);
+        const destacados = todosLosProductos.slice(0, 8);
+        console.log("Home.jsx - Productos a destacar:", destacados);
+        setProductosDestacados(destacados);
+        // --- FIN CORRECCIÓN ---
+    } catch(error) {
+        console.error("Home.jsx - Error al cargar productos en useEffect:", error);
+        setProductosDestacados([]); 
+    }
+  }, []); 
 
   const handleAgregarAlCarrito = (producto) => {
     agregarAlCarrito(producto);
@@ -30,8 +39,7 @@ const Home = () => {
   };
 
   return (
-    // Usamos Container para centrar y añadir padding
-    <Container> 
+    <> 
       {/* --- Banner --- */}
       <section className="banner">
         <img src="/banner.png" alt="Promoción Gamer" />
@@ -44,7 +52,7 @@ const Home = () => {
 
       {/* --- Sección de categorías --- */}
       <section className="categorias">
-        {/* ... (código de categorías sin cambios) ... */}
+         {/* Código de categorías */}
          <div className="categoria">
           <img src="/catan.png" alt="Juegos de Mesa" />
           <h3>Juegos de Mesa</h3>
@@ -77,27 +85,23 @@ const Home = () => {
         <h2 className="titulo-seccion">PRODUCTOS DESTACADOS</h2>
         <div className="grid-productos">
           
-          {/* 2. VERIFICAMOS SI HAY PRODUCTOS ANTES DE MAPEAR */}
           {productosDestacados && productosDestacados.length > 0 ? (
-            productosDestacados.map((prod) => {
-              // Log para cada producto que se intenta renderizar
-              console.log("Home.jsx - Renderizando ProductCard para:", prod); 
-              return (
-                <ProductCard 
-                  key={prod.codigo} 
-                  producto={prod} 
-                  onAgregarAlCarrito={handleAgregarAlCarrito}
-                />
-              );
-            })
+            productosDestacados.map((prod) => (
+              <ProductCard 
+                key={prod.codigo} 
+                producto={prod} 
+                onAgregarAlCarrito={handleAgregarAlCarrito}
+              />
+            ))
           ) : (
-            // Mensaje si no hay productos en el estado
-            <p style={{ color: 'yellow', gridColumn: '1 / -1' }}>Cargando productos destacados...</p> 
+            <p style={{ color: 'yellow', gridColumn: '1 / -1', textAlign: 'center' }}>
+              No hay productos destacados para mostrar.
+            </p> 
           )}
 
         </div>
       </section>
-    </Container>
+    </> 
   );
 };
 

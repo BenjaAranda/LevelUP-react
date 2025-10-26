@@ -1,15 +1,14 @@
-// En: src/pages/Productos.jsx
+// En: src/pages/Productos.jsx (Corregido)
 
 import React, { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-// 1. VERIFICA ESTA RUTA DE IMPORTACIÓN
-import { productos as todosLosProductos } from '../data/productos.js';
+// --- CORRECCIÓN ---
+// Importamos la FUNCIÓN getProductos
+import { getProductos } from '../data/productos.js';
+// --- FIN CORRECCIÓN ---
 import { useCart } from '../hooks/useCart.jsx';
 import ProductCard from '../components/ProductCard.jsx';
 import '../styles/productos.css';
-
-// Log para verificar si los productos se importan
-console.log("Productos.jsx - Productos importados:", todosLosProductos);
 
 // (Componente ModalFeedback - sin cambios)
 const ModalFeedback = ({ producto, show, onHide }) => {
@@ -23,8 +22,8 @@ const ModalFeedback = ({ producto, show, onHide }) => {
         </div>
       </div>
     );
-  };
-  
+};
+
 
 const Productos = () => {
   const [searchParams] = useSearchParams();
@@ -43,7 +42,11 @@ const Productos = () => {
 
   useEffect(() => {
     console.log("Productos.jsx - useEffect ejecutándose con filtros:", { orden, categoria, precioMin, precioMax, searchTerm });
-    let lista = [...todosLosProductos];
+    // --- CORRECCIÓN ---
+    // Llamamos a getProductos() para obtener la lista actualizada CADA VEZ que los filtros cambian
+    let lista = getProductos();
+    // --- FIN CORRECCIÓN ---
+    console.log("Productos.jsx - Productos cargados:", lista);
 
     if (searchTerm) {
       lista = lista.filter(p =>
@@ -62,18 +65,22 @@ const Productos = () => {
       case "z-a": lista.sort((a, b) => b.nombre.localeCompare(a.nombre)); break;
       default: break;
     }
-    
+
     console.log("Productos.jsx - Productos filtrados:", lista);
     setProductosMostrados(lista);
 
-    if (categorias.length === 0 && todosLosProductos.length > 0) {
-      const allCategories = [...new Set(todosLosProductos.map(p => p.categoria))].sort();
-      console.log("Productos.jsx - Categorías generadas:", allCategories);
-      setCategorias(allCategories);
+    // Generamos categorías dinámicas desde la lista COMPLETA de productos
+    // Solo lo hacemos una vez o si la lista original cambia (poco probable con localStorage)
+    if (categorias.length === 0) {
+        const todosLosProductos = getProductos(); // Obtenemos todos para las categorías
+        if (todosLosProductos.length > 0) {
+            const allCategories = [...new Set(todosLosProductos.map(p => p.categoria))].sort();
+            console.log("Productos.jsx - Categorías generadas:", allCategories);
+            setCategorias(allCategories);
+        }
     }
 
-  // Añadimos 'todosLosProductos' a las dependencias por si acaso, aunque no debería cambiar
-  }, [orden, categoria, precioMin, precioMax, searchTerm, categorias.length]); 
+  }, [orden, categoria, precioMin, precioMax, searchTerm, categorias.length]); // useEffect se ejecuta si cambia algún filtro
 
   const handleAgregarCarrito = (producto) => {
     agregarAlCarrito(producto);
@@ -87,7 +94,6 @@ const Productos = () => {
 
       <div className="productos-page">
         <aside className="filtros">
-          {/* ... (código de filtros sin cambios) ... */}
           <h3>Filtros</h3>
           {searchTerm && (
             <div className="mb-3">
@@ -121,25 +127,21 @@ const Productos = () => {
         </aside>
 
         <section className="lista-productos" id="listaProductos">
-          {/* 2. VERIFICAMOS SI HAY PRODUCTOS ANTES DE MAPEAR */}
           {productosMostrados && productosMostrados.length > 0 ? (
             productosMostrados.map(prod => {
-              // Log para cada producto que se intenta renderizar
-              console.log("Productos.jsx - Renderizando ProductCard para:", prod);
+              // console.log("Productos.jsx - Renderizando ProductCard para:", prod);
               return (
-                <ProductCard 
-                  key={prod.codigo} 
-                  producto={prod} 
+                <ProductCard
+                  key={prod.codigo}
+                  producto={prod}
                   onAgregarAlCarrito={handleAgregarCarrito}
                 />
               );
             })
           ) : (
-             // Mensaje si no hay productos después de filtrar
-            <p style={{ color: 'yellow', gridColumn: '1 / -1' }}>
-              {/* Mensaje dinámico */}
-              {todosLosProductos.length === 0 ? "No hay productos disponibles en la tienda." : "No se encontraron productos con esos filtros."}
-            </p>
+             <p style={{ color: 'yellow', gridColumn: '1 / -1', textAlign: 'center' }}>
+               No se encontraron productos con esos filtros.
+             </p>
           )}
         </section>
       </div>

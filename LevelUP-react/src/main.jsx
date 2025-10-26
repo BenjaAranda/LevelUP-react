@@ -1,4 +1,4 @@
-// En: src/main.jsx
+// En: src/main.jsx (Versión Completa y Verificada)
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
@@ -18,7 +18,7 @@ import './styles/carrito.css';
 import './styles/admin-login.css'; // Asegúrate que este exista
 import './styles/homeAdmin.css'; // CSS que proporcionaste
 import './styles/crearProducto.css';
-import './styles/gestionDestacados.css';
+import './styles/gestionDestacados.css'; // Usado también por GestionCategorias
 import './styles/verProductosAdmin.css';
 import './index.css'; // Estilos base de Vite
 
@@ -52,7 +52,8 @@ import CrearProducto from './pages/CrearProducto.jsx';
 import VerProductosAdmin from './pages/VerProductosAdmin.jsx';
 import GestionDestacados from './pages/GestionDestacados.jsx';
 import EditarProducto from './pages/EditarProducto.jsx';
-import ProductosCriticos from './pages/ProductosCriticos.jsx'; // Añadido ProductosCriticos
+import ProductosCriticos from './pages/ProductosCriticos.jsx';
+import GestionCategorias from './pages/GestionCategorias.jsx'; // <-- Importación para GestionCategorias
 
 // --- CONFIGURACIÓN DEL ROUTER ---
 // Definimos todas las rutas de la aplicación
@@ -108,6 +109,10 @@ const router = createBrowserRouter([
        {
         path: '/admin/productos-criticos',
         element: ( <RutaProtegida requireAdmin={true}> <ProductosCriticos /> </RutaProtegida> )
+      },
+      { // <-- Ruta para Gestionar Categorías
+        path: '/admin/gestionar-categorias',
+        element: ( <RutaProtegida requireAdmin={true}> <GestionCategorias /> </RutaProtegida> )
       },
 
 
