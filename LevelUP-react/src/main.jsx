@@ -1,4 +1,4 @@
-// En: src/main.jsx (Versión Completa y Verificada)
+// En: src/main.jsx
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
@@ -19,7 +19,7 @@ import './styles/admin-login.css'; // Asegúrate que este exista
 import './styles/homeAdmin.css'; // CSS que proporcionaste
 import './styles/crearProducto.css';
 import './styles/gestionDestacados.css'; // Usado también por GestionCategorias
-import './styles/verProductosAdmin.css';
+import './styles/verProductosAdmin.css'; // Usado también por GestionUsuarios
 import './index.css'; // Estilos base de Vite
 
 // --- CONTEXTO ---
@@ -53,7 +53,9 @@ import VerProductosAdmin from './pages/VerProductosAdmin.jsx';
 import GestionDestacados from './pages/GestionDestacados.jsx';
 import EditarProducto from './pages/EditarProducto.jsx';
 import ProductosCriticos from './pages/ProductosCriticos.jsx';
-import GestionCategorias from './pages/GestionCategorias.jsx'; // <-- Importación para GestionCategorias
+import GestionCategorias from './pages/GestionCategorias.jsx';
+import GestionUsuarios from './pages/GestionUsuarios.jsx'; // Importación para GestionUsuarios
+import EditarUsuario from './pages/EditarUsuario.jsx';     // Importación para EditarUsuario
 
 // --- CONFIGURACIÓN DEL ROUTER ---
 // Definimos todas las rutas de la aplicación
@@ -110,9 +112,17 @@ const router = createBrowserRouter([
         path: '/admin/productos-criticos',
         element: ( <RutaProtegida requireAdmin={true}> <ProductosCriticos /> </RutaProtegida> )
       },
-      { // <-- Ruta para Gestionar Categorías
+      {
         path: '/admin/gestionar-categorias',
         element: ( <RutaProtegida requireAdmin={true}> <GestionCategorias /> </RutaProtegida> )
+      },
+      { // <-- Ruta para Gestionar Usuarios
+        path: '/admin/gestionar-usuarios',
+        element: ( <RutaProtegida requireAdmin={true}> <GestionUsuarios /> </RutaProtegida> )
+      },
+      { // <-- Ruta para Editar Usuario
+        path: '/admin/editar-usuario/:email', // Usamos email como parámetro
+        element: ( <RutaProtegida requireAdmin={true}> <EditarUsuario /> </RutaProtegida> )
       },
 
 
