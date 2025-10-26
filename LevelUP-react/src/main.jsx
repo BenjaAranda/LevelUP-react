@@ -25,7 +25,7 @@ import './index.css'; // Estilos base de Vite
 // --- CONTEXTO ---
 // Importamos los Providers para el Carrito y la Autenticación
 // Asegúrate que las rutas sean correctas (ej: si CartProvider está en hooks o context)
-import { CartProvider } from './hooks/useCart.jsx';
+import { CartProvider } from './context/CartProvider.jsx';
 import { AuthProvider } from './context/AuthProvider.jsx';
 
 // --- LAYOUT Y COMPONENTES ---

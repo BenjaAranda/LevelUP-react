@@ -7,7 +7,7 @@ import '../styles/verProductosAdmin.css';
 const GestionOrdenes = () => {
   const [ordenes, setOrdenes] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [ordenes, setOrdenes] = useState([]);
+  const [error, setError] = useState(null);
   const [filtroEstado, setFiltroEstado] = useState('');
   const [ordenSeleccionada, setOrdenSeleccionada] = useState(null);
   const [showDetalles, setShowDetalles] = useState(false);
@@ -50,7 +50,10 @@ const GestionOrdenes = () => {
         total: 49980
       }
     ];
-    setOrdenes(mockOrdenes);
+    try {
+      setOrdenes(mockOrdenes);
+    } catch (err) {
+      setError('Error al cargar las órdenes');
     } finally {
       setLoading(false);
     }
