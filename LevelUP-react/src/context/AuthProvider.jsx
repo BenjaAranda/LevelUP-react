@@ -49,6 +49,9 @@ export const AuthProvider = ({ children }) => {
   };
 
   const value = { 
+    // Mantener compatibilidad hacia atrás: algunas partes del código/tests esperan la clave
+    // `usuario` mientras que código nuevo puede usar `user`. Exponemos ambas.
+    usuario: user,
     user, 
     login, 
     logout,
