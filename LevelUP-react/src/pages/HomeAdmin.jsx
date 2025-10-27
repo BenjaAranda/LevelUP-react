@@ -6,9 +6,12 @@ import { useAuth } from '../hooks/useAuth.jsx';
 import { Container, Button, Card } from 'react-bootstrap';
 import '../styles/homeAdmin.css';
 import { FaUsers, FaClipboardList } from 'react-icons/fa'; // Importa icono de órdenes
+import { useGoBackOnEsc } from '../hooks/useGoBackOnEsc';
 
 const HomeAdmin = () => {
   const { usuario } = useAuth();
+  
+  useGoBackOnEsc();
 
   return (
     <Container className="admin-home-container my-5">

@@ -3,8 +3,11 @@
 import React from 'react';
 // Importamos los estilos que acabamos de crear
 import '../styles/blog.css';
+import { useGoBackOnEsc } from '../hooks/useGoBackOnEsc';
 
 const Blog = () => {
+  useGoBackOnEsc();
+  
   return (
     // Usamos un Fragment (<>) porque App.jsx ya nos da el <main>
     <>

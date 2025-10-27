@@ -5,11 +5,14 @@ import { Link } from 'react-router-dom';
 import { Container, Card, Button, Form, InputGroup, Alert, Table } from 'react-bootstrap'; 
 // 1. IMPORTAMOS LAS FUNCIONES CRUD
 import { getProductos, actualizarProducto, eliminarProducto } from '../data/productos.js'; 
+import { useGoBackOnEsc } from '../hooks/useGoBackOnEsc';
 import '../styles/verProductosAdmin.css'; 
 
 const VerProductosAdmin = () => {
   const [productos, setProductos] = useState([]);
   const [mensaje, setMensaje] = useState(''); 
+  
+  useGoBackOnEsc();
 
   // Cargar productos al inicio usando la función CRUD
   useEffect(() => {

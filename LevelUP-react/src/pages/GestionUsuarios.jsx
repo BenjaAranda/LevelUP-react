@@ -8,6 +8,7 @@ import { Container, Card, Table, Button, Alert } from 'react-bootstrap';
 import { getUsuarios, eliminarUsuarioAdmin } from '../data/usuarios.js';
 // --- FIN CORRECCIÓN ---
 import { useAuth } from '../hooks/useAuth.jsx';
+import { useGoBackOnEsc } from '../hooks/useGoBackOnEsc';
 // Reutilizamos estilos de verProductosAdmin para la tabla
 import '../styles/verProductosAdmin.css';
 
@@ -16,6 +17,8 @@ const GestionUsuarios = () => {
   const [mensaje, setMensaje] = useState('');
   const [error, setError] = useState('');
   const { usuario: adminActual } = useAuth(); // Para evitar que el admin se borre a sí mismo
+  
+  useGoBackOnEsc();
 
   // Cargar usuarios al inicio
   useEffect(() => {

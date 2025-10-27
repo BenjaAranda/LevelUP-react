@@ -7,12 +7,15 @@ import { Container, Card, ListGroup, Button, Form, InputGroup, Alert } from 'rea
 import { getCategorias, agregarCategoria, eliminarCategoria, actualizarCategoria } from '../data/productos.js';
 // Reutilizamos estilos
 import '../styles/gestionDestacados.css';
+import { useGoBackOnEsc } from '../hooks/useGoBackOnEsc';
 
 const GestionCategorias = () => {
   const [categorias, setCategorias] = useState([]);
   const [nuevaCategoria, setNuevaCategoria] = useState('');
   const [mensaje, setMensaje] = useState('');
   const [error, setError] = useState('');
+  
+  useGoBackOnEsc();
 
   // --- NUEVOS ESTADOS PARA EDICIÓN ---
   const [editingCategory, setEditingCategory] = useState(null); // Guarda el nombre de la categoría que se está editando

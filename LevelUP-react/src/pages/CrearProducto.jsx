@@ -6,9 +6,12 @@ import { Form, Button, Container, Card, Alert } from 'react-bootstrap';
 // 1. IMPORTAMOS obtenerCategoriasUnicas
 import { agregarProducto, obtenerCategoriasUnicas } from '../data/productos.js'; 
 import '../styles/crearProducto.css'; 
+import { useGoBackOnEsc } from '../hooks/useGoBackOnEsc';
 
 const CrearProducto = () => {
   const navigate = useNavigate();
+  useGoBackOnEsc();
+  
   // Estados existentes...
   const [codigo, setCodigo] = useState('');
   const [categoria, setCategoria] = useState(''); // Inicia vacío

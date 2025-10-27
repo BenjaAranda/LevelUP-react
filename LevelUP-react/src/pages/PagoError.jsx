@@ -5,8 +5,11 @@ import { Link } from 'react-router-dom';
 // Importamos icono
 import { FaTimesCircle } from 'react-icons/fa'; 
 import '../styles/pago-resultado.css'; // Estilos compartidos
+import { useGoBackOnEsc } from '../hooks/useGoBackOnEsc';
 
 const PagoError = () => {
+  useGoBackOnEsc();
+  
   return (
     <div className="resultado-container">
       <div className="resultado-card error"> {/* Usamos la clase 'error' */}

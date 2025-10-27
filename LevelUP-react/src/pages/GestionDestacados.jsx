@@ -4,11 +4,14 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Container, Card, ListGroup, Button, Alert, Row, Col } from 'react-bootstrap';
 import '../styles/gestionDestacados.css'; // Asegúrate que el CSS esté importado
+import { useGoBackOnEsc } from '../hooks/useGoBackOnEsc';
 
 const GestionDestacados = () => {
   const [todosLosProductos, setTodosLosProductos] = useState([]);
   const [destacados, setDestacados] = useState([]);
   const [mensaje, setMensaje] = useState('');
+  
+  useGoBackOnEsc();
 
   useEffect(() => {
     const productosGuardados = JSON.parse(localStorage.getItem("productos")) || [];

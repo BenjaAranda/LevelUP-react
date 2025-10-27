@@ -7,10 +7,13 @@ import { Form, Button, Container, Card, Alert } from 'react-bootstrap';
 import { getProductoPorCodigo, actualizarProducto, obtenerCategoriasUnicas } from '../data/productos.js';
 // Reutilizamos los estilos de CrearProducto
 import '../styles/crearProducto.css'; 
+import { useGoBackOnEsc } from '../hooks/useGoBackOnEsc';
 
 const EditarProducto = () => {
   const { codigo } = useParams(); // Obtenemos el código de la URL
   const navigate = useNavigate();
+  
+  useGoBackOnEsc();
 
   // Estados del formulario
   const [producto, setProducto] = useState(null); // Guardará el producto a editar

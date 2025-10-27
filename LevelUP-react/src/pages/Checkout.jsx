@@ -8,11 +8,14 @@ import { useCart } from '../hooks/useCart.jsx';
 import '../styles/checkout.css'; 
 // 1. IMPORTAMOS LOS DATOS DE REGIONES Y COMUNAS
 import { regionesComunas } from '../data/chile-regiones-comunas.js';
+import { useGoBackOnEsc } from '../hooks/useGoBackOnEsc';
 
 const Checkout = () => {
   const { usuario } = useAuth();
   const { carritoItems, totalPrecio, finalizarCompraYActualizarStock } = useCart();
   const navigate = useNavigate();
+  
+  useGoBackOnEsc();
 
   // Estados del formulario (Expandidos)
   const [nombre, setNombre] = useState('');

@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import { Form, Button, Container, Row, Col, Alert, Card } from 'react-bootstrap';
 import { useAuth } from '../hooks/useAuth.jsx'; 
 import '../styles/admin-login.css'; 
+import { useGoBackOnEsc } from '../hooks/useGoBackOnEsc';
+import BotonVolver from '../components/BotonVolver'
 
 const AdminLogin = () => {
   const [email, setEmail] = useState('');
@@ -13,6 +15,8 @@ const AdminLogin = () => {
   
   const navigate = useNavigate();
   const { login } = useAuth();
+  
+  useGoBackOnEsc();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -30,11 +34,14 @@ const AdminLogin = () => {
 
   return (
     // --- AÑADIMOS id="admin-login-page" Y QUITAMOS my-5 ---
+    
     <Container id="admin-login-page"> 
+    
       <Row className="justify-content-center w-100"> {/* w-100 para que Row ocupe el ancho completo */}
         <Col md={6} lg={4}>
           <Card>
             <Card.Body>
+              <BotonVolver />
               <h2 className="text-center mb-4">Acceso Administrador</h2>
               <Form onSubmit={handleSubmit}>
                 {error && <Alert variant="danger">{error}</Alert>}

@@ -8,11 +8,14 @@ import { FaCheckCircle } from 'react-icons/fa';
 // Importamos función para buscar orden
 import { getOrdenPorId } from '../data/ordenes.js'; 
 import '../styles/pago-resultado.css'; // Estilos compartidos
+import { useGoBackOnEsc } from '../hooks/useGoBackOnEsc';
 
 const PagoExitoso = () => {
   const { ordenId } = useParams();
   const [orden, setOrden] = useState(null);
   const [loading, setLoading] = useState(true);
+  
+  useGoBackOnEsc();
 
   useEffect(() => {
     try {

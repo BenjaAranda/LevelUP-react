@@ -6,11 +6,14 @@ import { useCart } from '../hooks/useCart.jsx';
 import '../styles/carrito.css'; 
 // Importamos Button para estilizar el Link
 import { Button } from 'react-bootstrap'; 
+import { useGoBackOnEsc } from '../hooks/useGoBackOnEsc';
 
 const Carrito = () => {
   const cartContext = useCart();
   const carritoItems = cartContext?.carritoItems || [];
   const totalPrecio = cartContext?.totalPrecio || 0;
+  
+  useGoBackOnEsc();
   const {
     restarDelCarrito,
     agregarAlCarrito,

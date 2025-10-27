@@ -8,11 +8,14 @@ import { Container, Card, Table, Button, Alert, Badge } from 'react-bootstrap';
 // --- FIN CORRECCIÓN ---
 import { getOrdenes } from '../data/ordenes.js';
 import '../styles/verProductosAdmin.css';
+import { useGoBackOnEsc } from '../hooks/useGoBackOnEsc';
 
 const GestionOrdenes = () => {
   const [ordenes, setOrdenes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  
+  useGoBackOnEsc();
 
   useEffect(() => {
     setLoading(true);

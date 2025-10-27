@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { getProductos, obtenerCategoriasUnicas } from '../data/productos.js';
 import { useCart } from '../hooks/useCart.jsx';
+import { useGoBackOnEsc } from '../hooks/useGoBackOnEsc';
 import ProductCard from '../components/ProductCard.jsx'; 
 import '../styles/productos.css'; 
 
@@ -12,6 +13,8 @@ import '../styles/productos.css';
 const Productos = () => {
   const [searchParams] = useSearchParams();
   const { agregarAlCarrito } = useCart(); // Solo traemos agregarAlCarrito
+  
+  useGoBackOnEsc();
 
   const [orden, setOrden] = useState('default');
   const [categoria, setCategoria] = useState(searchParams.get('categoria') || 'todas');

@@ -3,8 +3,11 @@
 import React from 'react';
 // Importamos los estilos (que ahora tienes)
 import '../styles/nosotros.css'; 
+import { useGoBackOnEsc } from '../hooks/useGoBackOnEsc';
 
 const Nosotros = () => {
+  useGoBackOnEsc();
+  
   return (
     <>
       {/* --- Banner --- */}

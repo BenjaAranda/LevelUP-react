@@ -2,12 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { Container, Form, Button, Alert } from 'react-bootstrap';
+import { useGoBackOnEsc } from '../hooks/useGoBackOnEsc';
 
 const Perfil = () => {
   const { user, updateUser } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [showPasswordForm, setShowPasswordForm] = useState(false);
+  
+  useGoBackOnEsc();
   const [errors, setErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState('');
   const [userData, setUserData] = useState({

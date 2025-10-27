@@ -7,10 +7,13 @@ import { Link } from 'react-router-dom';
 import { getProductos } from '../data/productos.js'; 
 import ProductCard from '../components/ProductCard.jsx';
 import { useCart } from '../hooks/useCart.jsx';
+import { useGoBackOnEsc } from '../hooks/useGoBackOnEsc';
 
 const Home = () => {
   const [productosDestacados, setProductosDestacados] = useState([]);
   const { agregarAlCarrito } = useCart();
+  
+  useGoBackOnEsc();
 
   useEffect(() => {
     try {

@@ -7,12 +7,15 @@ import { Container, Card, Table, Alert, Button } from 'react-bootstrap';
 import { getProductos } from '../data/productos.js';
 // Reutilizamos estilos de VerProductosAdmin si aplican, o creamos nuevos
 import '../styles/verProductosAdmin.css'; // Reutilizamos estilos de tabla
+import { useGoBackOnEsc } from '../hooks/useGoBackOnEsc';
 
 const UMBRAL_STOCK_CRITICO = 5; // Define qué se considera "bajo stock"
 
 const ProductosCriticos = () => {
   const [productosCriticos, setProductosCriticos] = useState([]);
   const [loading, setLoading] = useState(true);
+  
+  useGoBackOnEsc();
 
   useEffect(() => {
     setLoading(true);

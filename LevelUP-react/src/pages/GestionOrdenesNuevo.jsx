@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Card, Table, Button, Form, Modal } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import { useGoBackOnEsc } from '../hooks/useGoBackOnEsc';
 import '../styles/verProductosAdmin.css';
 
 const GestionOrdenesNuevo = () => {
@@ -8,6 +9,8 @@ const GestionOrdenesNuevo = () => {
   const [filtroEstado, setFiltroEstado] = useState('');
   const [ordenSeleccionada, setOrdenSeleccionada] = useState(null);
   const [showDetalles, setShowDetalles] = useState(false);
+
+  useGoBackOnEsc();
 
   useEffect(() => {
     const mockOrdenes = [
