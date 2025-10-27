@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+// --- 1. Link AÑADIDO ---
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { Container, Form, Button, Alert } from 'react-bootstrap';
 import { useGoBackOnEsc } from '../hooks/useGoBackOnEsc';
+// --- 2. IMPORTACIONES AÑADIDAS ---
+import BotonVolver from '../components/BotonVolver';
+import { FaTachometerAlt } from 'react-icons/fa'; // Icono para el botón de admin
 
 const Perfil = () => {
   const { user, updateUser } = useAuth();
@@ -34,88 +38,86 @@ const Perfil = () => {
       });
       setLoading(false);
     }
-  }, [user]);
+  }, [user]); // El array de dependencias está correcto así
 
+  // ... (Toda tu lógica de validación y handlers se mantiene igual) ...
   const validateForm = () => {
-    const errors = {};
-    if (!userData.nombre) errors.nombre = 'El nombre es requerido';
-    if (!userData.email) {
-      errors.email = 'El email es requerido';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userData.email)) {
-      errors.email = 'Email inválido';
-    }
-    return errors;
-  };
+    const errors = {};
+    if (!userData.nombre) errors.nombre = 'El nombre es requerido';
+    if (!userData.email) {
+      errors.email = 'El email es requerido';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userData.email)) {
+      errors.email = 'Email inválido';
+    }
+    return errors;
+  };
 
-  const validatePasswordForm = () => {
-    const errors = {};
-    if (!userData.currentPassword) errors.currentPassword = 'La contraseña actual es requerida';
-    if (!userData.newPassword) errors.newPassword = 'La nueva contraseña es requerida';
-    if (userData.newPassword && userData.newPassword.length < 8) {
-      errors.newPassword = 'La nueva contraseña debe tener al menos 8 caracteres';
-    }
-    if (!userData.confirmPassword) errors.confirmPassword = 'Debe confirmar la nueva contraseña';
-    if (userData.newPassword !== userData.confirmPassword) {
-      errors.confirmPassword = 'Las contraseñas no coinciden';
-    }
-    return errors;
-  };
+  const validatePasswordForm = () => {
+    const errors = {};
+    if (!userData.currentPassword) errors.currentPassword = 'La contraseña actual es requerida';
+    if (!userData.newPassword) errors.newPassword = 'La nueva contraseña es requerida';
+    if (userData.newPassword && userData.newPassword.length < 8) {
+      errors.newPassword = 'La nueva contraseña debe tener al menos 8 caracteres';
+    }
+    if (!userData.confirmPassword) errors.confirmPassword = 'Debe confirmar la nueva contraseña';
+    if (userData.newPassword !== userData.confirmPassword) {
+      errors.confirmPassword = 'Las contraseñas no coinciden';
+    }
+    return errors;
+  };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setUserData(prev => ({ ...prev, [name]: value }));
-    
-    // Validate email format on change
-    if (name === 'email') {
-      if (!value) {
-        setErrors(prev => ({ ...prev, email: 'El email es requerido' }));
-      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-        setErrors(prev => ({ ...prev, email: 'Email inválido' }));
-      } else {
-        setErrors(prev => ({ ...prev, email: '' }));
-      }
-    } else {
-      setErrors(prev => ({ ...prev, [name]: '' }));
-    }
-  };
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setUserData(prev => ({ ...prev, [name]: value }));
+    
+    if (name === 'email') {
+      if (!value) {
+        setErrors(prev => ({ ...prev, email: 'El email es requerido' }));
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+        setErrors(prev => ({ ...prev, email: 'Email inválido' }));
+      } else {
+        setErrors(prev => ({ ...prev, email: '' }));
+      }
+    } else {
+      setErrors(prev => ({ ...prev, [name]: '' }));
+    }
+  };
 
-    const handleSubmit = (e) => {
-    e.preventDefault();
-    const validationErrors = validateForm();
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
-    }
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const validationErrors = validateForm();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
 
-    // Actualizamos user en localStorage
-    const { currentPassword, newPassword, confirmPassword, ...profileData } = userData;
-    const updatedUser = { ...user, ...profileData };
-    localStorage.setItem('user', JSON.stringify(updatedUser));
-    updateUser(updatedUser);
-    setSuccessMessage('Perfil actualizado con éxito');
-    setErrors({});
-  };
+    const { currentPassword, newPassword, confirmPassword, ...profileData } = userData;
+    const updatedUser = { ...user, ...profileData };
+    localStorage.setItem('user', JSON.stringify(updatedUser));
+    updateUser(updatedUser);
+    setSuccessMessage('Perfil actualizado con éxito');
+    setErrors({});
+  };
 
-  const handlePasswordSubmit = (e) => {
-    e.preventDefault();
-    const validationErrors = validatePasswordForm();
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
-    }
+  const handlePasswordSubmit = (e) => {
+    e.preventDefault();
+    const validationErrors = validatePasswordForm();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
 
-    // Aquí iría la lógica para cambiar la contraseña en el servidor
-    // Por ahora solo mostramos mensaje de éxito y limpiamos el formulario
-    setSuccessMessage('Contraseña actualizada con éxito');
-    setShowPasswordForm(false);
-    setUserData(prev => ({
-      ...prev,
-      currentPassword: '',
-      newPassword: '',
-      confirmPassword: ''
-    }));
-    setErrors({});
-  };
+    setSuccessMessage('Contraseña actualizada con éxito');
+    setShowPasswordForm(false);
+    setUserData(prev => ({
+      ...prev,
+      currentPassword: '',
+      newPassword: '',
+      confirmPassword: ''
+    }));
+    setErrors({});
+  };
+
 
   if (loading || !user) {
     return <p>Cargando...</p>;
@@ -123,7 +125,23 @@ const Perfil = () => {
 
   return (
     <Container className="py-5">
+      
+      {/* --- 3. BOTÓN VOLVER AÑADIDO --- */}
+      <BotonVolver />
+
       <h1>Mi Perfil</h1>
+      
+      {/* --- 4. BOTÓN ADMIN AÑADIDO --- */}
+      {user.isAdmin && (
+        <Link to="/admin/home" className="d-block mb-4">
+          <Button variant="info" className="w-100">
+            <FaTachometerAlt className="me-2" /> 
+            Volver al Panel de Administrador
+          </Button>
+        </Link>
+      )}
+      {/* --- FIN CAMBIOS --- */}
+
       
       {successMessage && (
         <Alert variant="success" onClose={() => setSuccessMessage('')} dismissible>
