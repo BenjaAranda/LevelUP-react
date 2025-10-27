@@ -1,0 +1,102 @@
+/* En: src/styles/pago-resultado.css */
+
+.resultado-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 70vh;
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.resultado-card {
+  max-width: 700px;
+  width: 100%;
+  background-color: #1a1a1a;
+  padding: 40px;
+  border-radius: 12px;
+  color: #fff;
+}
+
+/* Estilo para ÉXITO (verde) */
+.resultado-card.exito {
+  border: 1px solid #39ff14;
+  box-shadow: 0 0 20px #39ff1455;
+}
+.resultado-card.exito .resultado-icono {
+  color: #39ff14;
+  font-size: 4rem; /* Icono grande */
+  margin-bottom: 20px;
+}
+.resultado-card.exito h1 {
+  color: #39ff14;
+}
+
+/* Estilo para ERROR (rojo) */
+.resultado-card.error {
+  border: 1px solid #dc3545;
+  box-shadow: 0 0 20px #dc354555;
+}
+.resultado-card.error .resultado-icono {
+  color: #dc3545;
+  font-size: 4rem;
+  margin-bottom: 20px;
+}
+.resultado-card.error h1 {
+  color: #dc3545;
+}
+
+/* Detalles de la orden (para éxito) */
+.orden-detalles {
+  text-align: left;
+  background-color: #0d0d0d;
+  padding: 20px;
+  border-radius: 8px;
+  margin-top: 30px;
+  border: 1px solid #444;
+}
+.orden-detalles p {
+  margin-bottom: 10px;
+  color: #ccc;
+}
+.orden-detalles p strong {
+  color: #fff;
+}
+.orden-detalles .item {
+  font-size: 0.9rem;
+  color: #aaa;
+}
+
+/* Botones */
+.btn-volver-tienda {
+  background-color: #8000ff;
+  border-color: #8000ff;
+  color: #fff;
+  font-weight: bold;
+  padding: 10px 25px;
+  margin-top: 30px;
+  text-decoration: none;
+  display: inline-block;
+  transition: 0.3s;
+}
+.btn-volver-tienda:hover {
+  background-color: #62017a;
+  border-color: #62017a;
+  color: #fff;
+}
+.btn-reintentar { /* Botón para error */
+  background-color: #ffc107;
+  border-color: #ffc107;
+  color: #111;
+  font-weight: bold;
+  padding: 10px 25px;
+  margin-top: 30px;
+  text-decoration: none;
+  display: inline-block;
+  transition: 0.3s;
+}
+.btn-reintentar:hover {
+   background-color: #e0a800;
+   border-color: #e0a800;
+   color: #111;
+}

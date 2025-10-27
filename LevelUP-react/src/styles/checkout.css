@@ -1,0 +1,120 @@
+/* En: src/styles/checkout.css */
+
+/* Contenedor principal de la página de checkout */
+.checkout-container {
+  padding: 40px 0;
+  color: #fff;
+}
+
+/* Tarjeta principal (similar a admin) */
+.checkout-card {
+  background-color: #1a1a1a;
+  border: 1px solid #8000ff;
+  border-radius: 12px;
+  box-shadow: 0 0 20px #8000ff55;
+  padding: 30px;
+}
+
+/* Títulos H2 (Información, Resumen) */
+.checkout-container h2 {
+  color: #39ff14; /* Verde neón */
+  font-weight: bold;
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #8000ff;
+  padding-bottom: 10px;
+}
+
+/* Estilos de formulario (reutilizando clases de admin) */
+.checkout-form .form-label {
+  color: #d3d3d3;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+.checkout-form .form-control,
+.checkout-form .form-select {
+  background-color: #0d0d0d;
+  border: 1px solid #555;
+  color: #fff;
+  padding: 10px 15px;
+}
+.checkout-form .form-control:focus,
+.checkout-form .form-select:focus {
+  background-color: #0d0d0d;
+  color: #fff;
+  border-color: #39ff14;
+  box-shadow: 0 0 10px #39ff1455;
+}
+.checkout-form .form-control::placeholder {
+  color: #777;
+}
+
+/* Resumen del Carrito (Columna derecha) */
+.checkout-resumen {
+  background-color: #0d0d0d;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #444;
+  height: fit-content; /* Se ajusta al contenido */
+}
+
+/* Items en el resumen */
+.checkout-resumen-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  color: #ccc;
+  border-bottom: 1px solid #333;
+  padding: 10px 0;
+}
+.checkout-resumen-item:last-child {
+  border-bottom: none;
+}
+.checkout-resumen-item .item-nombre {
+  font-weight: bold;
+}
+.checkout-resumen-item .item-total {
+  color: #fff;
+}
+
+/* Total en el resumen */
+.checkout-resumen-total {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 2px solid #8000ff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+.checkout-resumen-total .total-label {
+  color: #fff;
+}
+.checkout-resumen-total .total-valor {
+  color: #39ff14; /* Verde neón */
+}
+
+/* Botón Pagar Ahora */
+.btn-pagar {
+  background-color: #39ff14; /* Verde */
+  border-color: #39ff14;
+  color: #111;
+  font-weight: bold;
+  padding: 12px;
+  width: 100%;
+  font-size: 1.2rem;
+  margin-top: 20px;
+  transition: 0.3s;
+}
+.btn-pagar:hover {
+  background-color: #2aaa0f;
+  border-color: #2aaa0f;
+  color: #111;
+}
+.btn-pagar:disabled {
+  background-color: #333;
+  border-color: #333;
+  color: #777;
+}   

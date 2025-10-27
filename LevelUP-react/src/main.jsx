@@ -15,26 +15,25 @@ import './styles/contacto.css';
 import './styles/blog.css';
 import './styles/login.css';
 import './styles/carrito.css';
-import './styles/admin-login.css'; // Asegúrate que este exista
-import './styles/homeAdmin.css'; // CSS que proporcionaste
+import './styles/admin-login.css'; 
+import './styles/homeAdmin.css'; 
 import './styles/crearProducto.css';
-import './styles/gestionDestacados.css'; // Usado también por GestionCategorias
-import './styles/verProductosAdmin.css'; // Usado también por GestionUsuarios y GestionOrdenes
+import './styles/gestionDestacados.css'; 
+import './styles/verProductosAdmin.css'; 
+// CSS para el checkout (asegúrate que existan)
+import './styles/checkout.css'; 
+import './styles/pago-resultado.css'; 
 import './index.css'; // Estilos base de Vite
 
 // --- CONTEXTO ---
-// Importamos los Providers para el Carrito y la Autenticación
-// Asegúrate que las rutas sean correctas (ej: si CartProvider está en hooks o context)
-import { CartProvider } from './context/CartProvider.jsx';
+import { CartProvider } from './hooks/useCart.jsx';
 import { AuthProvider } from './context/AuthProvider.jsx';
 
 // --- LAYOUT Y COMPONENTES ---
-// Importamos el Layout principal y el componente para proteger rutas
 import App from './App.jsx';
 import RutaProtegida from './components/RutaProtegida.jsx';
 
 // --- PÁGINAS ---
-// Importamos TODOS los componentes de página que tu aplicación usará
 import Home from './pages/Home.jsx';
 import Productos from './pages/Productos.jsx';
 import DetalleProducto from './pages/DetalleProducto.jsx';
@@ -56,99 +55,71 @@ import ProductosCriticos from './pages/ProductosCriticos.jsx';
 import GestionCategorias from './pages/GestionCategorias.jsx';
 import GestionUsuarios from './pages/GestionUsuarios.jsx';
 import EditarUsuario from './pages/EditarUsuario.jsx';
-// --- ¡IMPORTACIÓN AÑADIDA! ---
 import GestionOrdenes from './pages/GestionOrdenes.jsx';
+// --- PÁGINAS CHECKOUT ---
+import Checkout from './pages/Checkout.jsx';         
+import PagoExitoso from './pages/PagoExitoso.jsx'; 
+import PagoError from './pages/PagoError.jsx';     
 
 // --- CONFIGURACIÓN DEL ROUTER ---
-// Definimos todas las rutas de la aplicación
 const router = createBrowserRouter([
   {
-    path: '/', // Todas las rutas definidas aquí usarán el Layout <App />
+    path: '/', 
     element: <App />,
-    children: [ // Estas son las páginas que se renderizarán dentro del <Outlet /> de App.jsx
+    children: [ 
       // --- Rutas Públicas ---
-      { path: '/', element: <Home /> }, // Página principal
-      { path: '/productos', element: <Productos /> }, // Página de listado de productos
-      { path: '/producto/:codigo', element: <DetalleProducto /> }, // Página de detalle (ruta dinámica)
-      { path: '/nosotros', element: <Nosotros /> }, // Página "Sobre Nosotros"
-      { path: '/contacto', element: <Contacto /> }, // Página de Contacto
-      { path: '/blog', element: <Blog /> }, // Página principal del Blog
-      { path: '/blog/:slug', element: <DetalleBlog /> }, // Página de detalle del Blog (ruta dinámica)
-      { path: '/login', element: <Login /> }, // Login/Registro de usuario normal
-      { path: '/carrito', element: <Carrito /> }, // Página del carrito de compras
-
-      // --- Ruta Pública para Admin Login ---
-      // No está protegida para que el admin pueda iniciar sesión
-      { path: '/admin-login', element: <AdminLogin /> },
+      { path: '/', element: <Home /> }, 
+      { path: '/productos', element: <Productos /> }, 
+      { path: '/producto/:codigo', element: <DetalleProducto /> }, 
+      { path: '/nosotros', element: <Nosotros /> }, 
+      { path: '/contacto', element: <Contacto /> }, 
+      { path: '/blog', element: <Blog /> }, 
+      { path: '/blog/:slug', element: <DetalleBlog /> }, 
+      { path: '/login', element: <Login /> }, 
+      { path: '/carrito', element: <Carrito /> }, 
+      { path: '/admin-login', element: <AdminLogin /> }, 
 
       // --- Rutas de Cliente Protegidas ---
-      // Solo accesibles si el usuario está logueado (verificado por RutaProtegida)
       {
         path: '/perfil',
         element: ( <RutaProtegida> <Perfil /> </RutaProtegida> )
       },
 
       // --- Rutas de Admin Protegidas ---
-      // Solo accesibles si el usuario está logueado Y es admin (verificado por RutaProtegida con requireAdmin={true})
-      {
-        path: '/admin/home',
-        element: ( <RutaProtegida requireAdmin={true}> <HomeAdmin /> </RutaProtegida> )
-      },
-      {
-        path: '/admin/crear-producto',
-        element: ( <RutaProtegida requireAdmin={true}> <CrearProducto /> </RutaProtegida> )
-      },
-      {
-        path: '/admin/ver-productos',
-        element: ( <RutaProtegida requireAdmin={true}> <VerProductosAdmin /> </RutaProtegida> )
-      },
-       {
-        path: '/admin/editar-producto/:codigo',
-        element: ( <RutaProtegida requireAdmin={true}> <EditarProducto /> </RutaProtegida> )
-      },
-      {
-        path: '/admin/gestionar-destacados',
-        element: ( <RutaProtegida requireAdmin={true}> <GestionDestacados /> </RutaProtegida> )
-      },
-       {
-        path: '/admin/productos-criticos',
-        element: ( <RutaProtegida requireAdmin={true}> <ProductosCriticos /> </RutaProtegida> )
-      },
-      {
-        path: '/admin/gestionar-categorias',
-        element: ( <RutaProtegida requireAdmin={true}> <GestionCategorias /> </RutaProtegida> )
-      },
-      {
-        path: '/admin/gestionar-usuarios',
-        element: ( <RutaProtegida requireAdmin={true}> <GestionUsuarios /> </RutaProtegida> )
-      },
-      {
-        path: '/admin/editar-usuario/:email', // Usamos email como parámetro
-        element: ( <RutaProtegida requireAdmin={true}> <EditarUsuario /> </RutaProtegida> )
-      },
-      // --- ¡RUTA AÑADIDA! ---
-      {
-        path: '/admin/gestionar-ordenes',
-        element: ( <RutaProtegida requireAdmin={true}> <GestionOrdenes /> </RutaProtegida> )
-      },
+      { path: '/admin/home', element: ( <RutaProtegida requireAdmin={true}> <HomeAdmin /> </RutaProtegida> ) },
+      { path: '/admin/crear-producto', element: ( <RutaProtegida requireAdmin={true}> <CrearProducto /> </RutaProtegida> ) },
+      { path: '/admin/ver-productos', element: ( <RutaProtegida requireAdmin={true}> <VerProductosAdmin /> </RutaProtegida> ) },
+      { path: '/admin/editar-producto/:codigo', element: ( <RutaProtegida requireAdmin={true}> <EditarProducto /> </RutaProtegida> ) },
+      { path: '/admin/gestionar-destacados', element: ( <RutaProtegida requireAdmin={true}> <GestionDestacados /> </RutaProtegida> ) },
+      { path: '/admin/productos-criticos', element: ( <RutaProtegida requireAdmin={true}> <ProductosCriticos /> </RutaProtegida> ) },
+      { path: '/admin/gestionar-categorias', element: ( <RutaProtegida requireAdmin={true}> <GestionCategorias /> </RutaProtegida> ) },
+      { path: '/admin/gestionar-usuarios', element: ( <RutaProtegida requireAdmin={true}> <GestionUsuarios /> </RutaProtegida> ) },
+      { path: '/admin/editar-usuario/:email', element: ( <RutaProtegida requireAdmin={true}> <EditarUsuario /> </RutaProtegida> ) },
+      { path: '/admin/gestionar-ordenes', element: ( <RutaProtegida requireAdmin={true}> <GestionOrdenes /> </RutaProtegida> ) },
 
-
-      // (Placeholder para la página de checkout - futura implementación)
-      { path: '/checkout', element: <div><h1>Página Checkout (en construcción)</h1></div> },
+      // --- RUTAS DE CHECKOUT (REEMPLAZANDO EL PLACEHOLDER) ---
+      { 
+        path: '/checkout', 
+        // Protegemos el checkout (el usuario debe estar logueado)
+        element: ( <RutaProtegida> <Checkout /> </RutaProtegida> ) 
+      },
+      { 
+        path: '/pago-exitoso/:ordenId', // Ruta dinámica para mostrar ID
+        element: ( <RutaProtegida> <PagoExitoso /> </RutaProtegida> ) 
+      },
+      { 
+        path: '/pago-error', 
+        element: ( <RutaProtegida> <PagoError /> </RutaProtegida> ) 
+      },
     ],
   },
-  // Aquí podrías añadir rutas que NO usen el Layout <App /> si fuera necesario
 ]);
 
 // --- RENDERIZADO DE LA APLICACIÓN ---
-// Obtenemos el div #root del HTML
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    {/* Envolvemos TODA la aplicación con los Providers de Contexto */}
-    {/* AuthProvider debe ir por fuera si CartProvider depende del usuario logueado */}
     <AuthProvider>
       <CartProvider>
-        {/* RouterProvider es el que realmente monta la aplicación según la URL */}
         <RouterProvider router={router} />
       </CartProvider>
     </AuthProvider>

@@ -47,5 +47,11 @@ export const guardarOrden = (nuevaOrden) => {
   console.log("Orden guardada exitosamente:", nuevaOrden.id);
 };
 
+// Obtener una orden específica por su ID
+export const getOrdenPorId = (id) => {
+  const ordenes = getOrdenes();
+  // Comparamos 'id' como número, ya que Date.now() es un número
+  return ordenes.find(o => o.id === Number(id)); 
+};
 // (Opcional: Funciones futuras como getOrdenPorId, etc.)
  

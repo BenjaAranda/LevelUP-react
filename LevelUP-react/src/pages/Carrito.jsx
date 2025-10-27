@@ -1,15 +1,14 @@
-// En: src/pages/Carrito.jsx (Botón Corregido)
+// En: src/pages/Carrito.jsx (Actualizado)
 
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom'; // No necesitamos useNavigate aquí
 import { useCart } from '../hooks/useCart.jsx';
-import '../styles/carrito.css';
+import '../styles/carrito.css'; 
+// Importamos Button para estilizar el Link
+import { Button } from 'react-bootstrap'; 
 
 const Carrito = () => {
-  const navigate = useNavigate();
   const cartContext = useCart();
-  // console.log("Carrito.jsx - Contexto recibido:", cartContext);
-
   const carritoItems = cartContext?.carritoItems || [];
   const totalPrecio = cartContext?.totalPrecio || 0;
   const {
@@ -17,21 +16,7 @@ const Carrito = () => {
     agregarAlCarrito,
     eliminarDelCarrito,
     vaciarCarrito,
-    finalizarCompraYActualizarStock
   } = cartContext || {};
-
-  const handleFinalizarCompra = async () => {
-      if (finalizarCompraYActualizarStock) {
-          const exito = await finalizarCompraYActualizarStock();
-          if (exito) {
-              alert("¡Compra realizada con éxito! El stock ha sido actualizado.");
-              navigate('/');
-          }
-      } else {
-          console.error("Error: finalizarCompraYActualizarStock no está disponible en el contexto.");
-          alert("Error al procesar la finalización de la compra.");
-      }
-  };
 
   return (
     <div className="contenedor-carrito">
@@ -78,16 +63,18 @@ const Carrito = () => {
           <span className="texto-valor">$ {totalPrecio.toLocaleString('es-CL')}</span>
         </h2>
         
-        {/* --- CORRECCIÓN --- */}
-        {/* El botón solo se deshabilita si el carrito está vacío */}
-        <button
-            className="btn-finalizar"
-            onClick={handleFinalizarCompra}
-            disabled={carritoItems.length === 0} 
+        {/* --- CAMBIO: Botón es un Link a /checkout --- */}
+        <Button
+          as={Link} // Renderiza como un Link de React Router
+          to="/checkout" // Destino
+          className="btn-finalizar" // Clase CSS existente
+          // Deshabilitamos el Link (visualmente) si el carrito está vacío
+          disabled={carritoItems.length === 0} 
+          style={carritoItems.length === 0 ? { pointerEvents: 'none' } : {}} // Previene clic si está deshabilitado
         >
           Finalizar Compra
-        </button>
-        {/* --- FIN CORRECCIÓN --- */}
+        </Button>
+        {/* --- FIN CAMBIO --- */}
 
       </div>
     </div>
