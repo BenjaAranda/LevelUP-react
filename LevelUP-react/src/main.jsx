@@ -20,13 +20,14 @@ import './styles/homeAdmin.css';
 import './styles/crearProducto.css';
 import './styles/gestionDestacados.css'; 
 import './styles/verProductosAdmin.css'; 
+import './styles/toast.css';
 // CSS para el checkout (asegúrate que existan)
 import './styles/checkout.css'; 
 import './styles/pago-resultado.css'; 
 import './index.css'; // Estilos base de Vite
 
 // --- CONTEXTO ---
-import { CartProvider } from './hooks/useCart.jsx';
+import { CartProvider } from './context/CartProvider.jsx';
 import { AuthProvider } from './context/AuthProvider.jsx';
 
 // --- LAYOUT Y COMPONENTES ---

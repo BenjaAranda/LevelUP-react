@@ -125,35 +125,45 @@ const productosIniciales = [
   }
 ];
 
-// --- FUNCIONES CRUD PRODUCTOS ---
+// --- FUNCIONES CRUD PARA PRODUCTOS (LocalStorage) ---
 
 export const getProductos = () => {
   const productosGuardados = localStorage.getItem("productos");
   if (!productosGuardados) {
+    // console.log("No se encontraron productos en localStorage, cargando iniciales.");
     localStorage.setItem("productos", JSON.stringify(productosIniciales));
     return productosIniciales;
   }
   try {
     const parsedProductos = JSON.parse(productosGuardados);
-    return Array.isArray(parsedProductos) ? parsedProductos : productosIniciales;
+    if (!Array.isArray(parsedProductos)) {
+        // console.warn("Datos en localStorage para 'productos' no son un array, cargando iniciales.");
+        localStorage.setItem("productos", JSON.stringify(productosIniciales));
+        return productosIniciales;
+    }
+    return parsedProductos;
   } catch (error) {
-    console.error("Error parsing productos from localStorage:", error);
+    console.error("Error al parsear productos de localStorage:", error);
     localStorage.setItem("productos", JSON.stringify(productosIniciales));
     return productosIniciales;
   }
 };
 
 export const saveProductos = (productos) => {
-  if (!Array.isArray(productos)) return;
+  if (!Array.isArray(productos)) {
+      console.error("Se intentó guardar algo que no es un array en localStorage para 'productos'.");
+      return;
+  }
   try {
     localStorage.setItem("productos", JSON.stringify(productos));
   } catch (error) {
-    console.error("Error saving productos to localStorage:", error);
+    console.error("Error al guardar productos en localStorage:", error);
   }
 };
 
 export const getProductoPorCodigo = (codigo) => {
-  return getProductos().find(p => p.codigo === codigo);
+  const productos = getProductos();
+  return productos.find(p => p.codigo === codigo);
 };
 
 export const agregarProducto = (nuevoProducto) => {
@@ -172,7 +182,7 @@ export const actualizarProducto = (productoActualizado) => {
   const productos = getProductos();
   const index = productos.findIndex(p => p.codigo === productoActualizado.codigo);
   if (index === -1) {
-    throw new Error(`Producto con código ${productoActualizado.codigo} no encontrado.`);
+    throw new Error(`Producto con código ${productoActualizado.codigo} no encontrado para actualizar.`);
   }
   productoActualizado.precio = Number(productoActualizado.precio) || 0;
   productoActualizado.stock = Number(productoActualizado.stock) || 0;
@@ -185,11 +195,14 @@ export const actualizarProducto = (productoActualizado) => {
 export const eliminarProducto = (codigo) => {
   const productos = getProductos();
   const nuevaLista = productos.filter(p => p.codigo !== codigo);
+  if (nuevaLista.length === productos.length) {
+     console.warn(`Producto con código ${codigo} no encontrado para eliminar.`);
+  }
   saveProductos(nuevaLista);
   return nuevaLista; 
 };
 
-// --- FUNCIONES CRUD CATEGORÍAS ---
+// --- FUNCIONES CRUD CATEGORÍAS (LocalStorage) ---
 
 const CATEGORIAS_KEY = 'categorias'; 
 
@@ -224,7 +237,7 @@ const saveCategorias = (categorias) => {
   return categoriasUnicasOrdenadas; 
 };
 
-// --- ¡ASEGÚRATE QUE ESTAS FUNCIONES ESTÉN EXPORTADAS! ---
+// --- ¡ESTAS FUNCIONES AHORA ESTÁN EXPORTADAS! ---
 // Agregar una nueva categoría
 export const agregarCategoria = (nuevaCategoriaNombre) => {
   if (!nuevaCategoriaNombre || typeof nuevaCategoriaNombre !== 'string' || nuevaCategoriaNombre.trim() === '') {
@@ -239,13 +252,6 @@ export const agregarCategoria = (nuevaCategoriaNombre) => {
   return saveCategorias(nuevaLista); 
 };
 
-// Eliminar una categoría
-export const eliminarCategoria = (categoriaAEliminar) => {
-  const categoriasActuales = getCategorias();
-  const nuevaLista = categoriasActuales.filter(cat => cat !== categoriaAEliminar);
-  return saveCategorias(nuevaLista); 
-};
-
 // Actualizar el nombre de una categoría existente
 export const actualizarCategoria = (nombreViejo, nombreNuevo) => {
   if (!nombreViejo || !nombreNuevo || typeof nombreNuevo !== 'string' || nombreNuevo.trim() === '') {
@@ -253,22 +259,28 @@ export const actualizarCategoria = (nombreViejo, nombreNuevo) => {
   }
   const nombreLimpioNuevo = nombreNuevo.trim();
   const categoriasActuales = getCategorias();
-
-  // Verificar si el nombre viejo existe
   const index = categoriasActuales.findIndex(cat => cat === nombreViejo);
   if (index === -1) {
     throw new Error(`La categoría "${nombreViejo}" no existe y no se puede actualizar.`);
   }
-
-  // Verificar si el nombre nuevo ya existe (y no es el mismo que el viejo)
   if (nombreViejo.toLowerCase() !== nombreLimpioNuevo.toLowerCase() && categoriasActuales.some(cat => cat.toLowerCase() === nombreLimpioNuevo.toLowerCase())) {
     throw new Error(`La categoría "${nombreLimpioNuevo}" ya existe.`);
   }
-
-  // Actualizar la lista
   const nuevaLista = [...categoriasActuales];
-  nuevaLista[index] = nombreLimpioNuevo; // Reemplaza el nombre viejo por el nuevo
-  return saveCategorias(nuevaLista); // Guarda y devuelve la lista actualizada
+  nuevaLista[index] = nombreLimpioNuevo;
+  return saveCategorias(nuevaLista);
+};
+
+// Eliminar una categoría
+export const eliminarCategoria = (categoriaAEliminar) => {
+  // Opcional: Verificación si la categoría está en uso
+  // const productos = getProductos();
+  // if (productos.some(p => p.categoria === categoriaAEliminar)) {
+  //   throw new Error(`No se puede eliminar "${categoriaAEliminar}", está en uso.`);
+  // }
+  const categoriasActuales = getCategorias();
+  const nuevaLista = categoriasActuales.filter(cat => cat !== categoriaAEliminar);
+  return saveCategorias(nuevaLista); 
 };
 // --- FIN FUNCIONES CATEGORÍAS ---
 

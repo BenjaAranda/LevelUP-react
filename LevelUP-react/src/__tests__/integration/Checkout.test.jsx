@@ -45,8 +45,9 @@ describe('Flujo de Checkout (Integración)', () => {
 
   test('impide checkout si el carrito está vacío', () => {
     render(<Carrito />);
-    // El botón debe estar deshabilitado
-    expect(screen.getByRole('button', { name: /Finalizar Compra/i })).toBeDisabled();
+    // El botón debe aparecer visualmente deshabilitado (atributo aria-disabled o disabled)
+    const boton = screen.getByRole('button', { name: /Finalizar Compra/i });
+    expect(boton).toHaveAttribute('aria-disabled', 'true');
   });
 
   test('flujo completo de checkout con usuario autenticado', async () => {
@@ -71,18 +72,12 @@ describe('Flujo de Checkout (Integración)', () => {
     expect(screen.getByText('Catan')).toBeInTheDocument();
     expect(screen.getByText('$ 100')).toBeInTheDocument();
 
-    // 4. Hacemos clic en Finalizar Compra
+    // 4. Hacemos clic en Finalizar Compra — actualmente esto es un Link a /checkout,
+    // la lógica de finalización ocurre en la página de checkout, por lo que aquí
+    // comprobamos que el botón está habilitado y apunta a /checkout.
     const botonFinalizar = screen.getByRole('button', { name: /Finalizar Compra/i });
     expect(botonFinalizar).toBeEnabled();
-    fireEvent.click(botonFinalizar);
-
-    // 5. Verificamos que la lógica de finalización se llamó
-    await waitFor(() => {
-      expect(mockFinalizarCompra).toHaveBeenCalledTimes(1);
-    });
-
-    // 6. Verificamos la alerta de éxito
-    expect(window.alert).toHaveBeenCalledWith(expect.stringContaining('¡Compra realizada con éxito!'));
+    expect(botonFinalizar).toHaveAttribute('href', '/checkout');
     
     // 7. (Opcional) Verificar que la navegación (navigate) fue llamada
     // Esto requiere mockear 'react-router-dom', es más complejo.
@@ -103,17 +98,14 @@ describe('Flujo de Checkout (Integración)', () => {
     });
     mockFinalizarCompra.mockResolvedValue(true);
 
-    render(<Carrito />);
+  render(<Carrito />);
     
-    const botonFinalizar = screen.getByRole('button', { name: /Finalizar Compra/i });
-    fireEvent.click(botonFinalizar);
-
-    // Verificamos que la compra se procesa (como invitado)
-    await waitFor(() => {
-      expect(mockFinalizarCompra).toHaveBeenCalledTimes(1);
-    });
-    // Y la alerta de éxito se muestra
-    expect(window.alert).toHaveBeenCalledWith(expect.stringContaining('¡Compra realizada con éxito!'));
+  const botonFinalizar = screen.getByRole('button', { name: /Finalizar Compra/i });
+  // Verificamos que el botón está habilitado y apunta a /checkout
+  expect(botonFinalizar).toBeEnabled();
+  expect(botonFinalizar).toHaveAttribute('href', '/checkout');
+  // Clicking would navigate to /checkout in the real app
+  fireEvent.click(botonFinalizar);
 
     // Si en el futuro cambias la lógica para que redirija a /login si no hay usuario,
     // este test fallaría y deberías actualizarlo para esperar la redirección.

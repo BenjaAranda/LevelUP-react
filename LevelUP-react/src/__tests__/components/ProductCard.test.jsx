@@ -1,12 +1,11 @@
-// En: src/components/__tests__/ProductCard.test.jsx
+// En: src/__tests__/components/ProductCard.test.jsx
 
 import React from 'react';
 import { describe, test, expect, vi, afterEach } from 'vitest';
-// Usamos el render de test-utils
 import { render, screen, fireEvent } from '../utils/test-utils.jsx';
 import '@testing-library/jest-dom';
-// Corregimos la ruta al componente
-import ProductCard from '../../components/ProductCard.jsx'; 
+import ProductCard from '../../components/ProductCard.jsx';
+import { CartContext } from '../../context/CartContext';
 
 // Datos de prueba (ejemplo)
 const mockProduct = {
@@ -34,11 +33,22 @@ describe('Componente ProductCard', () => {
   });
 
   test('debe renderizar correctamente la información del producto', () => {
+    const mockCartContext = {
+      cart: [],
+      addToCart: vi.fn(),
+      removeFromCart: vi.fn(),
+      clearCart: vi.fn(),
+      totalItems: 0,
+      totalAmount: 0
+    };
+
     render(
-      <ProductCard
-        producto={mockProduct}
-        onAgregarAlCarrito={mockOnAgregarAlCarrito}
-      />
+      <CartContext.Provider value={mockCartContext}>
+        <ProductCard
+          producto={mockProduct}
+          onAgregarAlCarrito={mockOnAgregarAlCarrito}
+        />
+      </CartContext.Provider>
     );
 
     expect(screen.getByAltText('Producto de Prueba')).toBeInTheDocument();
@@ -61,11 +71,22 @@ describe('Componente ProductCard', () => {
   });
 
   test('debe llamar a onAgregarAlCarrito al hacer clic en el botón', () => {
+    const mockCartContext = {
+      cart: [],
+      addToCart: vi.fn(),
+      removeFromCart: vi.fn(),
+      clearCart: vi.fn(),
+      totalItems: 0,
+      totalAmount: 0
+    };
+
     render(
-       <ProductCard
-         producto={mockProduct}
-         onAgregarAlCarrito={mockOnAgregarAlCarrito}
-       />
+      <CartContext.Provider value={mockCartContext}>
+        <ProductCard
+          producto={mockProduct}
+          onAgregarAlCarrito={mockOnAgregarAlCarrito}
+        />
+      </CartContext.Provider>
     );
 
     const botonAgregar = screen.getByRole('button', { name: /Agregar al carrito/i });
@@ -76,11 +97,22 @@ describe('Componente ProductCard', () => {
   });
 
    test('debe mostrar "AGOTADO" y deshabilitar el botón si stock es 0', () => {
+    const mockCartContext = {
+      cart: [],
+      addToCart: vi.fn(),
+      removeFromCart: vi.fn(),
+      clearCart: vi.fn(),
+      totalItems: 0,
+      totalAmount: 0
+    };
+
     render(
-       <ProductCard
-         producto={mockProductAgotado}
-         onAgregarAlCarrito={mockOnAgregarAlCarrito}
-       />
+      <CartContext.Provider value={mockCartContext}>
+        <ProductCard
+          producto={mockProductAgotado}
+          onAgregarAlCarrito={mockOnAgregarAlCarrito}
+        />
+      </CartContext.Provider>
     );
 
     expect(screen.getByText('AGOTADO')).toBeInTheDocument();

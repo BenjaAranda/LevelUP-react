@@ -50,18 +50,18 @@ const Nosotros = () => {
           <div className="grid-equipo">
             <div className="miembro">
               {/* Esta ruta de imagen es clave */}
-              <img src="/public/rigby.jpg" alt="Miembro 1" />
+              <img src="/rigby.jpg" alt="Miembro 1" />
               <h4>Benjamín Aranda</h4>
               <p>Desarrollador Fullstack</p>
             </div>
             <div className="miembro">
-              <img src="/public/rigby.jpg" alt="Miembro 2" />
+              <img src="/rigby.jpg" alt="Miembro 2" />
               <h4>Joaquin Robles</h4>
               <p>Desarrollador Fullstack</p>
             </div>
             <div className="miembro">
-              <img src="/public/rigby.jpg" alt="Miembro 3" />
-              <h4>#######</h4>
+              <img src="/rigby.jpg" alt="Miembro 3" />
+              <h4>Martin</h4>
               <p>Soporte Técnico</p>
             </div>
           </div>

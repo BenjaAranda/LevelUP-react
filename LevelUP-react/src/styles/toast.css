@@ -1,0 +1,47 @@
+/* En: src/styles/toast.css */
+
+/* El contenedor del toast */
+.toast-notification {
+  position: fixed; /* Se queda fijo en la pantalla */
+  bottom: 20px;
+  right: 20px;
+  background-color: #39ff14; /* Verde neón */
+  color: #111; /* Texto oscuro */
+  padding: 16px 25px;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+  z-index: 2000; /* Asegura que esté por encima de todo */
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: bold;
+  font-size: 1.1rem;
+
+  /* Animación de entrada y salida */
+  animation: fadeInOut 3s ease-in-out forwards;
+}
+
+/* Icono (opcional, pero mejora el estilo) */
+.toast-notification svg {
+  font-size: 1.5rem;
+}
+
+/* Animación */
+@keyframes fadeInOut {
+  0% {
+    transform: translateY(100px);
+    opacity: 0;
+  }
+  15% { /* Entrada rápida */
+    transform: translateY(0);
+    opacity: 1;
+  }
+  85% { /* Se mantiene visible */
+    transform: translateY(0);
+    opacity: 1;
+  }
+  100% { /* Salida */
+    transform: translateY(100px);
+    opacity: 0;
+  }
+}

@@ -1,44 +1,36 @@
-// En: src/pages/Home.jsx (Corregido)
+// En: src/pages/Home.jsx (Limpiado)
 
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Container } from 'react-bootstrap'; 
-
-// --- CORRECCIÓN ---
-// Importamos la FUNCIÓN getProductos
+// Eliminamos Container, ya que las secciones son de ancho completo
+// import { Container } from 'react-bootstrap'; 
 import { getProductos } from '../data/productos.js'; 
 import ProductCard from '../components/ProductCard.jsx';
 import { useCart } from '../hooks/useCart.jsx';
-// --- FIN CORRECCIÓN ---
-
 
 const Home = () => {
   const [productosDestacados, setProductosDestacados] = useState([]);
   const { agregarAlCarrito } = useCart();
 
   useEffect(() => {
-    console.log("Home.jsx - useEffect ejecutándose");
     try {
-        // --- CORRECCIÓN ---
-        // Llamamos a getProductos() para obtener la lista actualizada
         const todosLosProductos = getProductos(); 
-        console.log("Home.jsx - Productos cargados desde getProductos:", todosLosProductos);
         const destacados = todosLosProductos.slice(0, 8);
-        console.log("Home.jsx - Productos a destacar:", destacados);
         setProductosDestacados(destacados);
-        // --- FIN CORRECCIÓN ---
     } catch(error) {
         console.error("Home.jsx - Error al cargar productos en useEffect:", error);
         setProductosDestacados([]); 
     }
   }, []); 
 
+  // --- LÓGICA DE ALERTA ELIMINADA ---
   const handleAgregarAlCarrito = (producto) => {
-    agregarAlCarrito(producto);
-    alert(`Agregado ${producto.nombre} al carrito!`); 
+    agregarAlCarrito(producto); // Solo llamamos a la función del contexto
+    // El Toast global se encargará del resto
   };
 
   return (
+    // Quitamos el <Container> exterior
     <> 
       {/* --- Banner --- */}
       <section className="banner">
@@ -52,7 +44,6 @@ const Home = () => {
 
       {/* --- Sección de categorías --- */}
       <section className="categorias">
-         {/* Código de categorías */}
          <div className="categoria">
           <img src="/catan.png" alt="Juegos de Mesa" />
           <h3>Juegos de Mesa</h3>
