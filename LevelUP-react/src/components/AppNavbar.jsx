@@ -8,15 +8,16 @@ import { Link, useNavigate } from 'react-router-dom';
 import { FaUser, FaShoppingCart, FaSearch, FaUserCircle, FaSignOutAlt } from 'react-icons/fa';
 // Importamos el hook de autenticación
 import { useAuth } from '../hooks/useAuth.jsx';
-// --- CORRECCIÓN ---
-// Importamos la FUNCIÓN getProductos (y quitamos la importación duplicada)
+// Importamos la FUNCIÓN getProductos
 import { getProductos } from '../data/productos.js';
-// --- FIN CORRECCIÓN ---
+// Importamos el hook del carrito
+import { useCart } from '../hooks/useCart.jsx';
 
 
 function AppNavbar() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const { totalItems } = useCart();
 
   // Estados para la búsqueda
   const [searchTerm, setSearchTerm] = useState('');
@@ -123,11 +124,23 @@ function AppNavbar() {
               </Button>
             </Link>
           )}
+
+          {/* --- CORRECCIÓN AQUÍ --- */}
           <Link to="/carrito" data-testid="cart-icon">
-            <Button title="Carrito">
+            {/* 1. Se añade la clase 'cart-button-wrapper' al BOTÓN */}
+            <Button title="Carrito" className="cart-button-wrapper">
               <FaShoppingCart />
+              
+              {/* 2. El 'span' ahora está DENTRO del botón */}
+              {totalItems > 0 && (
+                <span className="cart-item-count">
+                  {totalItems}
+                </span>
+              )}
             </Button>
           </Link>
+          {/* --- FIN CORRECCIÓN --- */}
+
         </div>
       </div>
 

@@ -69,7 +69,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 12px 20px;
+    padding: 16px 20px;
     background-color: #1c1c1c;
     gap: 25px;
     position: relative;
@@ -81,6 +81,8 @@ body {
     gap: 25px;
     flex-wrap: wrap;
     justify-content: center;
+    margin: 0;
+    padding: 0;
 }
 
 .navegacion ul li a {
@@ -580,4 +582,43 @@ body {
 }
 .stock-info .text-danger { /* Estilo específico para "AGOTADO" */
     color: #ff4d4d !important; /* Rojo brillante */
+}
+
+/* 1. El contenedor del ícono del carrito */
+.cart-link-wrapper {
+  position: relative; /* Clave para posicionar el círculo */
+  display: inline-block; /* Para que se ajuste al contenido */
+}
+
+/* 2. El círculo (badge) con el número */
+.cart-item-count {
+  /* Posición absoluta RELATIVA al .cart-link-wrapper */
+  position: absolute;
+  
+  /* Ajusta estos valores para mover el círculo a la esquina */
+  top: 95px; 
+  right: 8px;
+  
+  /* Color (¡puedes usar tu morado gamer!) */
+  background-color: #b700ff; 
+  color: white;
+  
+  /* Forma de círculo */
+  border-radius: 50%;
+  
+  /* Tamaño (asegúrate que ancho y alto sean iguales) */
+  width: 20px;
+  height: 20px;
+  
+  /* Centrar el número dentro del círculo (con flexbox) */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  /* Estilo del texto */
+  font-size: 12px;
+  font-weight: bold;
+
+  /* Opcional: un borde para que resalte sobre fondos oscuros */
+  border: 1px solid #1c1c1c; 
 }

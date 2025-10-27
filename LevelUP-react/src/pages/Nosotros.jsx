@@ -49,7 +49,7 @@ const Nosotros = () => {
           <h2>Conoce a nuestro equipo</h2>
           <div className="grid-equipo">
             <div className="miembro">
-              {/* Esta ruta de imagen es clave */}
+              {/* Esta ruta de imagen es clave */}  
               <img src="/rigby.jpg" alt="Miembro 1" />
               <h4>Benjamín Aranda</h4>
               <p>Desarrollador Fullstack</p>
