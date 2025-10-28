@@ -14,7 +14,7 @@ const Login = () => {
   const navigate = useNavigate();
   const { login } = useAuth(); 
   
-  // Hook para la tecla "Esc" (ya lo tenías)
+  // Hook para la tecla "Esc")
   useGoBackOnEsc();
 
   const [loginEmail, setLoginEmail] = useState('');
@@ -27,7 +27,7 @@ const Login = () => {
   const [registerError, setRegisterError] = useState('');
   const [registerSuccess, setRegisterSuccess] = useState('');
 
-  // ... (Toda tu lógica handleRegisterSubmit y handleLoginSubmit se mantiene igual) ...
+ 
   const handleRegisterSubmit = (e) => {
     e.preventDefault();
     setRegisterError('');

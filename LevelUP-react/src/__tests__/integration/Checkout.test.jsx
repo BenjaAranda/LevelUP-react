@@ -1,11 +1,9 @@
-// En: src/__tests__/integration/Checkout.test.jsx
+// src/__tests__/integration/Checkout.test.jsx
 
 import React from 'react';
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
-// --- ¡CAMBIO IMPORTANTE! ---
 // Importamos 'render' desde nuestro util
 import { render, screen, fireEvent, waitFor } from '../utils/test-utils.jsx';
-// --- FIN CAMBIO ---
 import '@testing-library/jest-dom';
 import Carrito from '../../pages/Carrito.jsx';
 import * as AuthHook from '../../hooks/useAuth.jsx';

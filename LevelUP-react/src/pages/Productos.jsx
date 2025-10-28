@@ -1,4 +1,4 @@
-// En: src/pages/Productos.jsx (Limpiado)
+
 
 import React, { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
@@ -8,7 +8,7 @@ import { useGoBackOnEsc } from '../hooks/useGoBackOnEsc';
 import ProductCard from '../components/ProductCard.jsx'; 
 import '../styles/productos.css'; 
 
-// --- MODALFEEDBACK ELIMINADO ---
+
 
 const Productos = () => {
   const [searchParams] = useSearchParams();
@@ -24,7 +24,7 @@ const Productos = () => {
   const [productosMostrados, setProductosMostrados] = useState([]);
   const [categorias, setCategorias] = useState([]);
   
-  // --- ESTADOS DEL MODAL ELIMINADOS ---
+
 
   useEffect(() => {
     let lista = getProductos(); 

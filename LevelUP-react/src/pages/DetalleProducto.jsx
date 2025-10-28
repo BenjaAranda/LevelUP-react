@@ -11,7 +11,7 @@ import BotonVolver from '../components/BotonVolver';
 import { useGoBackOnEsc } from '../hooks/useGoBackOnEsc';
 
 const DetalleProducto = () => {
-  // 2. Llama al hook del "Esc" (¡Esto está perfecto aquí!)
+  // 2. Llama al hook del "Esc" 
   useGoBackOnEsc();
   
   const { codigo } = useParams(); 
@@ -42,7 +42,7 @@ const DetalleProducto = () => {
     }
   }, [codigo, navigate]);
 
-  // ... (lógica de stock y puedeAgregar sin cambios) ...
+  // ... (lógica de stock y puedeAgregar )
   const itemEnCarrito = producto ? carritoItems.find(item => item.codigo === producto.codigo) : null;
   const cantidadEnCarrito = itemEnCarrito ? itemEnCarrito.unidades : 0;
   const stockDisponible = producto && typeof producto.stock === 'number' && producto.stock > 0; 

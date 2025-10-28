@@ -1,7 +1,6 @@
 // En: src/pages/Contacto.jsx
 
 import React, { useState } from 'react';
-// Importamos los estilos (asegúrate de crear este archivo)
 import '../styles/contacto.css'; 
 import { useGoBackOnEsc } from '../hooks/useGoBackOnEsc';
 

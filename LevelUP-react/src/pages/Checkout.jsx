@@ -1,4 +1,4 @@
-// En: src/pages/Checkout.jsx (Actualizado)
+// En: src/pages/Checkout.jsx
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
@@ -62,7 +62,6 @@ const Checkout = () => {
       // Actualizamos la lista de comunas disponibles
       const comunasDeRegion = regionesComunas[region];
       setComunasDisponibles(comunasDeRegion);
-      // Opcional: Reseteamos la comuna seleccionada o elegimos la primera
       setComuna(comunasDeRegion[0]); // Selecciona la primera comuna de la nueva región
     } else {
       // Si la región no es válida, vaciamos la lista
@@ -71,7 +70,7 @@ const Checkout = () => {
     }
     // Este efecto se ejecuta CADA VEZ que la 'region' cambia
   }, [region]);
-  // --- FIN useEffect Comunas ---
+ 
 
   // Manejador del submit (sin cambios, ya lee los estados 'region' y 'comuna')
   const handleSubmit = async (e) => {

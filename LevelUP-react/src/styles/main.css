@@ -249,8 +249,8 @@ body {
 
 .footer-links ul {
     list-style: none;
-    /* --- MEJORA --- */
-    padding: 0; /* Quita el padding por defecto del <ul> */
+  
+    padding: 0; 
 }
 
 .footer-links ul li a {
@@ -264,14 +264,14 @@ body {
 }
 
 .footer-social a {
-    color: #9b30ff;
+    color: #ffffff;
     text-decoration: none;
     margin: 0 5px;
-    transition: 0.3s;
+    transition: 0.4;
 }
 
 .footer-social a:hover {
-    color: #39ff14;
+    color: #00ff00;
 }
 
 .footer-newsletter input {

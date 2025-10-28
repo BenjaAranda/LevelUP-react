@@ -64,7 +64,7 @@ const Nosotros = () => {
             </div>
             <div className="miembro">
               <img src="/rigby.jpg" alt="Miembro 3" />
-              <h4>Martin</h4>
+              <h4>Martin Tobar</h4>
               <p>Soporte Técnico</p>
             </div>
           </div>

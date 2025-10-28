@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Container, Card, ListGroup, Button, Alert, Row, Col } from 'react-bootstrap';
-import '../styles/gestionDestacados.css'; // Asegúrate que el CSS esté importado
+import '../styles/gestionDestacados.css'; 
 import { useGoBackOnEsc } from '../hooks/useGoBackOnEsc';
 
 const GestionDestacados = () => {

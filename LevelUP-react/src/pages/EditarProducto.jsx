@@ -45,8 +45,7 @@ const EditarProducto = () => {
       setImagen(productoAEditar.imagen || '');
     } else {
       setError('Producto no encontrado.');
-      // Opcional: Redirigir si no se encuentra el producto
-      // setTimeout(() => navigate('/admin/ver-productos'), 2000);
+
     }
   }, [codigo, navigate]); // Depende del código del producto
 
@@ -63,7 +62,7 @@ const EditarProducto = () => {
 
     // Creamos el objeto producto actualizado
     const productoActualizado = {
-      ...producto, // Mantenemos el código original y otras props si las hubiera
+      ...producto,
       categoria,
       nombre,
       precio,

@@ -1,10 +1,9 @@
-// En: src/pages/Carrito.jsx (Actualizado)
+// En: src/pages/Carrito.jsx
 
 import React from 'react';
-import { Link } from 'react-router-dom'; // No necesitamos useNavigate aquí
+import { Link } from 'react-router-dom'; 
 import { useCart } from '../hooks/useCart.jsx';
 import '../styles/carrito.css'; 
-// Importamos Button para estilizar el Link
 import { Button } from 'react-bootstrap'; 
 import { useGoBackOnEsc } from '../hooks/useGoBackOnEsc';
 

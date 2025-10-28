@@ -1,4 +1,4 @@
-// En: src/pages/GestionCategorias.jsx (Con Edición)
+// En: src/pages/GestionCategorias.jsx
 
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
@@ -49,12 +49,6 @@ const GestionCategorias = () => {
     setMensaje('');
     if (window.confirm(`¿Estás seguro de que quieres eliminar la categoría "${categoria}"?`)) {
       try {
-        // Opcional: Verificar si la categoría está en uso antes de eliminar
-        // const productos = getProductos(); // Necesitarías importar getProductos
-        // if (productos.some(p => p.categoria === categoria)) {
-        //   setError(`No se puede eliminar "${categoria}" porque está asignada a productos.`);
-        //   return;
-        // }
         const listaActualizada = eliminarCategoria(categoria);
         setCategorias(listaActualizada);
         setMensaje(`Categoría "${categoria}" eliminada.`);
@@ -64,7 +58,6 @@ const GestionCategorias = () => {
     }
   };
 
-  // --- NUEVAS FUNCIONES PARA EDICIÓN ---
   // Se activa al hacer clic en "Editar"
   const handleEdit = (categoria) => {
     setEditingCategory(categoria); // Marca esta categoría como la que se está editando

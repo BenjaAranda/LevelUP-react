@@ -1,4 +1,4 @@
-// En: src/data/productos.js (Versión Definitiva Completa)
+// En: src/data/productos.js
 
 // --- DATOS INICIALES ---
 const productosIniciales = [

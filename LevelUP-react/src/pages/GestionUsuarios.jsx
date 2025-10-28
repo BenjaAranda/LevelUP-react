@@ -1,15 +1,11 @@
-// En: src/pages/GestionUsuarios.jsx (Corregido)
+// En: src/pages/GestionUsuarios.jsx
 
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Container, Card, Table, Button, Alert } from 'react-bootstrap';
-// --- CORRECCIÓN ---
-// Importamos funciones SOLO desde ../data/usuarios.js
 import { getUsuarios, eliminarUsuarioAdmin } from '../data/usuarios.js';
-// --- FIN CORRECCIÓN ---
 import { useAuth } from '../hooks/useAuth.jsx';
 import { useGoBackOnEsc } from '../hooks/useGoBackOnEsc';
-// Reutilizamos estilos de verProductosAdmin para la tabla
 import '../styles/verProductosAdmin.css';
 
 const GestionUsuarios = () => {

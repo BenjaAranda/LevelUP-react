@@ -1,11 +1,8 @@
-// En: src/pages/GestionOrdenes.jsx (Corregido)
+// En: src/pages/GestionOrdenes.jsx
 
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-// --- ¡CORRECCIÓN! ---
-// Importamos Alert junto con los otros componentes de react-bootstrap
 import { Container, Card, Table, Button, Alert, Badge } from 'react-bootstrap';
-// --- FIN CORRECCIÓN ---
 import { getOrdenes } from '../data/ordenes.js';
 import '../styles/verProductosAdmin.css';
 import { useGoBackOnEsc } from '../hooks/useGoBackOnEsc';

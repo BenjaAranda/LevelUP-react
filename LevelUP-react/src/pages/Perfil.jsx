@@ -38,9 +38,8 @@ const Perfil = () => {
       });
       setLoading(false);
     }
-  }, [user]); // El array de dependencias está correcto así
+  }, [user]); 
 
-  // ... (Toda tu lógica de validación y handlers se mantiene igual) ...
   const validateForm = () => {
     const errors = {};
     if (!userData.nombre) errors.nombre = 'El nombre es requerido';

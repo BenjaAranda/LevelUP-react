@@ -1,7 +1,6 @@
 // En: src/pages/Blog.jsx
 
 import React from 'react';
-// Importamos los estilos que acabamos de crear
 import '../styles/blog.css';
 import { useGoBackOnEsc } from '../hooks/useGoBackOnEsc';
 

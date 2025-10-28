@@ -1,9 +1,7 @@
-// En: src/pages/Home.jsx (Limpiado)
+// En: src/pages/Home.jsx 
 
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-// Eliminamos Container, ya que las secciones son de ancho completo
-// import { Container } from 'react-bootstrap'; 
 import { getProductos } from '../data/productos.js'; 
 import ProductCard from '../components/ProductCard.jsx';
 import { useCart } from '../hooks/useCart.jsx';
@@ -26,14 +24,13 @@ const Home = () => {
     }
   }, []); 
 
-  // --- LÓGICA DE ALERTA ELIMINADA ---
+
   const handleAgregarAlCarrito = (producto) => {
     agregarAlCarrito(producto); // Solo llamamos a la función del contexto
     // El Toast global se encargará del resto
   };
 
   return (
-    // Quitamos el <Container> exterior
     <> 
       {/* --- Banner --- */}
       <section className="banner">

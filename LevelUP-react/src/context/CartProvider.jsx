@@ -1,4 +1,4 @@
-// En: src/context/CartProvider.jsx (Actualizado)
+// En: src/context/CartProvider.jsx
 
 import React, { useState, useEffect } from 'react';
 import { CartContext } from './CartContext';
