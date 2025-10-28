@@ -54,14 +54,13 @@ describe('Componente ProductCard', () => {
     expect(screen.getByAltText('Producto de Prueba')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Producto de Prueba' })).toBeInTheDocument();
     
-    // --- CORRECCIÓN ---
     // Usamos una función (Text Matcher) para encontrar el texto 
     // aunque esté dividido en nodos <strong> y de texto.
     expect(screen.getByText((content, element) => 
       element.tagName.toLowerCase() === 'p' && 
       element.textContent.includes('Categoría: Test Categoria')
     )).toBeInTheDocument();
-    // --- FIN CORRECCIÓN ---
+  
 
     // Asegurarse que el formato de precio coincida
     expect(screen.getByText('$10.000 CLP')).toBeInTheDocument(); 

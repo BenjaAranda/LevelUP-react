@@ -85,9 +85,7 @@ describe('Flujo de Checkout (Integración)', () => {
   });
 
   test('requiere autenticación para checkout (Simulación Futura)', async () => {
-    // NOTA: Tu lógica actual en Carrito.jsx NO impide la compra si
-    // el usuario es 'Invitado'. Si quisieras añadir esa lógica,
-    // este test fallaría y tendrías que modificar Carrito.jsx.
+   
     
     // Por ahora, solo simulamos que el usuario es invitado
     AuthHook.useAuth.mockReturnValue({ usuario: null });
@@ -107,8 +105,7 @@ describe('Flujo de Checkout (Integración)', () => {
   // Clicking would navigate to /checkout in the real app
   fireEvent.click(botonFinalizar);
 
-    // Si en el futuro cambias la lógica para que redirija a /login si no hay usuario,
-    // este test fallaría y deberías actualizarlo para esperar la redirección.
+
   });
 
 });

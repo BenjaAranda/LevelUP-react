@@ -1,10 +1,8 @@
-// En: src/pages/Carrito.jsx (Actualizado)
-
+// En: src/pages/Carrito.jsx
 import React from 'react';
-import { Link } from 'react-router-dom'; // No necesitamos useNavigate aquí
+import { Link } from 'react-router-dom';
 import { useCart } from '../hooks/useCart.jsx';
 import '../styles/carrito.css'; 
-// Importamos Button para estilizar el Link
 import { Button } from 'react-bootstrap'; 
 import { useGoBackOnEsc } from '../hooks/useGoBackOnEsc';
 
@@ -14,6 +12,7 @@ const Carrito = () => {
   const totalPrecio = cartContext?.totalPrecio || 0;
   
   useGoBackOnEsc();
+  
   const {
     restarDelCarrito,
     agregarAlCarrito,
@@ -29,8 +28,8 @@ const Carrito = () => {
         {carritoItems.length === 0 ? (
           <p>Tu carrito está vacío.</p>
         ) : (
-          carritoItems.map((producto) => (
-            (producto && producto.codigo) ? (
+          carritoItems.map((producto) => 
+            producto && producto.codigo ? (
               <div key={producto.codigo} className="item-carrito">
                 <div className="item-carrito-info">
                   <div className="item-carrito-imagen">
@@ -39,7 +38,7 @@ const Carrito = () => {
                   <div className="item-carrito-detalles">
                     <h3>{producto.nombre || 'Nombre no disponible'}</h3>
                     <p>
-                      <span className="texto-label">Unidades:</span>
+                      <span className="texto-label">Unidades: </span>
                       <span className="texto-valor">{producto.unidades || 0}</span>
                       {agregarAlCarrito && (
                         <button 
@@ -67,18 +66,22 @@ const Carrito = () => {
                       )}
                     </p>
                     <p>
-                      <span className="texto-label">Precio Unitario:</span>
-                      <span className="texto-valor">${(producto.precio || 0).toLocaleString('es-CL')}</span>
+                      <span className="texto-label">Precio Unitario: </span>
+                      <span className="texto-valor">
+                        ${(producto.precio || 0).toLocaleString('es-CL')}
+                      </span>
                     </p>
                     <p>
-                      <span className="texto-label">Subtotal:</span>
-                      <span className="texto-valor">${((producto.unidades || 0) * (producto.precio || 0)).toLocaleString('es-CL')}</span>
+                      <span className="texto-label">Subtotal: </span>
+                      <span className="texto-valor">
+                        ${((producto.unidades || 0) * (producto.precio || 0)).toLocaleString('es-CL')}
+                      </span>
                     </p>
                   </div>
                 </div>
               </div>
-            ) : null 
-          ))
+            ) : null
+          )
         )}
       </div>
 
