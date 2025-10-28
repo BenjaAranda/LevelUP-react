@@ -18,7 +18,7 @@ body {
     justify-content: space-between;
     padding: 15px 20px;
     gap: 15px;
-    flex-wrap: wrap;
+    flex-wrap: wrap; /* Permite que se envuelva si no hay espacio */
 }
 
 .logo img {
@@ -31,28 +31,21 @@ body {
     display: flex;
     flex: 1;
     max-width: 600px;
-}
-
-.buscador select,
-.buscador input {
-    padding: 8px 10px;
-    border: none;
-    border-radius: 5px;
-    margin-right: 5px;
-    outline: none;
-}
-
-.buscador input {
-    flex: 1;
+    position: relative; /* Clave para el botón interno */
 }
 
 /* Iconos */
+.iconos {
+    display: flex;
+    gap: 10px; /* Un 'gap' es más limpio que 'margin-left' */
+}
+
 .iconos button {
     background: none;
     border: 2px solid #8206d4;
     color: #8409e9;
     font-size: 1.3rem;
-    margin-left: 10px;
+    /* margin-left: 10px; <--- Reemplazado por 'gap' en .iconos */
     cursor: pointer;
     border-radius: 5px;
     padding: 5px 10px;
@@ -73,6 +66,9 @@ body {
     background-color: #1c1c1c;
     gap: 25px;
     position: relative;
+    /* --- MEJORA --- */
+    /* Permite que el botón y los links se envuelvan en pantallas medianas */
+    flex-wrap: wrap; 
 }
 
 .navegacion ul {
@@ -94,7 +90,6 @@ body {
 
 .navegacion ul li a:hover {
     color: #b700ff;
-    /* morado gamer */
 }
 
 /* Botón Tiendas/Eventos */
@@ -104,17 +99,25 @@ body {
     border: none;
     border-radius: 50px;
     padding: 8px 18px;
-    position: absolute;
-    right: 20px;
+    /* position: absolute; <--- PROBLEMA RESPONSIVO */
+    /* right: 20px; <--- PROBLEMA RESPONSIVO */
     cursor: pointer;
     font-weight: bold;
     transition: 0.3s;
+    /* --- MEJORA --- */
+    /* Lo dejamos en el flujo, pero lo empujamos a la derecha con auto-margin */
+    margin-left: auto;
 }
 
 .btn-tiendas:hover {
     background-color: #62017a;
     color: #ffffff;
 }
+/* Hacemos que en el 'wrap', el botón no tenga ese margen */
+.navegacion:has(.btn-tiendas:not(:first-child)) {
+    margin-left: 0;
+}
+
 
 /* Banner principal */
 .banner {
@@ -246,6 +249,8 @@ body {
 
 .footer-links ul {
     list-style: none;
+    /* --- MEJORA --- */
+    padding: 0; /* Quita el padding por defecto del <ul> */
 }
 
 .footer-links ul li a {
@@ -315,6 +320,7 @@ body {
     padding-bottom: 8px;
 }
 
+/* Esto ya es responsivo, ¡excelente! */
 .grid-productos {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -356,119 +362,55 @@ body {
     margin-bottom: 15px;
 }
 
-.btn-carrito {
-    background-color: #8000ff;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 8px;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-    transition: 0.3s;
-}
+/* ============================================================
+  ESTILOS DE BOTONES DE TARJETA Y BUSCADOR
+============================================================ */
 
-.btn-carrito:hover {
+.producto .btn-carrito {
+  display: block;
+  width: 100%;
+  margin-bottom: 8px;
+  text-align: center;
+  background-color: #8000ff;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 8px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.producto .btn-carrito:hover {
     background-color: #39ff14;
     color: #111;
 }
 
-/* 📱 Responsivo */
-@media (max-width: 768px) {
-    .barra-superior {
-        flex-direction: column;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .navegacion ul {
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .btn-tiendas {
-        position: static;
-        margin-top: 10px;
-    }
-
-    .banner img {
-        height: 200px;
-    }
-
-    .banner-text h2 {
-        font-size: 1.8rem;
-    }
-
-    .categorias {
-        gap: 15px;
-    }
-}
-/* ============================================================
-  CORRECCIÓN BOTONES DE TARJETA DE PRODUCTO
-============================================================
-  Estos estilos se añaden al final del archivo.
-  Usamos '.producto .btn-carrito' para ser específicos
-  y no romper otros botones del sitio.
-*/
-
-/* 1. Hacemos que el botón principal ocupe todo el ancho 
-     DENTRO de la tarjeta.
-*/
-.producto .btn-carrito {
-  display: block;  /* Ocupa su propia línea */
-  width: 100%;     /* Ocupa todo el ancho de la tarjeta */
-  margin-bottom: 8px; /* Espacio entre los botones */
-  text-align: center; 
-}
-
-/* 2. Creamos el estilo para el botón "Ver detalle" (que es un Link)
-*/
 .producto .btn-detalle {
-  display: block; /* Ocupa su propia línea */
-  width: 100%;    /* Ocupa todo el ancho */
-  padding: 8px 15px; /* Un poco menos de padding que el botón principal */
+  display: block; 
+  width: 100%;
+  padding: 8px 15px;
   border-radius: 8px;
-  
-  /* Estilo de botón "secundario" o "fantasma" */
-  background-color: transparent; /* Fondo transparente */
-  border: 2px solid #39ff14;   /* Borde verde neón */
-  color: #39ff14;              /* Texto verde neón */
-  
+  background-color: transparent;
+  border: 2px solid #39ff14;
+  color: #39ff14;
   text-align: center;
-  text-decoration: none; /* ¡Importante! Quita el subrayado del link */
+  text-decoration: none;
   font-weight: bold;
   transition: 0.3s;
 }
-
-/* 3. Efecto hover para el botón de detalle 
-*/
 .producto .btn-detalle:hover {
-  background-color: #39ff14; /* Fondo verde al pasar el mouse */
-  color: #111;              /* Texto oscuro */
+  background-color: #39ff14;
+  color: #111;
 }
-
-
-/* --- BLOQUE DEL BUSCADOR CON BOTÓN INTERNO --- */
-
-/* Contenedor principal del buscador */
-.buscador {
-  display: flex;         /* Necesario para flex: 1 */
-  flex: 1;               /* Ocupa espacio */
-  max-width: 600px;      /* Ancho máximo */
-  position: relative;    /* Clave para posicionar el botón interno */
-}
-
-
 
 /* Input de Texto (Ocupa todo el espacio) */
 .buscador input {
-  /* Ocupa todo el ancho del contenedor .buscador */
   width: 100%; 
-  
-  padding: 10px 40px 10px 15px; /* Padding: 10px arriba/abajo, 40px DERECHA (espacio para botón), 15px IZQUIERDA */
-  border: 1px solid #ccc; /* Borde gris claro */
-  border-radius: 8px;    /* Redondeo */
+  padding: 10px 40px 10px 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
   background-color: #000000; 
-  color: #7b7676;         /* Texto oscuro */
+  color: #7b7676;
   outline: none;
   font-size: 1rem; 
 }
@@ -476,47 +418,35 @@ body {
   color: #999; 
 }
 .buscador input:focus {
-  border-color: #aaa; /* Borde un poco más oscuro al enfocar */
-  box-shadow: 0 0 5px rgba(0,0,0,0.1); /* Sombra sutil */
+  border-color: #aaa;
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);
 }
 
-
-/* Botón de Búsqueda (Lupa - Interno a la Derecha) */
-/* CAMBIAMOS LA CLASE A .btn-busqueda-interno para evitar conflictos */
 .buscador .btn-busqueda-interno { 
-  /* --- Posicionamiento Absoluto --- */
-  position: absolute; /* Se posiciona relativo al .buscador */
-  right: 0;           /* Pegado a la derecha */
-  top: 0;             /* Pegado arriba */
-  height: 100%;         /* Misma altura que el input */
-  
-  /* Tamaño y estilo */
-  padding: 0 12px;    /* Padding horizontal para centrar ícono */
-  font-size: 1.2rem;  /* Tamaño ícono */
-
-  /* Estilos visuales */
-  background-color: transparent; /* Fondo transparente */
-  border: none;             /* Sin borde */
-  color: #ffffff;             /* Color del ícono gris oscuro */
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  padding: 0 12px;
+  font-size: 1.2rem;
+  background-color: transparent;
+  border: none;
+  color: #ffffff;
   cursor: pointer;
   display: flex; 
   align-items: center; 
   justify-content: center; 
-  transition: color 0.2s; /* Transición solo para el color */
+  transition: color 0.2s;
 }
-
 .buscador .btn-busqueda-interno:hover {
-  color: #101010; /* Ícono negro al pasar el mouse */
+  color: #101010;
 }
 
-/* --- FIN BLOQUE BUSCADOR CON BOTÓN INTERNO --- */
-
-/* --- Estilos Dropdown Recomendaciones (Adaptados) --- */
+/* Estilos Dropdown Recomendaciones */
 .recomendaciones-dropdown {
   position: absolute;
   top: 100%; 
   left: 0;
-  /* Hacemos que tenga el mismo ancho que el input */
   width: 100%; 
   z-index: 1050; 
   background-color: #0000006b; 
@@ -527,7 +457,6 @@ body {
   overflow-y: auto; 
   box-shadow: 0 4px 8px rgba(0,0,0,0.1); 
 }
-/* ... (Estilos internos del dropdown: .recomendacion-item, etc. se mantienen igual) ... */
 .recomendacion-item { 
   color: #dcdcdc; 
   padding: 10px 15px;
@@ -557,16 +486,15 @@ body {
 
 /* Estilo para tarjetas de productos agotados */
 .producto.agotado {
-  opacity: 0.6; /* Hacerla semi-transparente */
-  position: relative; /* Para el pseudo-elemento */
+  opacity: 0.6;
+  position: relative;
 }
-/* Opcional: Añadir una cinta "Agotado" */
 .producto.agotado::after {
   content: 'AGOTADO';
   position: absolute;
   top: 10px;
   right: 10px;
-  background-color: rgba(220, 53, 69, 0.8); /* Rojo semi-transparente */
+  background-color: rgba(220, 53, 69, 0.8);
   color: white;
   padding: 3px 8px;
   border-radius: 4px;
@@ -574,30 +502,35 @@ body {
   font-weight: bold;
 }
 
-/* Estilo para mostrar el stock en la tarjeta y detalle */
+/* Estilo para mostrar el stock */
 .stock-info {
   font-size: 0.9rem;
-  color: #aaa; /* Gris claro */
+  color: #aaa;
   margin-bottom: 10px;
 }
-.stock-info .text-danger { /* Estilo específico para "AGOTADO" */
-    color: #ff4d4d !important; /* Rojo brillante */
+.stock-info .text-danger {
+    color: #ff4d4d !important;
 }
 
-/* 1. El contenedor del ícono del carrito */
-.cart-link-wrapper {
-  position: relative; /* Clave para posicionar el círculo */
-  display: inline-block; /* Para que se ajuste al contenido */
+/* ============================================================
+   CORRECCIÓN CONTADOR DEL CARRITO
+============================================================ */
+
+/* 1. El 'ancla' ahora es el botón MISMO.
+   (Asumiendo que usaste <Button className="cart-button-wrapper">)
+*/
+.cart-button-wrapper {
+  position: relative; 
 }
 
 /* 2. El círculo (badge) con el número */
 .cart-item-count {
-  /* Posición absoluta RELATIVA al .cart-link-wrapper */
+  /* Posición absoluta RELATIVA al .cart-button-wrapper */
   position: absolute;
   
-  /* Ajusta estos valores para mover el círculo a la esquina */
-  top: 95px; 
-  right: 8px;
+  /* Ajusta estas coordenadas para que quede bien en tu ícono */
+  top: -5px; 
+  right: -5px;
   
   /* Color (¡puedes usar tu morado gamer!) */
   background-color: #b700ff; 
@@ -606,11 +539,11 @@ body {
   /* Forma de círculo */
   border-radius: 50%;
   
-  /* Tamaño (asegúrate que ancho y alto sean iguales) */
+  /* Tamaño */
   width: 20px;
   height: 20px;
   
-  /* Centrar el número dentro del círculo (con flexbox) */
+  /* Centrar el número */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -618,7 +551,96 @@ body {
   /* Estilo del texto */
   font-size: 12px;
   font-weight: bold;
-
-  /* Opcional: un borde para que resalte sobre fondos oscuros */
   border: 1px solid #1c1c1c; 
+}
+
+
+/* ============================================================
+   📱 SECCIÓN RESPONSIVA CORREGIDA Y MEJORADA
+============================================================ */
+
+@media (max-width: 768px) {
+    /* --- HEADER --- */
+    .barra-superior {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px; /* Más espacio al apilar */
+    }
+
+    /* --- CORRECCIÓN BUSCADOR --- */
+    .buscador {
+        width: 100%; /* Hacemos que ocupe todo el ancho en móvil */
+        max-width: 100%; /* Quitamos el max-width de 600px */
+    }
+
+    .iconos {
+        justify-content: center; /* Centramos los iconos */
+        width: 100%;
+    }
+
+    /* --- NAVEGACIÓN --- */
+    .navegacion {
+        flex-direction: column; /* Apila los links Y el botón */
+        padding: 15px;
+    }
+
+    .navegacion ul {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center; /* Centra el texto de los links */
+    }
+
+    .btn-tiendas {
+        position: static; /* Lo quitamos de 'absolute' (ya lo tenías) */
+        margin-top: 10px;
+        margin-left: 0; /* Reseteamos el margen */
+        width: 80%; /* Hacemos que ocupe más ancho */
+        text-align: center;
+    }
+
+    /* --- BANNER --- */
+    .banner img {
+        height: 200px;
+    }
+
+    .banner-text {
+        width: 90%; /* Evita que el fondo se corte */
+        padding: 15px;
+    }
+
+    .banner-text h2 {
+        font-size: 1.8rem;
+    }
+
+    /* --- CATEGORÍAS --- */
+    .categorias {
+        gap: 15px;
+        padding: 20px 10px;
+    }
+    
+    .categoria {
+        width: 150px; /* Hacemos las tarjetas de categoría un poco más pequeñas */
+    }
+
+    /* --- FOOTER --- */
+    .footer-contenido {
+        flex-direction: column; /* Apila las secciones del footer */
+        align-items: center; /* Centra todo */
+        text-align: center;
+    }
+
+    .footer-links ul {
+        padding: 0; /* Quita el padding de la lista */
+    }
+
+    .footer-newsletter {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+
+    .footer-newsletter input {
+        width: 80%;
+    }
 }

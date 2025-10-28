@@ -153,7 +153,6 @@ function AppNavbar() {
           <li><Link to="/contacto">Contacto</Link></li>
           <li><Link to="/blog">Blog</Link></li>
         </ul>
-        <Button className="btn-tiendas">Eventos</Button>
       </nav>
     </header>
   );
