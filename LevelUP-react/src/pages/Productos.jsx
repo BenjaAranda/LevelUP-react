@@ -1,33 +1,52 @@
-
-
 import React, { useState, useEffect } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
-import { getProductos, obtenerCategoriasUnicas } from '../data/productos.js';
+import { useSearchParams } from 'react-router-dom';
+import client from '../api/axiosClient'; // Conexión API
 import { useCart } from '../hooks/useCart.jsx';
 import { useGoBackOnEsc } from '../hooks/useGoBackOnEsc';
 import ProductCard from '../components/ProductCard.jsx'; 
 import '../styles/productos.css'; 
 
-
-
 const Productos = () => {
   const [searchParams] = useSearchParams();
-  const { agregarAlCarrito } = useCart(); // Solo traemos agregarAlCarrito
+  const { agregarAlCarrito } = useCart();
   
   useGoBackOnEsc();
 
+  // Estados
   const [orden, setOrden] = useState('default');
   const [categoria, setCategoria] = useState(searchParams.get('categoria') || 'todas');
   const [precioMin, setPrecioMin] = useState(0);
   const [precioMax, setPrecioMax] = useState(2000000);
   const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '');
-  const [productosMostrados, setProductosMostrados] = useState([]);
-  const [categorias, setCategorias] = useState([]);
   
+  // Estados para datos
+  const [allProductos, setAllProductos] = useState([]); // Todos los productos del backend
+  const [productosMostrados, setProductosMostrados] = useState([]); // Filtrados
+  const [categorias, setCategorias] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-
+  // 1. Cargar productos desde el Backend
   useEffect(() => {
-    let lista = getProductos(); 
+    const fetchProductos = async () => {
+      try {
+        const response = await client.get('/productos');
+        setAllProductos(response.data);
+        
+        // Extraer categorías únicas de la respuesta
+        const cats = [...new Set(response.data.map(p => p.categoria))].sort();
+        setCategorias(cats);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error cargando productos:", error);
+        setLoading(false);
+      }
+    };
+    fetchProductos();
+  }, []);
+
+  // 2. Filtrado Local (Se ejecuta cuando cambian los filtros o la data)
+  useEffect(() => {
+    let lista = [...allProductos]; 
     
     if (searchTerm) {
       lista = lista.filter(p =>
@@ -37,7 +56,8 @@ const Productos = () => {
     if (categoria && categoria !== "todas") {
       lista = lista.filter(p => p.categoria === categoria);
     }
-    lista = lista.filter(p => p.precio >= precioMin && p.precio <= precioMax);
+    // Aseguramos que precio sea número
+    lista = lista.filter(p => (p.precio || 0) >= precioMin && (p.precio || 0) <= precioMax);
 
     switch (orden) {
       case "precioMayor": lista.sort((a, b) => b.precio - a.precio); break;
@@ -48,24 +68,18 @@ const Productos = () => {
     }
     
     setProductosMostrados(lista);
+  }, [orden, categoria, precioMin, precioMax, searchTerm, allProductos]); 
 
-    if (categorias.length === 0) {
-        const allCategories = obtenerCategoriasUnicas();
-        setCategorias(allCategories);
-    }
-
-  }, [orden, categoria, precioMin, precioMax, searchTerm, categorias.length]); 
-
-  // --- MANEJADOR SIMPLIFICADO ---
   const handleAgregarCarrito = (producto) => {
-    agregarAlCarrito(producto); // Solo llamamos a la función del contexto
+    agregarAlCarrito(producto);
   };
 
-  return (
-    <>
-      {/* --- MODALFEEDBACK ELIMINADO --- */}
+  if (loading) {
+    return <div className="text-center mt-5"><h3>Cargando catálogo...</h3></div>;
+  }
 
-      <div className="productos-page">
+  return (
+    <div className="productos-page">
         <aside className="filtros">
           <h3>Filtros</h3>
           {searchTerm && (
@@ -103,7 +117,7 @@ const Productos = () => {
           {productosMostrados && productosMostrados.length > 0 ? (
             productosMostrados.map(prod => (
               <ProductCard
-                key={prod.codigo}
+                key={prod.codigo || prod.id}
                 producto={prod}
                 onAgregarAlCarrito={handleAgregarCarrito}
               />
@@ -115,7 +129,6 @@ const Productos = () => {
           )}
         </section>
       </div>
-    </>
   );
 };
 

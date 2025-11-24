@@ -1,85 +1,101 @@
-// En: src/pages/Login.jsx
-
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth.jsx'; 
 import '../styles/login.css'; 
-import { findUsuarioParaLogin, emailExiste, agregarUsuario } from '../data/usuarios.js';
+import client from '../api/axiosClient'; // Para el registro directo
 import { useGoBackOnEsc } from '../hooks/useGoBackOnEsc';
-// --- 1. IMPORTAMOS EL BOTÓN ---
 import BotonVolver from '../components/BotonVolver';
 
 const Login = () => {
   const [activeTab, setActiveTab] = useState('login');
   const navigate = useNavigate();
-  const { login } = useAuth(); 
+  const { login } = useAuth(); // Esta función ya conecta al backend según el paso anterior
   
-  // Hook para la tecla "Esc")
   useGoBackOnEsc();
 
+  // Estados
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
+  
   const [regNombre, setRegNombre] = useState('');
   const [regEdad, setRegEdad] = useState(18);
   const [regEmail, setRegEmail] = useState('');
   const [regPassword, setRegPassword] = useState('');
+  
   const [loginError, setLoginError] = useState('');
   const [registerError, setRegisterError] = useState('');
   const [registerSuccess, setRegisterSuccess] = useState('');
+  const [loading, setLoading] = useState(false);
 
- 
-  const handleRegisterSubmit = (e) => {
-    e.preventDefault();
-    setRegisterError('');
-    setRegisterSuccess('');
+  // --- REGISTRO CON BACKEND ---
+  const handleRegisterSubmit = async (e) => {
+    e.preventDefault();
+    setRegisterError('');
+    setRegisterSuccess('');
+    setLoading(true);
 
-    if (regEdad < 18) {
-      setRegisterError("Debes tener al menos 18 años para registrarte.");
-      return;
-    }
-    if (emailExiste(regEmail)) { 
-      setRegisterError("Este correo ya está registrado.");
-      return;
-    }
-    let descuento = regEmail.endsWith("@duocuc.cl"); 
-    const nuevoUsuario = { nombre: regNombre, edad: regEdad, email: regEmail, password: regPassword, descuento, isAdmin: false };
-    
-    try {
-        agregarUsuario(nuevoUsuario); 
-        setRegisterSuccess(`¡Registro exitoso! ${descuento ? 'Obtienes un 20% de descuento.' : ''} Ahora puedes iniciar sesión.`);
-        setRegNombre(''); setRegEdad(18); setRegEmail(''); setRegPassword('');
-    } catch (err) {
-        setRegisterError(err.message || "Error al registrar el usuario.");
-    }
-  };
+    if (regEdad < 18) {
+      setRegisterError("Debes tener al menos 18 años para registrarte.");
+      setLoading(false);
+      return;
+    }
+    
+    // Objeto usuario según DTO del Backend
+    const nuevoUsuario = { 
+        nombre: regNombre, 
+        edad: parseInt(regEdad), 
+        email: regEmail, 
+        password: regPassword 
+    };
+    
+    try {
+        await client.post('/auth/register', nuevoUsuario);
+        
+        let descuento = regEmail.endsWith("@duocuc.cl");
+        setRegisterSuccess(`¡Registro exitoso! ${descuento ? 'Posible descuento aplicado.' : ''} Ahora puedes iniciar sesión.`);
+        setRegNombre(''); setRegEdad(18); setRegEmail(''); setRegPassword('');
+    } catch (err) {
+        console.error("Error registro:", err);
+        setRegisterError(err.response?.data?.message || "Error al registrar el usuario. El correo podría estar en uso.");
+    } finally {
+        setLoading(false);
+    }
+  };
 
-  const handleLoginSubmit = (e) => {
-    e.preventDefault();
-    setLoginError('');
-    const usuario = findUsuarioParaLogin(loginEmail, loginPassword); 
-    if (usuario) {
-      login(usuario); 
-      if (usuario.isAdmin) {
-          navigate("/admin/home");
-      } else {
-          navigate("/perfil"); 
-      }
-    } else {
-      setLoginError("Correo o contraseña incorrectos.");
-    }
-  };
+  // --- LOGIN CON BACKEND ---
+  const handleLoginSubmit = async (e) => {
+    e.preventDefault();
+    setLoginError('');
+    setLoading(true);
+
+    // Llamamos al login del AuthProvider (que ahora es asíncrono)
+    const result = await login(loginEmail, loginPassword);
+    
+    if (result.success) {
+      // Verificamos si es admin usando el usuario que quedó guardado o la respuesta
+      // Nota: AuthProvider actualiza el estado, pero aquí podemos redirigir directo
+      // Si necesitas validar admin, revisa el rol en el token o user
+      // Por defecto redirigimos a perfil o home
+      const user = JSON.parse(localStorage.getItem('user'));
+      if (user && (user.role === 'ADMIN' || user.isAdmin)) {
+          navigate("/admin/home");
+      } else {
+          navigate("/perfil"); 
+      }
+    } else {
+      setLoginError(result.message || "Correo o contraseña incorrectos.");
+    }
+    setLoading(false);
+  };
 
   return (
      <div className="login-wrapper"> 
        <div className="container-login"> 
         
-        {/* --- 2. BOTÓN AÑADIDO AQUÍ --- */}
-        {/* (La clase 'mb-3' por defecto lo separará del título) */}
         <BotonVolver /> 
         
         <h1>Bienvenido a Level-Up Gamer</h1>
 
-        {/* Tabs (Pestañas) */}
         <ul className="nav nav-tabs" id="loginTabs" role="tablist">
           <li className="nav-item">
             <button 
@@ -101,7 +117,6 @@ const Login = () => {
 
         <div className="tab-content">
           {activeTab === 'login' ? (
-            // --- Formulario de Iniciar Sesión ---
             <div id="login">
               <form id="loginForm" onSubmit={handleLoginSubmit}>
                 {loginError && <div className="error-field">{loginError}</div>}
@@ -128,11 +143,12 @@ const Login = () => {
                     onChange={(e) => setLoginPassword(e.target.value)} 
                   />
                 </div>
-                <button type="submit" className="btn btn-primary w-100">Iniciar Sesión</button>
+                <button type="submit" className="btn btn-primary w-100" disabled={loading}>
+                    {loading ? 'Cargando...' : 'Iniciar Sesión'}
+                </button>
               </form>
             </div>
           ) : (
-            // --- Formulario de Registro ---
             <div id="register">
               <form id="registerForm" onSubmit={handleRegisterSubmit}>
                 {registerError && <div className="error-field">{registerError}</div>}
@@ -154,13 +170,14 @@ const Login = () => {
                   <label htmlFor="registerPassword" className="form-label">Contraseña</label>
                   <input type="password" id="registerPassword" className="form-control" required value={regPassword} onChange={(e) => setRegPassword(e.target.value)} />
                 </div>
-                <button type="submit" className="btn btn-success w-100">Registrarse</button>
+                <button type="submit" className="btn btn-success w-100" disabled={loading}>
+                    {loading ? 'Procesando...' : 'Registrarse'}
+                </button>
               </form>
             </div>
           )}
         </div>
 
-        {/* --- Botón para Admin --- */}
         <div className="text-center mt-4">
           <button id="adminLoginBtn" onClick={() => navigate("/admin-login")}>
             Iniciar sesión como Administrador

@@ -1,8 +1,6 @@
-// En: src/pages/Home.jsx 
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { getProductos } from '../data/productos.js'; 
+import client from '../api/axiosClient'; // Conexión API
 import ProductCard from '../components/ProductCard.jsx';
 import { useCart } from '../hooks/useCart.jsx';
 import { useGoBackOnEsc } from '../hooks/useGoBackOnEsc';
@@ -14,20 +12,22 @@ const Home = () => {
   useGoBackOnEsc();
 
   useEffect(() => {
-    try {
-        const todosLosProductos = getProductos(); 
-        const destacados = todosLosProductos.slice(0, 8);
+    const fetchDestacados = async () => {
+      try {
+        const response = await client.get('/productos');
+        // Tomamos los primeros 8 productos del backend
+        const destacados = response.data.slice(0, 8);
         setProductosDestacados(destacados);
-    } catch(error) {
-        console.error("Home.jsx - Error al cargar productos en useEffect:", error);
+      } catch(error) {
+        console.error("Home.jsx - Error al cargar productos:", error);
         setProductosDestacados([]); 
-    }
+      }
+    };
+    fetchDestacados();
   }, []); 
 
-
   const handleAgregarAlCarrito = (producto) => {
-    agregarAlCarrito(producto); // Solo llamamos a la función del contexto
-    // El Toast global se encargará del resto
+    agregarAlCarrito(producto);
   };
 
   return (
@@ -79,14 +79,14 @@ const Home = () => {
           {productosDestacados && productosDestacados.length > 0 ? (
             productosDestacados.map((prod) => (
               <ProductCard 
-                key={prod.codigo} 
+                key={prod.codigo || prod.id} 
                 producto={prod} 
                 onAgregarAlCarrito={handleAgregarAlCarrito}
               />
             ))
           ) : (
             <p style={{ color: 'yellow', gridColumn: '1 / -1', textAlign: 'center' }}>
-              No hay productos destacados para mostrar.
+              Cargando destacados...
             </p> 
           )}
 

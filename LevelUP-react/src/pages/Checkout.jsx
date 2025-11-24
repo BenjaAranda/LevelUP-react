@@ -1,13 +1,10 @@
-// En: src/pages/Checkout.jsx
-
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { Container, Row, Col, Form, Button, Alert, Card } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
+import { Container, Row, Col, Form, Button, Alert } from 'react-bootstrap';
 import { useAuth } from '../hooks/useAuth.jsx';
 import { useCart } from '../hooks/useCart.jsx';
 import '../styles/checkout.css'; 
-// 1. IMPORTAMOS LOS DATOS DE REGIONES Y COMUNAS
-import { regionesComunas } from '../data/chile-regiones-comunas.js';
+import { regionesComunas } from '../data/chile-regiones-comunas.js'; // Data estática OK
 import { useGoBackOnEsc } from '../hooks/useGoBackOnEsc';
 
 const Checkout = () => {
@@ -17,7 +14,7 @@ const Checkout = () => {
   
   useGoBackOnEsc();
 
-  // Estados del formulario (Expandidos)
+  // Estados
   const [nombre, setNombre] = useState('');
   const [apellidos, setApellidos] = useState('');
   const [correo, setCorreo] = useState('');
@@ -27,11 +24,9 @@ const Checkout = () => {
   const [numero, setNumero] = useState('');
   const [departamento, setDepartamento] = useState('');
   
-  // --- ESTADOS DINÁMICOS PARA DIRECCIÓN ---
-  const [region, setRegion] = useState('Metropolitana de Santiago'); // Región por defecto
-  const [comuna, setComuna] = useState(''); // Comuna seleccionada
-  const [comunasDisponibles, setComunasDisponibles] = useState([]); // Array de comunas
-  // --- FIN ESTADOS DINÁMICOS ---
+  const [region, setRegion] = useState('Metropolitana de Santiago');
+  const [comuna, setComuna] = useState('');
+  const [comunasDisponibles, setComunasDisponibles] = useState([]);
 
   const [codigoPostal, setCodigoPostal] = useState('');
   const [indicaciones, setIndicaciones] = useState('');
@@ -39,40 +34,30 @@ const Checkout = () => {
   const [error, setError] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
 
-  // Efecto para autocompletar formulario si el usuario está logueado
   useEffect(() => {
     if (usuario) {
-      const nombreUsuario = usuario.nombre || '';
-      setNombre(nombreUsuario);
+      setNombre(usuario.nombre || '');
       setCorreo(usuario.email || '');
     }
   }, [usuario]); 
 
-  // Redirigir si el carrito está vacío
   useEffect(() => {
     if (carritoItems.length === 0 && !isProcessing) {
       navigate('/carrito');
     }
   }, [carritoItems, navigate, isProcessing]);
 
-  // --- NUEVO useEffect para actualizar las comunas ---
   useEffect(() => {
-    // Si la región seleccionada existe en nuestros datos
     if (region && regionesComunas[region]) {
-      // Actualizamos la lista de comunas disponibles
       const comunasDeRegion = regionesComunas[region];
       setComunasDisponibles(comunasDeRegion);
-      setComuna(comunasDeRegion[0]); // Selecciona la primera comuna de la nueva región
+      setComuna(comunasDeRegion[0]);
     } else {
-      // Si la región no es válida, vaciamos la lista
       setComunasDisponibles([]);
       setComuna('');
     }
-    // Este efecto se ejecuta CADA VEZ que la 'region' cambia
   }, [region]);
  
-
-  // Manejador del submit (sin cambios, ya lee los estados 'region' y 'comuna')
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -86,6 +71,7 @@ const Checkout = () => {
         setError('Formato de RUT inválido. (Ej: 12345678-9)');
         return;
     }
+    
     setIsProcessing(true); 
     
     const direccionEnvio = {
@@ -93,12 +79,14 @@ const Checkout = () => {
         calle, numero, departamento, region, comuna, codigoPostal, indicaciones
     };
     
+    // Llamada ASÍNCRONA al Provider (que llama al Backend)
     const { exito, ordenId } = await finalizarCompraYActualizarStock(direccionEnvio); 
     
     if (exito) {
       navigate(`/pago-exitoso/${ordenId}`);
     } else {
-      navigate('/pago-error');
+      // Si falla, mostramos error
+      setError('Error al procesar el pago. Intente nuevamente.');
       setIsProcessing(false); 
     }
   };
@@ -107,13 +95,11 @@ const Checkout = () => {
     <Container className="checkout-container">
       <Form onSubmit={handleSubmit} className="checkout-form">
         <Row>
-          {/* Columna Izquierda: Formulario */}
           <Col md={7}>
             <div className="checkout-card">
               {error && <Alert variant="danger" onClose={() => setError('')} dismissible>{error}</Alert>}
               
               <h2>Información del cliente</h2>
-              {/* ... (Campos Nombre, Apellidos, Correo, RUT, Teléfono - sin cambios) ... */}
                <Row>
                 <Col md={6}>
                   <Form.Group className="mb-3" controlId="nombre">
@@ -149,7 +135,6 @@ const Checkout = () => {
 
 
               <h2 className="mt-4">Dirección de entrega</h2>
-              {/* ... (Campos Calle, Número, Depto, Cód. Postal - sin cambios) ... */}
               <Row>
                 <Col md={8}>
                     <Form.Group className="mb-3" controlId="calle">
@@ -179,17 +164,15 @@ const Checkout = () => {
                 </Col>
               </Row>
 
-              {/* --- CAMPOS REGIÓN Y COMUNA ACTUALIZADOS --- */}
               <Row>
                 <Col md={6}>
                   <Form.Group className="mb-3" controlId="region">
                     <Form.Label>Región *</Form.Label>
                     <Form.Select 
                       value={region} 
-                      onChange={(e) => setRegion(e.target.value)} // Actualiza el estado Región
+                      onChange={(e) => setRegion(e.target.value)}
                       required
                     >
-                      {/* Mapea las claves (nombres de regiones) del objeto */}
                       {Object.keys(regionesComunas).map(r => (
                         <option key={r} value={r}>{r}</option>
                       ))}
@@ -201,14 +184,13 @@ const Checkout = () => {
                     <Form.Label>Comuna *</Form.Label>
                     <Form.Select 
                       value={comuna} 
-                      onChange={(e) => setComuna(e.target.value)} // Actualiza el estado Comuna
+                      onChange={(e) => setComuna(e.target.value)} 
                       required 
-                      disabled={comunasDisponibles.length === 0} // Deshabilitado si no hay comunas
+                      disabled={comunasDisponibles.length === 0}
                     >
                       {comunasDisponibles.length === 0 ? (
                         <option value="" disabled>Selecciona una región</option>
                       ) : (
-                        // Mapea el array de comunas disponibles
                         comunasDisponibles.map(c => (
                           <option key={c} value={c}>{c}</option>
                         ))
@@ -217,9 +199,7 @@ const Checkout = () => {
                   </Form.Group>
                 </Col>
               </Row>
-              {/* --- FIN CAMPOS ACTUALIZADOS --- */}
 
-              {/* ... (Campo Indicaciones - sin cambios) ... */}
               <Form.Group className="mb-3" controlId="indicaciones">
                 <Form.Label>Indicaciones para la entrega (opcional)</Form.Label>
                 <Form.Control as="textarea" rows={3} value={indicaciones} onChange={(e) => setIndicaciones(e.target.value)} placeholder="Ej: Casa con reja blanca, dejar en conserjería..." />
@@ -227,7 +207,6 @@ const Checkout = () => {
             </div>
           </Col>
 
-          {/* Columna Derecha: Resumen del Carrito (sin cambios) */}
           <Col md={5}>
             <div className="checkout-resumen">
               <h2>Resumen del Carrito</h2>
