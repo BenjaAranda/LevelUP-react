@@ -1,10 +1,9 @@
-// En: src/context/CartProvider.jsx
-
 import React, { useState, useEffect } from 'react';
 import { CartContext } from './CartContext';
-import { getProductos, saveProductos } from '../data/productos.js';
+// Importamos el hook useAuth para obtener el usuario real (user)
 import { useAuth } from '../hooks/useAuth.jsx';
-import { guardarOrden } from '../data/ordenes.js';
+// Importamos el cliente API para enviar la venta al backend
+import client from '../api/axiosClient';
 
 const cargarCarritoDesdeStorage = () => {
   try {
@@ -20,10 +19,11 @@ const cargarCarritoDesdeStorage = () => {
 
 export const CartProvider = ({ children }) => {
   const [carritoItems, setCarritoItems] = useState(cargarCarritoDesdeStorage);
-  const { usuario } = useAuth();
-
-  // --- ¡NUEVO ESTADO PARA EL TOAST! ---
-  const [toastMessage, setToastMessage] = useState(null); // Mensaje a mostrar
+  
+  // CORRECCIÓN 1: Usamos 'user' (que es como lo devuelve AuthProvider ahora), no 'usuario'
+  const { user } = useAuth();
+  
+  const [toastMessage, setToastMessage] = useState(null);
 
   useEffect(() => {
     if (Array.isArray(carritoItems)) {
@@ -36,14 +36,12 @@ export const CartProvider = ({ children }) => {
     }
   }, [carritoItems]);
 
-  // --- Funciones del Carrito ---
-
   const agregarAlCarrito = (producto) => {
     if (!producto || !producto.codigo) return;
-
-    const productosActuales = getProductos();
-    const productoEnStorage = productosActuales.find(p => p.codigo === producto.codigo);
-    const stockActual = productoEnStorage ? productoEnStorage.stock : 0;
+    
+    // Ya no validamos stock local estricto porque el backend tiene la verdad
+    // pero usamos el stock que viene en el objeto para una validación visual rápida
+    const stockActual = producto.stock || 0;
 
     setCarritoItems(prevItems => {
       const currentItems = Array.isArray(prevItems) ? prevItems : [];
@@ -59,16 +57,13 @@ export const CartProvider = ({ children }) => {
               : item
           );
         } else {
-          const productoParaAgregar = productoEnStorage ? { ...productoEnStorage, unidades: 1 } : { ...producto, unidades: 1 };
+          const productoParaAgregar = { ...producto, unidades: 1 };
           newCart = [...currentItems, productoParaAgregar];
         }
-        
-        // --- ¡MOSTRAR TOAST DE ÉXITO! ---
-        setToastMessage(producto.nombre); // Seteamos el nombre del producto
-        
+        setToastMessage(producto.nombre);
         return newCart;
       } else {
-        alert(`No hay suficiente stock para "${producto.nombre}". Stock actual: ${stockActual}, en carrito: ${cantidadActualEnCarrito}.`);
+        alert(`No hay suficiente stock para "${producto.nombre}". Stock disponible: ${stockActual}.`);
         return currentItems;
       }
     });
@@ -99,67 +94,61 @@ export const CartProvider = ({ children }) => {
     setCarritoItems([]);
   };
 
-  const finalizarCompraYActualizarStock = (direccionEnvio) => {
+  // --- FUNCIÓN DE CHECKOUT REAL ---
+  const finalizarCompraYActualizarStock = async (direccionEnvio) => {
     const currentCartItems = Array.isArray(carritoItems) ? carritoItems : [];
+    
     if (currentCartItems.length === 0) {
       alert("El carrito está vacío.");
       return { exito: false, ordenId: null };
     }
-    const productosActuales = getProductos();
-    let stockSuficiente = true;
-    let productosParaActualizar = [...productosActuales];
-    let compraTotal = 0;
 
-    for (const item of currentCartItems) {
-      const productoEnStorage = productosParaActualizar.find(p => p.codigo === item.codigo);
-      if (!productoEnStorage || productoEnStorage.stock < item.unidades) {
-        alert(`¡Stock insuficiente para "${item.nombre}"! Stock actual: ${productoEnStorage?.stock || 0}. Por favor, ajusta tu carrito.`);
-        stockSuficiente = false;
-        break;
-      }
-      const index = productosParaActualizar.findIndex(p => p.codigo === item.codigo);
-      productosParaActualizar[index] = {
-        ...productoEnStorage,
-        stock: productoEnStorage.stock - item.unidades
-      };
-      compraTotal += (item.precio || 0) * (item.unidades || 0);
+    // Validación de seguridad: ¿Hay usuario logueado?
+    if (!user || !user.email) {
+        alert("Error de sesión: No se detecta el usuario logueado.");
+        return { exito: false, ordenId: null };
     }
 
-    if (stockSuficiente) {
-      try {
-        const nuevaOrden = {
-          id: Date.now(),
-          fecha: new Date().toISOString(),
-          usuarioEmail: usuario ? usuario.email : 'Invitado',
-          items: currentCartItems.map(({ cantidad, ...rest }) => ({ ...rest, unidades: cantidad || rest.unidades })),
-          total: compraTotal,
-          direccionEnvio: direccionEnvio
-        };
-        guardarOrden(nuevaOrden);
-        saveProductos(productosParaActualizar);
-        vaciarCarrito();
-        return { exito: true, ordenId: nuevaOrden.id };
-      } catch (error) {
-        console.error("Error al guardar orden o actualizar productos:", error);
-        alert("Ocurrió un error al procesar la compra. Intenta de nuevo.");
-        return { exito: false, ordenId: null };
-      }
-    } else {
+    const compraTotal = currentCartItems.reduce((acc, item) => acc + ((item.precio || 0) * (item.unidades || 0)), 0);
+
+    try {
+      // Payload para el Backend
+      const ventaPayload = {
+        usuarioEmail: user.email, // CORRECCIÓN 2: Usamos user.email real
+        totalVenta: compraTotal,
+        // Dirección opcional si tu backend la guarda
+        // direccion: direccionEnvio, 
+        items: currentCartItems.map(item => ({
+          productoCodigo: item.codigo,
+          cantidad: item.unidades,
+          precioUnitario: item.precio
+        }))
+      };
+
+      // POST al Backend
+      const response = await client.post('/ventas', ventaPayload);
+      
+      // Éxito
+      vaciarCarrito();
+      
+      // Retornamos el ID real de la base de datos (ej: 1, 2, 3...)
+      return { exito: true, ordenId: response.data.id };
+
+    } catch (error) {
+      console.error("Error al procesar venta:", error);
+      alert("Error al procesar la compra: " + (error.response?.data || "Error de servidor"));
       return { exito: false, ordenId: null };
     }
   };
 
-  // --- ¡NUEVA FUNCIÓN PARA LIMPIAR EL TOAST! ---
   const clearToast = () => {
     setToastMessage(null);
   };
 
-  // --- Valores Derivados ---
   const currentSafeCartItems = Array.isArray(carritoItems) ? carritoItems : [];
   const totalItems = currentSafeCartItems.reduce((acc, item) => acc + (item.unidades || 0), 0);
   const totalPrecio = currentSafeCartItems.reduce((acc, item) => acc + ((item.precio || 0) * (item.unidades || 0)), 0);
 
-  // --- VALOR DEL CONTEXTO (ACTUALIZADO) ---
   const value = {
     carritoItems: currentSafeCartItems,
     agregarAlCarrito,
@@ -169,7 +158,6 @@ export const CartProvider = ({ children }) => {
     totalItems,
     totalPrecio,
     finalizarCompraYActualizarStock,
-    // --- Exponemos el estado y la función del toast ---
     toastMessage,
     clearToast
   };

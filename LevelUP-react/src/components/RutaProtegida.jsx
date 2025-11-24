@@ -1,28 +1,35 @@
-// En: src/components/RutaProtegida.jsx
-
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth.jsx'; 
+import { useAuth } from '../hooks/useAuth.jsx';
 
-// --- ¡MODIFICADO! ---
-// Ahora acepta una prop 'requireAdmin', que por defecto es 'false'
-const RutaProtegida = ({ children, requireAdmin = false }) => {
-  const { usuario } = useAuth(); 
+// Componente Spinner simple para la carga
+const LoadingScreen = () => (
+  <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh', backgroundColor: '#050505', color: '#fff' }}>
+    <div className="spinner-border text-primary" role="status">
+      <span className="visually-hidden">Cargando...</span>
+    </div>
+  </div>
+);
 
-  // 1. Chequeo básico: ¿Está logueado?
-  if (!usuario) {
-    // Si no está logueado, lo mandamos al login
-    return <Navigate to="/login" replace />; 
+const RutaProtegida = ({ children, requireAdmin }) => {
+  const { user, loading } = useAuth();
+
+  // 1. Si está cargando, NO redirigimos todavía. Esperamos.
+  if (loading) {
+    return <LoadingScreen />;
   }
 
-  // 2. Chequeo de Admin: ¿Esta ruta REQUIERE admin Y el usuario NO es admin?
-  if (requireAdmin && !usuario.isAdmin) {
-    // Es un usuario normal (logueado) intentando entrar a una ruta de admin.
-    // Lo mandamos a la página de inicio (o a su perfil) para que no vea nada.
-    return <Navigate to="/" replace />; 
+  // 2. Si terminó de cargar y no hay usuario, al Login.
+  if (!user) {
+    return <Navigate to="/login" replace />;
   }
 
-  // 3. Si todo está bien (está logueado Y tiene los permisos), mostramos la página
+  // 3. Si requiere admin y el usuario no lo es, al Home.
+  if (requireAdmin && (user.role !== 'ADMIN' && user.isAdmin !== true)) {
+    return <Navigate to="/" replace />;
+  }
+
+  // 4. Todo bien, mostramos la página.
   return children;
 };
 

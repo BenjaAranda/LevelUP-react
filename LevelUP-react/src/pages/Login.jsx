@@ -1,19 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth.jsx'; 
 import '../styles/login.css'; 
-import client from '../api/axiosClient'; // Para el registro directo
+import client from '../api/axiosClient';
 import { useGoBackOnEsc } from '../hooks/useGoBackOnEsc';
 import BotonVolver from '../components/BotonVolver';
 
 const Login = () => {
   const [activeTab, setActiveTab] = useState('login');
   const navigate = useNavigate();
-  const { login } = useAuth(); 
+  const { login, user } = useAuth(); // Obtenemos 'user' para verificar sesión
   
   useGoBackOnEsc();
 
-  // Estados
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   
@@ -27,21 +26,24 @@ const Login = () => {
   const [registerSuccess, setRegisterSuccess] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // --- Lógica de Redirección Centralizada ---
-  const redirectUser = () => {
-      let user = null;
-      try {
-          user = JSON.parse(localStorage.getItem('user'));
-      } catch (e) { console.error("Error parsing user", e); }
+  // --- NUEVO: Si ya estoy logueado, me voy de aquí ---
+  useEffect(() => {
+    if (user) {
+        redirectUser(user);
+    }
+  }, [user, navigate]);
 
-      if (user && (user.role === 'ADMIN' || user.isAdmin === true)) {
+  const redirectUser = (userData) => {
+      // Si no pasamos userData, intentamos leerlo del storage o del estado
+      const currentUser = userData || user || JSON.parse(localStorage.getItem('user'));
+
+      if (currentUser && (currentUser.role === 'ADMIN' || currentUser.isAdmin === true)) {
           navigate("/admin/home");
       } else {
-          navigate("/"); // Redirigir al Home por defecto
+          navigate("/perfil"); // O al Home "/" si prefieres
       }
   };
 
-  // --- REGISTRO CON AUTO-LOGIN ---
   const handleRegisterSubmit = async (e) => {
     e.preventDefault();
     setRegisterError('');
@@ -62,25 +64,23 @@ const Login = () => {
     };
     
     try {
-        // 1. Registrar usuario en backend
         await client.post('/auth/register', nuevoUsuario);
         
-        // 2. Mensaje de éxito (breve)
         setRegisterSuccess('¡Registro exitoso! Iniciando sesión...');
         
-        // 3. AUTO-LOGIN: Iniciar sesión automáticamente con las credenciales
+        // Auto-login
         const loginResult = await login(regEmail, regPassword);
         
         if (loginResult.success) {
-            // Pequeña pausa para que el usuario lea el mensaje
+            // La redirección la manejará el useEffect o esta llamada
+            // Pero por seguridad dejamos un timeout corto
             setTimeout(() => {
-                redirectUser();
-            }, 1500);
+                 // El useEffect de arriba detectará el cambio de usuario y redirigirá
+            }, 1000);
         } else {
-            // Si el registro funcionó pero el login falló (raro), mandamos al login manual
             setRegisterSuccess('Registro exitoso. Por favor inicia sesión manualmente.');
             setActiveTab('login');
-            setLoginEmail(regEmail); // Pre-llenar email
+            setLoginEmail(regEmail);
             setLoginPassword('');
             setLoading(false);
         }
@@ -92,7 +92,6 @@ const Login = () => {
     }
   };
 
-  // --- LOGIN MANUAL ---
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     setLoginError('');
@@ -102,16 +101,14 @@ const Login = () => {
         const result = await login(loginEmail, loginPassword);
         
         if (result.success) {
-            redirectUser();
+            // El useEffect detectará el cambio de estado 'user' y redirigirá
         } else {
             setLoginError(result.message || "Correo o contraseña incorrectos.");
+            setLoading(false);
         }
     } catch (error) {
         console.error("Error inesperado en login:", error);
         setLoginError("Ocurrió un error inesperado. Intenta de nuevo.");
-    } finally {
-        // Importante: Si redirigimos, el componente se desmonta y esto no afecta.
-        // Si NO redirigimos (error), esto apaga el spinner.
         setLoading(false);
     }
   };
