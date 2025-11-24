@@ -1,45 +1,57 @@
 import React, { useState, useEffect } from 'react';
 import { AuthContext } from './AuthContext';
-import { getUsuarios, saveUsuarios } from '../data/usuarios.js';
-import { getProductos } from '../data/productos.js';
+import client from '../api/axiosClient'; 
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Inicializar datos
-    getUsuarios();
-    getProductos();
-    
-    // Cargar usuario
     try {
-      const savedUser = localStorage.getItem('usuarioActivo') || localStorage.getItem('user');
-      if (savedUser) {
-        const userData = JSON.parse(savedUser);
-        setUser(userData);
-        // Migrate old storage key to new one
-        if (localStorage.getItem('usuarioActivo')) {
-          localStorage.setItem('user', savedUser);
-          localStorage.removeItem('usuarioActivo');
-        }
+      // Intentamos recuperar la sesión si el usuario recarga la página
+      const savedUser = localStorage.getItem('user');
+      const token = localStorage.getItem('token');
+
+      if (savedUser && token) {
+        setUser(JSON.parse(savedUser));
       }
     } catch (error) {
-      console.error("Error al parsear usuario:", error);
-      localStorage.removeItem('usuarioActivo');
-      localStorage.removeItem('user');
+      console.error("Error restaurando sesión:", error);
+      localStorage.clear(); // Limpiamos si hay datos corruptos
+    } finally {
+      setLoading(false);
     }
   }, []);
 
-  const login = (userData) => {
-    setUser(userData);
-    localStorage.setItem('usuarioActivo', JSON.stringify(userData));
-    localStorage.setItem('user', JSON.stringify(userData));
+  const login = async (email, password) => {
+    try {
+      const response = await client.post('/auth/login', { email, password });
+      
+      // Extraemos el token y los datos del usuario
+      const { token, ...userDataBackend } = response.data;
+      const userData = { email, ...userDataBackend };
+
+      // Guardamos en el estado y en localStorage
+      setUser(userData);
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(userData));
+      
+      // Retornamos éxito para que el frontend sepa que funcionó
+      return { success: true };
+    } catch (error) {
+      console.error("Error Login:", error);
+      return { 
+        success: false, 
+        message: error.response?.data?.message || "Credenciales incorrectas" 
+      };
+    }
   };
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('usuarioActivo');
-    localStorage.removeItem('user');
+    localStorage.clear();
+    // Redirigimos forzosamente al login
+    window.location.href = '/login';
   };
 
   const updateUser = (updatedData) => {
@@ -49,14 +61,16 @@ export const AuthProvider = ({ children }) => {
   };
 
   const value = { 
-    // Mantener compatibilidad hacia atrás: algunas partes del código/tests esperan la clave
-    // `usuario` mientras que código nuevo puede usar `user`. Exponemos ambas.
-    usuario: user,
     user, 
     login, 
     logout,
-    updateUser
+    updateUser,
+    loading
   };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={value}>
+      {!loading && children}
+    </AuthContext.Provider>
+  );
 };

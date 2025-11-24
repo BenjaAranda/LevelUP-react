@@ -9,7 +9,7 @@ import BotonVolver from '../components/BotonVolver';
 const Login = () => {
   const [activeTab, setActiveTab] = useState('login');
   const navigate = useNavigate();
-  const { login } = useAuth(); // Esta función ya conecta al backend según el paso anterior
+  const { login } = useAuth(); 
   
   useGoBackOnEsc();
 
@@ -27,7 +27,21 @@ const Login = () => {
   const [registerSuccess, setRegisterSuccess] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // --- REGISTRO CON BACKEND ---
+  // --- Lógica de Redirección Centralizada ---
+  const redirectUser = () => {
+      let user = null;
+      try {
+          user = JSON.parse(localStorage.getItem('user'));
+      } catch (e) { console.error("Error parsing user", e); }
+
+      if (user && (user.role === 'ADMIN' || user.isAdmin === true)) {
+          navigate("/admin/home");
+      } else {
+          navigate("/"); // Redirigir al Home por defecto
+      }
+  };
+
+  // --- REGISTRO CON AUTO-LOGIN ---
   const handleRegisterSubmit = async (e) => {
     e.preventDefault();
     setRegisterError('');
@@ -40,7 +54,6 @@ const Login = () => {
       return;
     }
     
-    // Objeto usuario según DTO del Backend
     const nuevoUsuario = { 
         nombre: regNombre, 
         edad: parseInt(regEdad), 
@@ -49,43 +62,58 @@ const Login = () => {
     };
     
     try {
+        // 1. Registrar usuario en backend
         await client.post('/auth/register', nuevoUsuario);
         
-        let descuento = regEmail.endsWith("@duocuc.cl");
-        setRegisterSuccess(`¡Registro exitoso! ${descuento ? 'Posible descuento aplicado.' : ''} Ahora puedes iniciar sesión.`);
-        setRegNombre(''); setRegEdad(18); setRegEmail(''); setRegPassword('');
+        // 2. Mensaje de éxito (breve)
+        setRegisterSuccess('¡Registro exitoso! Iniciando sesión...');
+        
+        // 3. AUTO-LOGIN: Iniciar sesión automáticamente con las credenciales
+        const loginResult = await login(regEmail, regPassword);
+        
+        if (loginResult.success) {
+            // Pequeña pausa para que el usuario lea el mensaje
+            setTimeout(() => {
+                redirectUser();
+            }, 1500);
+        } else {
+            // Si el registro funcionó pero el login falló (raro), mandamos al login manual
+            setRegisterSuccess('Registro exitoso. Por favor inicia sesión manualmente.');
+            setActiveTab('login');
+            setLoginEmail(regEmail); // Pre-llenar email
+            setLoginPassword('');
+            setLoading(false);
+        }
+
     } catch (err) {
         console.error("Error registro:", err);
-        setRegisterError(err.response?.data?.message || "Error al registrar el usuario. El correo podría estar en uso.");
-    } finally {
+        setRegisterError(err.response?.data?.message || "Error al registrar. El correo podría estar en uso.");
         setLoading(false);
     }
   };
 
-  // --- LOGIN CON BACKEND ---
+  // --- LOGIN MANUAL ---
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     setLoginError('');
     setLoading(true);
 
-    // Llamamos al login del AuthProvider (que ahora es asíncrono)
-    const result = await login(loginEmail, loginPassword);
-    
-    if (result.success) {
-      // Verificamos si es admin usando el usuario que quedó guardado o la respuesta
-      // Nota: AuthProvider actualiza el estado, pero aquí podemos redirigir directo
-      // Si necesitas validar admin, revisa el rol en el token o user
-      // Por defecto redirigimos a perfil o home
-      const user = JSON.parse(localStorage.getItem('user'));
-      if (user && (user.role === 'ADMIN' || user.isAdmin)) {
-          navigate("/admin/home");
-      } else {
-          navigate("/perfil"); 
-      }
-    } else {
-      setLoginError(result.message || "Correo o contraseña incorrectos.");
+    try {
+        const result = await login(loginEmail, loginPassword);
+        
+        if (result.success) {
+            redirectUser();
+        } else {
+            setLoginError(result.message || "Correo o contraseña incorrectos.");
+        }
+    } catch (error) {
+        console.error("Error inesperado en login:", error);
+        setLoginError("Ocurrió un error inesperado. Intenta de nuevo.");
+    } finally {
+        // Importante: Si redirigimos, el componente se desmonta y esto no afecta.
+        // Si NO redirigimos (error), esto apaga el spinner.
+        setLoading(false);
     }
-    setLoading(false);
   };
 
   return (

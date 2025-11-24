@@ -1,29 +1,26 @@
-// En: src/App.jsx (Actualizado con Toast Global)
-
-import React, { useEffect } from 'react'; // Importamos useEffect
+import React, { useEffect } from 'react'; 
 import { Outlet } from 'react-router-dom';
 import AppNavbar from './components/AppNavbar.jsx';
 import AppFooter from './components/AppFooter.jsx';
-// 1. Importamos el hook useCart y el CSS del toast
+// Importamos el hook useCart y el CSS del toast
 import { useCart } from './hooks/useCart.jsx';
 import './styles/toast.css';
-// 2. Importamos un ícono para el toast
+// Importamos un ícono para el toast (asegúrate de tener react-icons instalado: npm install react-icons)
+// Si no tienes react-icons, puedes quitar el ícono o usar un emoji ✅
 import { FaCheckCircle } from 'react-icons/fa';
 
-// --- Componente Toast (definido aquí mismo para simpleza) ---
+// --- Componente Toast Interno ---
 const AddToCartToast = ({ message, onEnd }) => {
   useEffect(() => {
-    // 3. Temporizador para ocultar el toast.
-    // 3000ms = 3 segundos (coincide con la animación CSS)
+    // Temporizador para ocultar el toast a los 3 segundos
     const timer = setTimeout(() => {
-      onEnd(); // Llama a clearToast()
+      onEnd(); // Llama a clearToast() del contexto
     }, 3000);
 
-    // Limpiamos el temporizador si el componente se desmonta
     return () => clearTimeout(timer);
-  }, [message, onEnd]); // Dependencias: se reinicia si el mensaje cambia
+  }, [message, onEnd]);
 
-  if (!message) return null; // No renderizar si no hay mensaje
+  if (!message) return null;
 
   return (
     <div className="toast-notification">
@@ -33,30 +30,26 @@ const AddToCartToast = ({ message, onEnd }) => {
   );
 };
 
-
 function App() {
-  // 4. Obtenemos el estado del toast desde el contexto
-  const { toastMessage, clearToast } = useCart() || {}; // Añadimos fallback por si acaso
+  // Obtenemos el estado del toast desde el contexto
+  // El fallback || {} evita errores si el contexto aún no carga
+  const { toastMessage, clearToast } = useCart() || {}; 
 
   return (
     <>
       <AppNavbar />
 
-      <main className="py-3">
-        {/* El Outlet renderiza la página actual (Home, Productos, etc.) */}
+      <main className="py-3" style={{ minHeight: '80vh' }}>
+        {/* El Outlet renderiza la página hija correspondiente a la ruta actual */}
         <Outlet />
       </main>
 
       <AppFooter />
 
-      {/* --- 5. RENDERIZAMOS EL TOAST GLOBAL --- */}
-      {/* Usamos una 'key' que cambia (Date.now()) para forzar 
-        que el componente se remonte y la animación se reinicie
-        cada vez que 'toastMessage' cambia.
-      */}
+      {/* --- RENDERIZADO DEL TOAST GLOBAL --- */}
       {toastMessage && (
          <AddToCartToast 
-            key={Date.now()} 
+            key={Date.now()} // Fuerza reinicio de animación al cambiar mensaje
             message={toastMessage} 
             onEnd={clearToast} 
          />

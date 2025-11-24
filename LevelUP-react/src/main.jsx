@@ -1,31 +1,16 @@
-
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
-// --- ESTILOS ---
-// Importamos todos los CSS necesarios. Asegúrate de que estos archivos existan en src/styles/
+// --- ESTILOS GLOBALES ---
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './index.css'; 
+// Importa tus estilos personalizados aquí si es necesario, pero asegúrate que existan
+// Si alguno da error 404, coméntalo temporalmente
 import './styles/main.css';
-import './styles/productos.css';
-import './styles/detalle-producto.css';
-import './styles/nosotros.css';
-import './styles/contacto.css';
-import './styles/blog.css';
-import './styles/login.css';
-import './styles/carrito.css';
-import './styles/admin-login.css'; 
-import './styles/homeAdmin.css'; 
-import './styles/crearProducto.css';
-import './styles/gestionDestacados.css'; 
-import './styles/verProductosAdmin.css'; 
 import './styles/toast.css';
-// CSS para el checkout (asegúrate que existan)
-import './styles/checkout.css'; 
-import './styles/pago-resultado.css'; 
-import './index.css'; // Estilos base de Vite
 
-// --- CONTEXTO ---
+// --- CONTEXTOS ---
 import { CartProvider } from './context/CartProvider.jsx';
 import { AuthProvider } from './context/AuthProvider.jsx';
 
@@ -33,7 +18,7 @@ import { AuthProvider } from './context/AuthProvider.jsx';
 import App from './App.jsx';
 import RutaProtegida from './components/RutaProtegida.jsx';
 
-// --- PÁGINAS ---
+// --- PÁGINAS (Asegúrate que los nombres de archivo coincidan EXACTAMENTE) ---
 import Home from './pages/Home.jsx';
 import Productos from './pages/Productos.jsx';
 import DetalleProducto from './pages/DetalleProducto.jsx';
@@ -44,7 +29,11 @@ import DetalleBlog from './pages/DetalleBlog.jsx';
 import Login from './pages/Login.jsx';
 import Perfil from './pages/Perfil.jsx';
 import Carrito from './pages/Carrito.jsx';
-// --- PÁGINAS ADMIN ---
+import Checkout from './pages/Checkout.jsx';
+import PagoExitoso from './pages/PagoExitoso.jsx';
+import PagoError from './pages/PagoError.jsx';
+
+// Admin Pages
 import AdminLogin from './pages/AdminLogin.jsx';
 import HomeAdmin from './pages/HomeAdmin.jsx';
 import CrearProducto from './pages/CrearProducto.jsx';
@@ -56,66 +45,58 @@ import GestionCategorias from './pages/GestionCategorias.jsx';
 import GestionUsuarios from './pages/GestionUsuarios.jsx';
 import EditarUsuario from './pages/EditarUsuario.jsx';
 import GestionOrdenes from './pages/GestionOrdenes.jsx';
-// --- PÁGINAS CHECKOUT ---
-import Checkout from './pages/Checkout.jsx';         
-import PagoExitoso from './pages/PagoExitoso.jsx'; 
-import PagoError from './pages/PagoError.jsx';     
 
-// --- CONFIGURACIÓN DEL ROUTER ---
 const router = createBrowserRouter([
   {
-    path: '/', 
-    element: <App />,
-    children: [ 
-      // --- Rutas Públicas ---
-      { path: '/', element: <Home /> }, 
-      { path: '/productos', element: <Productos /> }, 
-      { path: '/producto/:codigo', element: <DetalleProducto /> }, 
-      { path: '/nosotros', element: <Nosotros /> }, 
-      { path: '/contacto', element: <Contacto /> }, 
-      { path: '/blog', element: <Blog /> }, 
-      { path: '/blog/:slug', element: <DetalleBlog /> }, 
-      { path: '/login', element: <Login /> }, 
-      { path: '/carrito', element: <Carrito /> }, 
-      { path: '/admin-login', element: <AdminLogin /> }, 
+    path: '/',
+    element: <App />, // App es el layout padre
+    errorElement: <div className="text-center mt-5"><h1>404 - Página no encontrada</h1><a href="/">Volver al inicio</a></div>,
+    children: [
+      // Rutas Públicas
+      { index: true, element: <Home /> }, // index: true es lo mismo que path: '/'
+      { path: 'productos', element: <Productos /> },
+      { path: 'producto/:codigo', element: <DetalleProducto /> },
+      { path: 'nosotros', element: <Nosotros /> },
+      { path: 'contacto', element: <Contacto /> },
+      { path: 'blog', element: <Blog /> },
+      { path: 'blog/:slug', element: <DetalleBlog /> },
+      { path: 'login', element: <Login /> },
+      { path: 'carrito', element: <Carrito /> },
+      { path: 'admin-login', element: <AdminLogin /> },
 
-      // --- Rutas de Cliente Protegidas ---
-      {
-        path: '/perfil',
-        element: ( <RutaProtegida> <Perfil /> </RutaProtegida> )
-      },
-
-      // --- Rutas de Admin Protegidas ---
-      { path: '/admin/home', element: ( <RutaProtegida requireAdmin={true}> <HomeAdmin /> </RutaProtegida> ) },
-      { path: '/admin/crear-producto', element: ( <RutaProtegida requireAdmin={true}> <CrearProducto /> </RutaProtegida> ) },
-      { path: '/admin/ver-productos', element: ( <RutaProtegida requireAdmin={true}> <VerProductosAdmin /> </RutaProtegida> ) },
-      { path: '/admin/editar-producto/:codigo', element: ( <RutaProtegida requireAdmin={true}> <EditarProducto /> </RutaProtegida> ) },
-      { path: '/admin/gestionar-destacados', element: ( <RutaProtegida requireAdmin={true}> <GestionDestacados /> </RutaProtegida> ) },
-      { path: '/admin/productos-criticos', element: ( <RutaProtegida requireAdmin={true}> <ProductosCriticos /> </RutaProtegida> ) },
-      { path: '/admin/gestionar-categorias', element: ( <RutaProtegida requireAdmin={true}> <GestionCategorias /> </RutaProtegida> ) },
-      { path: '/admin/gestionar-usuarios', element: ( <RutaProtegida requireAdmin={true}> <GestionUsuarios /> </RutaProtegida> ) },
-      { path: '/admin/editar-usuario/:email', element: ( <RutaProtegida requireAdmin={true}> <EditarUsuario /> </RutaProtegida> ) },
-      { path: '/admin/gestionar-ordenes', element: ( <RutaProtegida requireAdmin={true}> <GestionOrdenes /> </RutaProtegida> ) },
-
-      // --- RUTAS DE CHECKOUT (REEMPLAZANDO EL PLACEHOLDER) ---
+      // Rutas Protegidas (Cliente)
       { 
-        path: '/checkout', 
-        // Protegemos el checkout (el usuario debe estar logueado)
-        element: ( <RutaProtegida> <Checkout /> </RutaProtegida> ) 
+        path: 'perfil', 
+        element: <RutaProtegida><Perfil /></RutaProtegida> 
       },
       { 
-        path: '/pago-exitoso/:ordenId', // Ruta dinámica para mostrar ID
-        element: ( <RutaProtegida> <PagoExitoso /> </RutaProtegida> ) 
+        path: 'checkout', 
+        element: <RutaProtegida><Checkout /></RutaProtegida> 
       },
       { 
-        path: '/pago-error', 
-        element: ( <RutaProtegida> <PagoError /> </RutaProtegida> ) 
+        path: 'pago-exitoso/:ordenId', 
+        element: <RutaProtegida><PagoExitoso /></RutaProtegida> 
       },
-    ],
-  },
+      { 
+        path: 'pago-error', 
+        element: <RutaProtegida><PagoError /></RutaProtegida> 
+      },
+
+      // Rutas Protegidas (Admin)
+      { path: 'admin/home', element: <RutaProtegida requireAdmin={true}><HomeAdmin /></RutaProtegida> },
+      { path: 'admin/crear-producto', element: <RutaProtegida requireAdmin={true}><CrearProducto /></RutaProtegida> },
+      { path: 'admin/ver-productos', element: <RutaProtegida requireAdmin={true}><VerProductosAdmin /></RutaProtegida> },
+      { path: 'admin/editar-producto/:codigo', element: <RutaProtegida requireAdmin={true}><EditarProducto /></RutaProtegida> },
+      { path: 'admin/gestionar-destacados', element: <RutaProtegida requireAdmin={true}><GestionDestacados /></RutaProtegida> },
+      { path: 'admin/productos-criticos', element: <RutaProtegida requireAdmin={true}><ProductosCriticos /></RutaProtegida> },
+      { path: 'admin/gestionar-categorias', element: <RutaProtegida requireAdmin={true}><GestionCategorias /></RutaProtegida> },
+      { path: 'admin/gestionar-usuarios', element: <RutaProtegida requireAdmin={true}><GestionUsuarios /></RutaProtegida> },
+      { path: 'admin/editar-usuario/:email', element: <RutaProtegida requireAdmin={true}><EditarUsuario /></RutaProtegida> },
+      { path: 'admin/gestionar-ordenes', element: <RutaProtegida requireAdmin={true}><GestionOrdenes /></RutaProtegida> },
+    ]
+  }
 ]);
 
-// --- RENDERIZADO DE LA APLICACIÓN ---
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <AuthProvider>
