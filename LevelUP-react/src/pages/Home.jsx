@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import client from '../api/axiosClient'; // Conexión API
+import client from '../api/axiosClient';
 import ProductCard from '../components/ProductCard.jsx';
 import { useCart } from '../hooks/useCart.jsx';
 import { useGoBackOnEsc } from '../hooks/useGoBackOnEsc';
@@ -8,31 +8,23 @@ import { useGoBackOnEsc } from '../hooks/useGoBackOnEsc';
 const Home = () => {
   const [productosDestacados, setProductosDestacados] = useState([]);
   const { agregarAlCarrito } = useCart();
-  
   useGoBackOnEsc();
 
   useEffect(() => {
     const fetchDestacados = async () => {
       try {
         const response = await client.get('/productos');
-        // Tomamos los primeros 8 productos del backend
-        const destacados = response.data.slice(0, 8);
-        setProductosDestacados(destacados);
+        // Tomamos los primeros 8 como destacados
+        setProductosDestacados(response.data.slice(0, 8));
       } catch(error) {
-        console.error("Home.jsx - Error al cargar productos:", error);
-        setProductosDestacados([]); 
+        console.error("Home.jsx - Error:", error);
       }
     };
     fetchDestacados();
   }, []); 
 
-  const handleAgregarAlCarrito = (producto) => {
-    agregarAlCarrito(producto);
-  };
-
   return (
     <> 
-      {/* --- Banner --- */}
       <section className="banner">
         <img src="/banner.png" alt="Promoción Gamer" />
         <div className="banner-text">
@@ -42,8 +34,8 @@ const Home = () => {
         </div>
       </section>
 
-      {/* --- Sección de categorías --- */}
       <section className="categorias">
+         {/* Asegúrate que estos nombres coincidan con lo que cargaste en la BD */}
          <div className="categoria">
           <img src="/catan.png" alt="Juegos de Mesa" />
           <h3>Juegos de Mesa</h3>
@@ -71,25 +63,22 @@ const Home = () => {
         </div>
       </section>
 
-      {/* --- Productos destacados --- */}
       <section className="productos">
         <h2 className="titulo-seccion">PRODUCTOS DESTACADOS</h2>
         <div className="grid-productos">
-          
-          {productosDestacados && productosDestacados.length > 0 ? (
+          {productosDestacados.length > 0 ? (
             productosDestacados.map((prod) => (
               <ProductCard 
                 key={prod.codigo || prod.id} 
                 producto={prod} 
-                onAgregarAlCarrito={handleAgregarAlCarrito}
+                onAgregarAlCarrito={(p) => agregarAlCarrito(p)}
               />
             ))
           ) : (
-            <p style={{ color: 'yellow', gridColumn: '1 / -1', textAlign: 'center' }}>
-              Cargando destacados...
+            <p style={{ color: 'gray', gridColumn: '1 / -1', textAlign: 'center' }}>
+              Cargando productos...
             </p> 
           )}
-
         </div>
       </section>
     </> 

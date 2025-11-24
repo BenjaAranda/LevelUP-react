@@ -1,58 +1,56 @@
-// En: src/components/ProductCard.jsx (Con Safeguard)
-
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useCart } from '../hooks/useCart.jsx'; 
+import { Button } from 'react-bootstrap'; 
 
 const ProductCard = ({ producto, onAgregarAlCarrito }) => {
-  // 1. OBTENEMOS EL CONTEXTO COMPLETO PRIMERO (PARA DEBUG)
-  const cartContext = useCart(); 
-  console.log("ProductCard - Contexto Recibido:", cartContext); // Log para ver qué llega
+  // Protección contra nulos
+  if (!producto) return null;
 
-  // 2. EXTRAEMOS carritoItems CON UN VALOR POR DEFECTO (ARRAY VACÍO)
-  const carritoItems = cartContext?.carritoItems || []; 
-  console.log("ProductCard - carritoItems a usar:", carritoItems); // Log para ver el array
-
-  // Verificamos si los datos esenciales del producto existen
-  if (!producto || !producto.codigo || !producto.nombre || producto.precio === undefined || producto.stock === undefined) {
-     console.error("ProductCard.jsx - Datos incompletos para:", producto);
-     return <div className="producto" style={{borderColor: 'red', color: 'red', textAlign:'center'}}>Datos<br/>Inválidos</div>;
-  }
-  
-  const imageUrl = producto.img || producto.imagen || '/placeholder.png'; 
-  const stockDisponible = producto.stock > 0;
-
-  // 3. AHORA .find() ES SEGURO PORQUE carritoItems ES UN ARRAY
-  const itemEnCarrito = carritoItems.find(item => item.codigo === producto.codigo); 
-  const cantidadEnCarrito = itemEnCarrito ? itemEnCarrito.unidades : 0;
-  const puedeAgregar = stockDisponible && cantidadEnCarrito < producto.stock;
+  const nombreCategoria = producto.categoria?.nombre || producto.categoria || 'Sin Categoría';
+  const imagenSrc = producto.img || producto.imagen || 'https://placehold.co/400x300?text=Sin+Imagen';
 
   return (
-    <div className={`producto ${!stockDisponible ? 'agotado' : ''}`}> 
-      <Link to={`/producto/${producto.codigo}`}>
-        <img src={imageUrl} alt={producto.nombre} />
+    // Agregamos 'bg-dark' y 'text-white' para base oscura, pero nuestro CSS lo refinará
+    <div className="card h-100 product-card-gamer bg-dark text-white border-0">
+      {/* Imagen con enlace */}
+      <Link to={`/producto/${producto.codigo}`} className="img-container">
+        <img 
+          src={imagenSrc} 
+          className="card-img-top p-3" 
+          alt={producto.nombre} 
+        />
       </Link>
-      
-      <h3>{producto.nombre}</h3>
-      <p><strong>Categoría:</strong> {producto.categoria || 'N/A'}</p> 
-      <p className="precio">${producto.precio.toLocaleString("es-CL")} CLP</p>
-      
-      <p className="stock-info">
-        {stockDisponible ? `Stock: ${producto.stock}` : <span className="text-danger fw-bold">AGOTADO</span>}
-      </p>
 
-      <button 
-        className="btn-carrito" 
-        onClick={() => onAgregarAlCarrito(producto)}
-        disabled={!puedeAgregar} 
-        title={!puedeAgregar ? (stockDisponible ? 'Ya tienes el máximo en tu carrito' : 'Producto Agotado') : 'Agregar al carrito'}
-      >
-        {puedeAgregar ? 'Agregar al carrito' : (stockDisponible ? 'Máx. en carrito' : 'Agotado')}
-      </button>
-      
-      <Link to={`/producto/${producto.codigo}`} className="btn-detalle">
-        Ver detalle
-      </Link>
+      <div className="card-body d-flex flex-column">
+        {/* Categoría */}
+        <div className="mb-2">
+            {/* Badge oscuro con borde neón */}
+            <span className="badge bg-black text-light border border-secondary">{nombreCategoria}</span>
+        </div>
+
+        {/* Título */}
+        <h5 className="card-title text-truncate">
+            <Link to={`/producto/${producto.codigo}`} className="text-decoration-none text-white fw-bold link-hover-effect">
+                {producto.nombre}
+            </Link>
+        </h5>
+
+        {/* Precio */}
+        <p className="card-text fw-bold fs-4 text-info mt-auto neon-text">
+          ${(producto.precio || 0).toLocaleString('es-CL')}
+        </p>
+
+        {/* Botón Agregar */}
+        <div className="d-grid mt-3">
+            <Button 
+                className="btn-gamer" // Usamos nuestra clase personalizada
+                onClick={() => onAgregarAlCarrito(producto)}
+                disabled={producto.stock <= 0}
+            >
+                {producto.stock > 0 ? 'Añadir al Carrito' : 'Agotado'}
+            </Button>
+        </div>
+      </div>
     </div>
   );
 };

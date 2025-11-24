@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import client from '../api/axiosClient'; // Conexión API
+import client from '../api/axiosClient'; 
 import { useCart } from '../hooks/useCart.jsx';
 import { useGoBackOnEsc } from '../hooks/useGoBackOnEsc';
 import ProductCard from '../components/ProductCard.jsx'; 
@@ -9,42 +9,37 @@ import '../styles/productos.css';
 const Productos = () => {
   const [searchParams] = useSearchParams();
   const { agregarAlCarrito } = useCart();
-  
   useGoBackOnEsc();
 
-  // Estados
   const [orden, setOrden] = useState('default');
   const [categoria, setCategoria] = useState(searchParams.get('categoria') || 'todas');
   const [precioMin, setPrecioMin] = useState(0);
   const [precioMax, setPrecioMax] = useState(2000000);
   const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '');
   
-  // Estados para datos
-  const [allProductos, setAllProductos] = useState([]); // Todos los productos del backend
-  const [productosMostrados, setProductosMostrados] = useState([]); // Filtrados
+  const [allProductos, setAllProductos] = useState([]); 
+  const [productosMostrados, setProductosMostrados] = useState([]); 
   const [categorias, setCategorias] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // 1. Cargar productos desde el Backend
   useEffect(() => {
     const fetchProductos = async () => {
       try {
         const response = await client.get('/productos');
         setAllProductos(response.data);
         
-        // Extraer categorías únicas de la respuesta
-        const cats = [...new Set(response.data.map(p => p.categoria))].sort();
+        // CORRECCIÓN: Mapeamos p.categoria.nombre porque categoria es un objeto
+        const cats = [...new Set(response.data.map(p => p.categoria?.nombre || 'Sin Categoría'))].sort();
         setCategorias(cats);
-        setLoading(false);
       } catch (error) {
         console.error("Error cargando productos:", error);
+      } finally {
         setLoading(false);
       }
     };
     fetchProductos();
   }, []);
 
-  // 2. Filtrado Local (Se ejecuta cuando cambian los filtros o la data)
   useEffect(() => {
     let lista = [...allProductos]; 
     
@@ -54,9 +49,10 @@ const Productos = () => {
       );
     }
     if (categoria && categoria !== "todas") {
-      lista = lista.filter(p => p.categoria === categoria);
+      // CORRECCIÓN: Comparamos con p.categoria.nombre
+      lista = lista.filter(p => (p.categoria?.nombre || 'Sin Categoría') === categoria);
     }
-    // Aseguramos que precio sea número
+    
     lista = lista.filter(p => (p.precio || 0) >= precioMin && (p.precio || 0) <= precioMax);
 
     switch (orden) {
@@ -75,7 +71,7 @@ const Productos = () => {
   };
 
   if (loading) {
-    return <div className="text-center mt-5"><h3>Cargando catálogo...</h3></div>;
+    return <div className="text-center mt-5 text-white"><h3>Cargando catálogo...</h3></div>;
   }
 
   return (
@@ -105,7 +101,6 @@ const Productos = () => {
               <option key={cat} value={cat}>{cat}</option>
             ))}
           </select>
-
 
           <label htmlFor="precioMin">Precio mínimo</label>
           <input type="number" id="precioMin" value={precioMin} onChange={(e) => setPrecioMin(e.target.valueAsNumber || 0)} />
