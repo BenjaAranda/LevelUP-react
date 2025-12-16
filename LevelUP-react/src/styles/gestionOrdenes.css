@@ -1,0 +1,87 @@
+/* src/styles/gestionOrdenes.css */
+
+body {
+    background-color: #0d0d0d; /* Fondo casi negro */
+}
+
+.gestion-ordenes-container {
+    padding-top: 2rem;
+}
+
+/* --- TARJETA PRINCIPAL --- */
+.card-custom {
+    background-color: #111; /* Fondo oscuro para la card */
+    border: 2px solid #8a2be2; /* Borde Morado */
+    box-shadow: 0 0 15px rgba(138, 43, 226, 0.5); /* Resplandor morado */
+    border-radius: 10px;
+    color: #fff;
+}
+
+.card-custom .card-header {
+    background-color: transparent;
+    border-bottom: 1px solid #333;
+    text-align: center;
+    padding: 1.5rem;
+}
+
+/* Título con estilo "USUARIOS" de tu imagen */
+.titulo-neon {
+    font-family: 'Arial Black', sans-serif; /* O la fuente que uses */
+    font-size: 2rem;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.highlight-green {
+    color: #00ff41; /* Verde Hacker/Matrix */
+    text-shadow: 0 0 10px rgba(0, 255, 65, 0.7);
+}
+
+/* --- TABLA --- */
+.table-dark-custom {
+    background-color: #1a1a1a;
+    color: #e0e0e0;
+    border-color: #444;
+}
+
+.table-dark-custom thead {
+    background-color: #2a0e36; /* Un morado muy oscuro para el header */
+    color: #00ff41; /* Texto verde en cabecera */
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    border-bottom: 2px solid #8a2be2;
+}
+
+.table-dark-custom tbody tr:hover {
+    background-color: #222; /* Hover sutil */
+    box-shadow: inset 0 0 10px rgba(138, 43, 226, 0.1);
+}
+
+.table-dark-custom td, .table-dark-custom th {
+    vertical-align: middle;
+    border-color: #333;
+}
+
+/* --- TEXTOS Y ESTADOS --- */
+.text-email {
+    color: #aaa;
+    font-style: italic;
+}
+
+.precio-total {
+    color: #00ff41;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+/* Botón de volver */
+.btn-back {
+    border-color: #666;
+    color: #ccc;
+}
+.btn-back:hover {
+    background-color: #333;
+    color: #fff;
+    border-color: #fff;
+}
