@@ -1,146 +1,173 @@
-/* En: src/styles/homeAdmin.css (Versión Limpia Desde Cero) */
+/* src/styles/homeAdmin.css */
 
-/* Contenedor Principal */
-/* Usa esta clase en el <Container> de HomeAdmin.jsx */
+/* --- VARIABLES --- */
+:root {
+  --neon-purple: #8000ff;
+  --neon-green: #39ff14;
+  --bg-dark: #050505;
+  --panel-bg: #121212;
+  --text-white: #ffffff;
+}
+
+/* --- CONTENEDOR PRINCIPAL --- */
 .admin-home-container {
-  padding-top: 40px;    /* Espacio superior */
-  padding-bottom: 40px; /* Espacio inferior */
+  padding: 40px 20px;
+  background-color: var(--bg-dark);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* Alineación superior */
 }
 
-/* Tarjeta Principal */
-.admin-home-container .card {
-  background-color: #1a1a1a;        /* Fondo oscuro para la tarjeta */
-  color: #fff;                     /* Texto blanco por defecto */
-  border: 1px solid #8000ff;         /* Borde morado */
-  border-radius: 12px;             /* Bordes redondeados */
-  box-shadow: 0 5px 25px rgba(128, 0, 255, 0.3); /* Sombra morada */
-  overflow: hidden;                /* Asegura que el header respete el redondeo */
+/* --- MARCO TIPO PANEL DE NAVE GAMER --- */
+.admin-panel-frame {
+  width: 100%;
+  max-width: 1200px;
+  border: 1px solid #333;
+  padding: 20px;
+  border-radius: 15px;
+  background: radial-gradient(circle at top, #1a0b2e 0%, #000000 100%);
+  box-shadow: 0 0 20px rgba(128, 0, 255, 0.1);
 }
 
-/* Cabecera de la Tarjeta */
-.admin-home-container .card-header {
-  background-color: #8000ff;        /* Fondo morado */
-  color: #fff;                     /* Texto blanco */
-  font-size: 1.6rem;               /* Tamaño del título */
-  font-weight: bold;               /* Negrita */
-  text-align: center;              /* Centrado */
-  padding: 15px;                   /* Espaciado interno */
-  border-bottom: 3px solid #39ff14; /* Línea verde neón abajo */
+/* --- CABECERA --- */
+.admin-header {
+  text-align: center;
+  margin-bottom: 40px;
+  border-bottom: 2px solid var(--neon-purple);
+  padding-bottom: 20px;
+  position: relative;
 }
 
-/* Cuerpo de la Tarjeta */
-.admin-home-container .card-body {
-  padding: 30px;                   /* Espaciado interno generoso */
+/* Efecto de linea brillante bajo el header */
+.admin-header::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50%;
+  height: 2px;
+  background-color: var(--neon-green);
+  box-shadow: 0 0 10px var(--neon-green);
 }
 
-/* Título de Bienvenida */
-.admin-home-container .card-title {
-  color: #39ff14;                 /* Verde neón */
-  font-weight: bold;               /* Negrita */
-  font-size: 1.4rem;               /* Tamaño */
-  margin-bottom: 10px;             /* Espacio abajo */
+.neon-text-purple {
+  font-family: 'Orbitron', sans-serif; /* Si tienes fuente gamer, si no usará sans */
+  font-size: 2.5rem;
+  color: #fff;
+  text-transform: uppercase;
+  text-shadow: 0 0 5px var(--neon-purple), 0 0 10px var(--neon-purple);
+  margin-bottom: 10px;
 }
 
-/* Texto Introductorio */
-.admin-home-container .card-text {
-  color: #d3d3d3;                 /* Gris claro */
-  font-size: 1.1rem;               /* Tamaño */
-  margin-bottom: 30px;             /* Espacio antes de los botones */
+.admin-welcome {
+  font-size: 1.2rem;
+  color: #ccc;
 }
 
-/* Contenedor de Botones */
-.admin-actions {
-  display: flex;                   /* Botones en línea */
-  flex-wrap: wrap;                 /* Se envuelven si no caben */
-  gap: 20px;                     /* Espacio entre botones */
-  justify-content: center;         /* Centra los botones */
-  margin-top: 20px;                /* Espacio arriba */
+.neon-text-green {
+  color: var(--neon-green);
+  font-weight: bold;
+  text-shadow: 0 0 5px rgba(57, 255, 20, 0.5);
 }
 
-/* Estilo Base para los Botones (dentro de Link) */
-/* Aplicado al elemento 'a' que contiene el botón */
-.admin-actions a {
-  display: block;                  /* Ocupa espacio */
-  text-decoration: none;           /* Sin subrayado */
-  flex-grow: 1;                    /* Ocupa espacio disponible */
-  min-width: 220px;                /* Ancho mínimo */
-  /* --- REGLA CLAVE ANTI-OUTLINE --- */
-  outline: none !important;        /* Quita outline del enlace */
-  box-shadow: none !important;     /* Quita sombra del enlace */
+/* --- SECCIONES (COLUMNAS) --- */
+.admin-section-card {
+  background-color: rgba(255, 255, 255, 0.03); /* Fondo semi transparente */
+  border: 1px solid var(--neon-purple);
+  border-radius: 10px;
+  padding: 20px;
+  height: 100%;
+  position: relative;
+  transition: box-shadow 0.3s ease;
 }
 
-/* Estilo específico para el botón Bootstrap dentro del Link */
-.admin-actions a > .btn {
-  width: 100%;                     /* Botón ocupa todo el ancho del 'a' */
-  padding: 12px 20px;              /* Padding generoso */
-  font-size: 1rem;                 /* Tamaño de letra */
-  font-weight: bold;               /* Negrita */
-  border-radius: 8px;              /* Bordes redondeados */
-  transition: transform 0.2s ease-out, background-color 0.3s, color 0.3s, border-color 0.3s; /* Transiciones suaves */
-  /* --- REGLA CLAVE ANTI-OUTLINE --- */
-  outline: none !important;        /* Quita outline del botón */
-  box-shadow: none !important;     /* Quita sombra del botón */
-  -webkit-tap-highlight-color: transparent; /* Quita brillo en móvil */
+.admin-section-card:hover {
+  box-shadow: 0 0 15px rgba(128, 0, 255, 0.2);
 }
 
-.admin-actions a > .btn:hover {
-  transform: translateY(-3px);     /* Efecto levantar al pasar mouse */
-  /* La sombra en hover sí la queremos */
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3) !important; 
+/* Títulos de las secciones (Productos / Varios) */
+.section-title {
+  color: var(--neon-green); /* Verde segun dibujo (numero 2) */
+  font-size: 1.8rem;
+  margin-bottom: 25px;
+  border-left: 5px solid var(--neon-purple);
+  padding-left: 15px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
 }
 
-/* --- REGLAS DEFINITIVAS ANTI-OUTLINE PARA TODOS LOS ESTADOS --- */
-/* Se aplica a los enlaces y botones en estado de foco o activo */
-.admin-actions a:focus,
-.admin-actions a:focus-visible,
-.admin-actions a:active,
-.admin-actions a > .btn:focus,
-.admin-actions a > .btn:focus-visible,
-.admin-actions a > .btn:active {
-  outline: none !important;
-  box-shadow: none !important;
-  /* Forzamos a mantener el color de borde original para evitar cambios */
-  border-color: inherit !important; 
+/* --- LISTA DE BOTONES --- */
+.button-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
-/* Forzamos colores específicos en foco para evitar cambios visuales no deseados */
-.admin-actions a > .btn-primary:focus, .admin-actions a > .btn-primary:active { background-color: #8000ff !important; border-color: #8000ff !important; color: #fff !important; }
-.admin-actions a > .btn-secondary:focus, .admin-actions a > .btn-secondary:active { background-color: #333 !important; border-color: #555 !important; color: #eee !important; }
-.admin-actions a > .btn-info:focus, .admin-actions a > .btn-info:active { background-color: #0dcaf0 !important; border-color: #0dcaf0 !important; color: #111 !important; }
-.admin-actions a > .btn-danger:focus, .admin-actions a > .btn-danger:active { background-color: #dc3545 !important; border-color: #dc3545 !important; color: #fff !important; }
-/* --- FIN REGLAS ANTI-OUTLINE --- */
 
+/* Enlaces (Contenedores de botones) */
+.gamer-link {
+  text-decoration: none;
+  display: block;
+}
 
-/* Colores específicos para cada botón */
-.admin-actions a > .btn-primary { background-color: #8000ff; border-color: #8000ff; color: #fff; }
-.admin-actions a > .btn-primary:hover { background-color: #39ff14; border-color: #39ff14; color: #111; }
+/* --- BOTÓN  --- */
+.btn-gamer {
+  width: 100%;
+  padding: 15px 20px;
+  background-color: transparent;
+  border: 2px solid var(--neon-purple); /* Borde morado por defecto */
+  color: white;
+  font-size: 1.1rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  border-radius: 5px; /* Bordes ligeramente redondeados */
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* Alinea texto a la izquierda como lista */
+}
 
-.admin-actions a > .btn-secondary { background-color: #333; border-color: #555; color: #eee; }
-.admin-actions a > .btn-secondary:hover { background-color: #444; border-color: #666; color: #fff; }
+.btn-gamer .icon-left {
+  margin-right: 15px;
+  font-size: 1.3rem;
+  color: #b360e3;
+  transition: color 0.3s;
+}
 
-.admin-actions a > .btn-info { background-color: #0dcaf0; border-color: #0dcaf0; color: #111; }
-.admin-actions a > .btn-info:hover { background-color: #39ff14; border-color: #39ff14; color: #111; }
+/* --- EFECTOS HOVER (MAGIA NEÓN) --- */
+.btn-gamer:hover {
+  transform: scale(1.03) translateX(5px); /* Crece un poco y se mueve a la derecha */
+  border-color: var(--neon-green);        /* El borde se vuelve verde */
+  box-shadow: 0 0 15px var(--neon-green), inset 0 0 10px rgba(57, 255, 20, 0.2); /* Brillo externo e interno */
+  background-color: rgba(57, 255, 20, 0.05); /* Fondo verde muy sutil */
+  color: var(--neon-green);
+}
 
-.admin-actions a > .btn-danger { background-color: #dc3545; border-color: #dc3545; color: #fff; }
-.admin-actions a > .btn-danger:hover { background-color: #bb2d3b; border-color: #b02a37; color: #fff; }
+.btn-gamer:hover .icon-left {
+  color: var(--neon-green); /* Icono cambia a verde */
+}
 
-/* Responsividad */
+/* --- ELIMINAR OUTLINES MOLESTOS AL HACER CLICK --- */
+.gamer-link:focus, .btn-gamer:focus, .btn-gamer:active {
+  outline: none;
+}
+
+/* --- RESPONSIVE --- */
 @media (max-width: 768px) {
-  .admin-actions {
-    flex-direction: column; /* Apila botones */
-    gap: 15px;           /* Espacio entre botones apilados */
-    align-items: center;   /* Centra los botones */
+  .admin-header h1 {
+    font-size: 1.8rem;
   }
-  .admin-actions a {
-    width: 90%;          /* Ancho del Link */
-    max-width: 350px;    /* Ancho máximo */
-    min-width: unset;      /* Quita ancho mínimo del Link */
+  
+  .btn-gamer {
+    font-size: 1rem;
+    padding: 12px;
   }
-   .admin-actions a > .btn {
-     min-width: unset;     /* Quita ancho mínimo del Botón */
-     width: 100%;          /* Botón ocupa todo el Link */
-   }
-
-  .admin-home-container .card-header {
-    font-size: 1.5rem;   /* Título más pequeño */
+  
+  .admin-panel-frame {
+    padding: 10px;
   }
 }
