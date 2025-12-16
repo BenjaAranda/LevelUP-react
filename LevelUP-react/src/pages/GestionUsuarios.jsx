@@ -1,121 +1,124 @@
-// En: src/pages/GestionUsuarios.jsx
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Container, Card, Table, Button, Alert } from 'react-bootstrap';
-import { getUsuarios, eliminarUsuarioAdmin } from '../data/usuarios.js';
-import { useAuth } from '../hooks/useAuth.jsx';
+import { Container, Table, Button, Spinner, Alert } from 'react-bootstrap';
+import { FaEdit, FaTrash, FaUserShield, FaUserTie, FaUser } from 'react-icons/fa';
+import client from '../api/axiosClient'; 
 import { useGoBackOnEsc } from '../hooks/useGoBackOnEsc';
-import '../styles/verProductosAdmin.css';
+import '../styles/gestionUsuarios.css';
 
 const GestionUsuarios = () => {
-  const [usuarios, setUsuarios] = useState([]);
-  const [mensaje, setMensaje] = useState('');
-  const [error, setError] = useState('');
-  const { usuario: adminActual } = useAuth(); // Para evitar que el admin se borre a sí mismo
-  
-  useGoBackOnEsc();
+  useGoBackOnEsc(); // Te permite volver con ESC
 
-  // Cargar usuarios al inicio
+  const [usuarios, setUsuarios] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [successMsg, setSuccessMsg] = useState('');
+
+  // 1. Cargar Usuarios al iniciar
   useEffect(() => {
-    cargarListaUsuarios();
+    cargarUsuarios();
   }, []);
 
-  const cargarListaUsuarios = () => {
-      try {
-          // Usa la función importada correctamente
-          setUsuarios(getUsuarios());
-      } catch(e) {
-          setError("Error al cargar la lista de usuarios.");
-          console.error(e);
-      }
+  const cargarUsuarios = async () => {
+    try {
+      const response = await client.get('/users');
+      setUsuarios(response.data);
+      setLoading(false);
+    } catch (err) {
+      console.error(err);
+      setError('Error al conectar con la base de datos.');
+      setLoading(false);
+    }
   };
 
-  const handleEliminar = (email, nombre) => {
-    setError('');
-    setMensaje('');
+  // 2. Eliminar Usuario
+  const handleDelete = async (id) => {
+    if (!window.confirm('¿Estás seguro de eliminar este usuario? Esta acción no se puede deshacer.')) return;
 
-    // Prevenir auto-eliminación
-    if (adminActual && email === adminActual.email) {
-        setError("No puedes eliminar tu propia cuenta de administrador.");
-        return;
+    try {
+      await client.delete(`/users/${id}`);
+      setSuccessMsg('Usuario eliminado correctamente.');
+      // Recargar lista
+      cargarUsuarios();
+      // Ocultar mensaje luego de 3 seg
+      setTimeout(() => setSuccessMsg(''), 3000);
+    } catch (err) {
+      console.error(err);
+      setError('No se pudo eliminar el usuario.');
     }
-    // Prevenir eliminar admins principales
-    if (email === "admin@levelup.com" || email === "exsairs@gmail.com") {
-        setError("No se puede eliminar a los administradores principales.");
-        return;
-    }
+  };
 
-    if (window.confirm(`¿Estás seguro de que quieres eliminar al usuario "${nombre}" (${email})?`)) {
-      try {
-        // Usa la función importada correctamente
-        const listaActualizada = eliminarUsuarioAdmin(email);
-        setUsuarios(listaActualizada);
-        setMensaje(`Usuario "${nombre}" eliminado.`);
-      } catch (err) {
-        setError(err.message || 'Error al eliminar el usuario.');
-      }
-    }
+  // Helper para icono de rol
+  const getRoleIcon = (role) => {
+    if (role === 'ADMIN') return <FaUserShield className="text-danger" title="Admin" />;
+    if (role === 'VENDEDOR') return <FaUserTie className="text-warning" title="Vendedor" />;
+    return <FaUser className="text-info" title="Cliente" />;
   };
 
   return (
-    <Container className="ver-productos-admin-container my-5"> {/* Reutiliza clase */}
-      <Card>
-        <Card.Header as="h2">Gestionar Usuarios</Card.Header>
-        <Card.Body>
-          <Link to="/admin/home">
-            <Button variant="outline-secondary" className="mb-3">← Volver al Panel</Button>
-          </Link>
+    <Container fluid className="gestion-users-container">
+      <div className="users-panel-frame">
+        <h1 className="users-title">BASE DE DATOS DE <span className="neon-green">USUARIOS</span></h1>
 
-          {mensaje && <Alert variant="success" onClose={() => setMensaje('')} dismissible>{mensaje}</Alert>}
-          {error && <Alert variant="danger" onClose={() => setError('')} dismissible>{error}</Alert>}
+        {error && <Alert variant="danger" className="gamer-alert">{error}</Alert>}
+        {successMsg && <Alert variant="success" className="gamer-alert">{successMsg}</Alert>}
 
-          <Table responsive striped bordered hover variant="dark" className="mt-3">
-            <thead>
-              <tr>
-                <th>Nombre</th>
-                <th>Email</th>
-                <th>Edad</th>
-                <th>Rol</th>
-                <th>Descuento Duoc</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {usuarios.length === 0 ? (
-                <tr><td colSpan="6" className="text-center">No hay usuarios registrados.</td></tr>
-              ) : (
-                usuarios.map(user => (
-                  <tr key={user.email}>
-                    <td>{user.nombre}</td>
-                    <td>{user.email}</td>
-                    <td>{user.edad || 'N/A'}</td>
-                    <td>{user.isAdmin ? 'Administrador' : 'Cliente'}</td>
-                    <td>{user.descuento ? 'Sí (20%)' : 'No'}</td>
-                    <td className="admin-producto-acciones">
-                       {/* Link a la página de edición */}
-                       <Link to={`/admin/editar-usuario/${encodeURIComponent(user.email)}`}>
-                           <Button variant="warning" size="sm" title="Editar">✏️</Button>
-                       </Link>
-                       {/* Botón Eliminar (deshabilitado para admins principales o uno mismo) */}
-                       <Button
-                           variant="danger"
-                           size="sm"
-                           title="Eliminar"
-                           onClick={() => handleEliminar(user.email, user.nombre)}
-                           disabled={user.email === "admin@levelup.com" || user.email === "exsairs@gmail.com" || (adminActual && user.email === adminActual.email)}
-                       >
-                           🗑️
-                       </Button>
+        {loading ? (
+          <div className="text-center py-5">
+            <Spinner animation="border" variant="info" />
+          </div>
+        ) : (
+          <div className="table-responsive gamer-table-wrapper">
+            <Table hover className="gamer-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>ROL</th>
+                  <th>NOMBRE</th>
+                  <th>EMAIL</th>
+                  <th>EDAD</th>
+                  <th>ACCIONES</th>
+                </tr>
+              </thead>
+              <tbody>
+                {usuarios.map((u) => (
+                  <tr key={u.id}>
+                    <td className="id-col">#{u.id}</td>
+                    <td className="text-center">{getRoleIcon(u.role)} <small>{u.role}</small></td>
+                    <td className="fw-bold text-white">{u.nombre}</td>
+                    <td className="text-muted">{u.email}</td>
+                    <td>{u.edad}</td>
+                    <td>
+                      <div className="action-buttons">
+                        {/* BOTÓN EDITAR: Pasa el ID en la URL */}
+                        <Link to={`/admin/editar-usuario/${u.id}`}>
+                          <Button variant="outline-success" size="sm" className="btn-action">
+                            <FaEdit />
+                          </Button>
+                        </Link>
+                        
+                        {/* BOTÓN ELIMINAR */}
+                        <Button 
+                          variant="outline-danger" 
+                          size="sm" 
+                          className="btn-action"
+                          onClick={() => handleDelete(u.id)}
+                        >
+                          <FaTrash />
+                        </Button>
+                      </div>
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </Table>
-
-        </Card.Body>
-      </Card>
+                ))}
+              </tbody>
+            </Table>
+          </div>
+        )}
+        
+        <div className="mt-4 text-center">
+            <Link to="/admin/home" className="btn-return">VOLVER AL PANEL</Link>
+        </div>
+      </div>
     </Container>
   );
 };

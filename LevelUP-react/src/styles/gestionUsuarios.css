@@ -1,0 +1,221 @@
+/* src/styles/gestionUsuarios.css */
+
+/* --- VARIABLES DE LA PALETA CYBERPUNK --- */
+:root {
+    --bg-dark: #050505;       /* Fondo casi negro */
+    --panel-bg: #111111;      /* Fondo del panel */
+    
+    /* Colores Neón */
+    --neon-purple: #8000ff;   /* Prominente */
+    --neon-green: #39ff14;    /* Resaltar */
+    --neon-red: #ff003c;      /* Borrar / Peligro */
+    --neon-cyan: #00f3ff;     /* Complementario (Editar/Info) */
+    
+    --text-white: #ffffff;
+    --text-dim: #b0b0b0;
+    --text-purple: #8000ff;
+}
+
+/* --- CONTENEDOR PRINCIPAL --- */
+.gestion-users-container {
+    background-color: var(--bg-dark);
+    background-image: 
+        radial-gradient(circle at 10% 20%, rgba(128, 0, 255, 0.05) 0%, transparent 20%),
+        radial-gradient(circle at 90% 80%, rgba(57, 255, 20, 0.05) 0%, transparent 20%);
+    min-height: 100vh;
+    padding: 40px 20px;
+    font-family: 'Orbitron', 'Roboto', sans-serif; /* Prioriza fuente gamer si existe */
+}
+
+/* --- MARCO DEL PANEL --- */
+.users-panel-frame {
+    background-color: var(--panel-bg);
+    border: 2px solid var(--neon-purple);
+    box-shadow: 
+        0 0 15px rgba(128, 0, 255, 0.2),
+        inset 0 0 20px rgba(0, 0, 0, 0.8);
+    border-radius: 12px;
+    padding: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Línea decorativa superior estilo HUD */
+.users-panel-frame::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
+    box-shadow: 0 0 10px var(--neon-cyan);
+}
+
+/* --- TÍTULO --- */
+.users-title {
+    color: var(--text-white);
+    text-align: center;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 40px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.neon-green {
+    color: var(--neon-green);
+    text-shadow: 0 0 10px rgba(57, 255, 20, 0.6);
+}
+
+/* --- TABLA GAMER --- */
+.gamer-table-wrapper {
+    border: 1px solid #333;
+    border-radius: 8px;
+    background-color: rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+}
+
+.gamer-table {
+    margin-bottom: 0;
+    color: var(--text-dim);
+    vertical-align: middle;
+}
+
+/* Cabecera (thead) */
+.gamer-table thead th {
+    background-color: rgba(128, 0, 255, 0.15); /* Fondo morado translúcido */
+    color: var(--neon-green);                  /* Texto verde neón */
+    border-bottom: 2px solid var(--neon-purple);
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    padding: 18px;
+    letter-spacing: 1px;
+    border-top: none;
+}
+
+/* Filas (tbody) */
+.gamer-table tbody tr {
+    border-bottom: 1px solid #222;
+    transition: all 0.2s ease-in-out;
+}
+
+.gamer-table tbody tr:hover {
+    background-color: rgba(0, 243, 255, 0.05); /* Brillo cian muy suave al pasar mouse */
+    box-shadow: inset 3px 0 0 var(--neon-cyan); /* Borde izquierdo brillante */
+}
+
+/* Celdas */
+.gamer-table td {
+    vertical-align: middle;
+    padding: 15px;
+    border-color: #222;
+}
+
+/* ID Column */
+.id-col {
+    font-family: 'Courier New', monospace;
+    color: var(--neon-purple);
+    font-weight: bold;
+    text-shadow: 0 0 5px rgba(128, 0, 255, 0.4);
+}
+
+/* Texto  fuerte para nombres */
+.text-white {
+    color: #482682 !important;
+    font-weight: 600;
+}
+
+/* --- BOTONES DE ACCIÓN (PERSONALIZADOS) --- */
+.action-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+/* Botón Editar (Cian - Complementario) */
+.gamer-table .btn-outline-success {
+    color: var(--neon-cyan);
+    border-color: var(--neon-cyan);
+    background: transparent;
+    transition: 0.3s;
+}
+
+.gamer-table .btn-outline-success:hover {
+    background-color: var(--neon-cyan);
+    color: #000;
+    box-shadow: 0 0 15px var(--neon-cyan);
+    transform: translateY(-2px);
+    border-color: var(--neon-cyan);
+}
+
+/* Botón Borrar (Rojo Neón) */
+.gamer-table .btn-outline-danger {
+    color: var(--neon-red);
+    border-color: var(--neon-red);
+    background: transparent;
+    transition: 0.3s;
+}
+
+.gamer-table .btn-outline-danger:hover {
+    background-color: var(--neon-red);
+    color: #fff;
+    box-shadow: 0 0 15px var(--neon-red);
+    transform: translateY(-2px) rotate(5deg); /* Efecto de "romper" leve */
+    border-color: var(--neon-red);
+}
+
+/* --- BOTÓN VOLVER --- */
+.btn-return {
+    display: inline-block;
+    margin-top: 20px;
+    color: #888;
+    text-decoration: none;
+    border: 1px solid #444;
+    padding: 12px 30px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    transition: all 0.3s;
+    background: linear-gradient(45deg, transparent 5%, #1a1a1a 5%);
+}
+
+.btn-return:hover {
+    color: var(--neon-purple);
+    border-color: var(--neon-purple);
+    box-shadow: 0 0 10px rgba(128, 0, 255, 0.4);
+    background-color: #000;
+}
+
+/* --- ALERTAS --- */
+.gamer-alert {
+    background-color: rgba(0,0,0,0.8);
+    border-left: 5px solid;
+    color: rgb(68, 120, 12);
+    font-weight: 500;
+}
+.alert-danger { border-color: var(--neon-red); color: #ffcccc; }
+.alert-success { border-color: var(--neon-green); color: #ccffcc; }
+
+/* --- SCROLLBAR PERSONALIZADO --- */
+/* Para navegadores Webkit (Chrome, Edge, Safari) */
+::-webkit-scrollbar {
+    width: 10px;
+}
+::-webkit-scrollbar-track {
+    background: #050505; 
+}
+::-webkit-scrollbar-thumb {
+    background: #333; 
+    border-radius: 5px;
+    border: 1px solid #000;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--neon-purple); 
+}

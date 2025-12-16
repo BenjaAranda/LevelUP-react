@@ -19,14 +19,23 @@ const RutaProtegida = ({ children, requireAdmin }) => {
     return <LoadingScreen />;
   }
 
-  // 2. Si terminó de cargar y no hay usuario, al Login.
+  // 2. Si terminó de cargar y no hay usuario logueado, al Login.
   if (!user) {
     return <Navigate to="/login" replace />;
   }
 
-  // 3. Si requiere admin y el usuario no lo es, al Home.
-  if (requireAdmin && (user.role !== 'ADMIN' && user.isAdmin !== true)) {
-    return <Navigate to="/" replace />;
+  // 3. Verificación de Roles para el Panel
+  if (requireAdmin) {
+    // Definimos quiénes son "Personal Autorizado" para entrar al panel
+    const esPersonalAutorizado = 
+        user.role === 'ADMIN' || 
+        user.role === 'VENDEDOR' || 
+        user.isAdmin === true; // (Compatibilidad legacy)
+
+    // Si requiere admin pero el usuario NO es ni Admin ni Vendedor -> Al Home público
+    if (!esPersonalAutorizado) {
+      return <Navigate to="/" replace />;
+    }
   }
 
   // 4. Todo bien, mostramos la página.

@@ -1,138 +1,182 @@
-// En: src/pages/EditarUsuario.jsx (Corregido)
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { Container, Card, Form, Button, Alert } from 'react-bootstrap';
-// --- CORRECCIÓN ---
-// ASEGÚRATE DE QUE ESTA SEA LA ÚNICA LÍNEA QUE IMPORTA ESTAS FUNCIONES
-import { getUsuarios, actualizarUsuarioAdmin } from '../data/usuarios.js';
-// --- FIN CORRECCIÓN ---
-import '../styles/crearProducto.css'; // Reutilizamos estilos
+import { Container, Card, Form, Button, Alert, Spinner } from 'react-bootstrap';
+import client from '../api/axiosClient';
+import { FaSave, FaArrowLeft, FaUserEdit } from 'react-icons/fa';
+import '../styles/editUsuario.css';
 
 const EditarUsuario = () => {
-  const { email } = useParams();
+  // Captura el ID de la URL (definido en App.jsx como /:id)
+  const { id } = useParams(); 
   const navigate = useNavigate();
 
   const [usuario, setUsuario] = useState(null);
+  const [loading, setLoading] = useState(true);
+  
+  // Estados para los inputs
   const [nombre, setNombre] = useState('');
-  const [edad, setEdad] = useState(''); // Mantenido como string para input, convertir a número al guardar
+  const [email, setEmail] = useState('');
+  const [edad, setEdad] = useState('');
+  const [rol, setRol] = useState('');
+  const [descuento, setDescuento] = useState(false);
 
   const [mensaje, setMensaje] = useState('');
   const [error, setError] = useState('');
 
-  // Cargar datos del usuario a editar
+  // 1. Fetch de datos al cargar
   useEffect(() => {
-    try {
-        // Usamos la función importada UNA SOLA VEZ
-        const usuarios = getUsuarios();
-        const userToEdit = usuarios.find(u => u.email === email);
-        if (userToEdit) {
-            setUsuario(userToEdit);
-            setNombre(userToEdit.nombre || '');
-            // Convertimos a string para el input
-            setEdad(userToEdit.edad ? String(userToEdit.edad) : '');
-        } else {
-            setError('Usuario no encontrado.');
-        }
-    } catch(e) {
-        setError('Error al cargar datos del usuario.');
-        console.error(e);
-    }
-  }, [email]); // Dependencia correcta
+    const fetchUsuario = async () => {
+      try {
+        const response = await client.get(`/users/${id}`);
+        const data = response.data;
+        
+        setUsuario(data);
+        setNombre(data.nombre);
+        setEmail(data.email);
+        setEdad(data.edad);
+        setRol(data.role); 
+        setDescuento(data.descuento);
+        setLoading(false);
+      } catch (err) {
+        console.error(err);
+        setError('Error al cargar el usuario. Verifica conexión.');
+        setLoading(false);
+      }
+    };
 
-  const handleSubmit = (e) => {
+    fetchUsuario();
+  }, [id]);
+
+  // 2. Submit del formulario
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setMensaje('');
 
-    const edadNumero = Number(edad); // Convertir edad a número para validación
+    const edadNumero = Number(edad);
     if (!nombre.trim() || !edad || isNaN(edadNumero) || edadNumero < 18) {
-      setError('El nombre es requerido y la edad debe ser un número mayor o igual a 18.');
+      setError('Nombre requerido y edad válida (+18).');
       return;
     }
 
-    const usuarioActualizado = {
-      ...usuario, // Mantenemos email, password, isAdmin, etc.
-      nombre: nombre.trim(),
-      edad: edadNumero // Guardamos la edad como número
-    };
-
     try {
-      actualizarUsuarioAdmin(usuarioActualizado); // Usamos la función importada
-      setMensaje('¡Usuario actualizado con éxito!');
+      await client.put(`/users/${id}`, {
+        nombre: nombre,
+        edad: edadNumero,
+        role: rol
+      });
+
+      setMensaje('¡Usuario actualizado correctamente!');
+      
+      // Redirigir tras 1.5 seg
       setTimeout(() => {
         navigate('/admin/gestionar-usuarios');
-      }, 2000);
+      }, 1500);
+
     } catch (err) {
-      setError(err.message || 'Error al actualizar el usuario.');
+      console.error(err);
+      setError('Error al guardar los cambios.');
     }
   };
 
-  if (!usuario && !error) return <Container className="my-5"><Alert variant="info">Cargando...</Alert></Container>;
-  // Corregido: Mostrar error si existe, incluso si usuario es null al principio
-  if (error) {
-     return (
-        <Container className="my-5">
-            <Alert variant="danger">{error}</Alert>
-             <Link to="/admin/gestionar-usuarios">
-                <Button variant="secondary">Volver a Usuarios</Button>
-            </Link>
-        </Container>
-     );
-  }
-   // Si no hay usuario después de cargar y sin error explícito (caso raro)
-  if (!usuario) return <Container className="my-5"><Alert variant="warning">No se pudo cargar el usuario.</Alert></Container>;
-
+  if (loading) return (
+    <Container className="gamer-edit-container text-center pt-5">
+       <Spinner animation="border" variant="info" /> <span className="text-white ms-2">Cargando datos...</span>
+    </Container>
+  );
 
   return (
-    <Container className="crear-producto-container my-5"> {/* Reutiliza clase */}
-      <Card>
-        <Card.Header as="h2">Editar Usuario: {usuario?.email}</Card.Header>
-        <Card.Body>
-          <Link to="/admin/gestionar-usuarios">
-            <Button variant="outline-secondary" className="mb-3">← Volver a Usuarios</Button>
+    <Container className="gamer-edit-container">
+      <div className="gamer-card-frame">
+        
+        {/* Cabecera */}
+        <div className="gamer-card-header">
+          <FaUserEdit className="header-icon" /> 
+          <h2>EDITAR: <span className="neon-text-green">{usuario?.nombre?.toUpperCase()}</span></h2>
+        </div>
+
+        <Card.Body className="gamer-card-body">
+          <Link to="/admin/gestionar-usuarios" className="back-link">
+            <Button variant="outline-light" className="btn-back">
+               <FaArrowLeft /> Volver
+            </Button>
           </Link>
 
-          <Form onSubmit={handleSubmit}>
-            {error && <Alert variant="danger" onClose={() => setError('')} dismissible>{error}</Alert>}
-            {mensaje && <Alert variant="success" onClose={() => setMensaje('')} dismissible>{mensaje}</Alert>}
+          {error && <Alert variant="danger" className="gamer-alert error">{error}</Alert>}
+          {mensaje && <Alert variant="success" className="gamer-alert success">{mensaje}</Alert>}
 
-            <Form.Group className="mb-3" controlId="emailUsuario">
-              <Form.Label>Email (No editable)</Form.Label>
-              <Form.Control type="email" value={email} readOnly disabled />
+          <Form onSubmit={handleSubmit} className="gamer-form">
+            
+            {/* EMAIL (Bloqueado) */}
+            <Form.Group className="mb-4">
+              <Form.Label className="gamer-label">Email (ID Sistema)</Form.Label>
+              <div className="input-wrapper locked">
+                 <Form.Control type="email" value={email} disabled className="gamer-input disabled" />
+                 <span className="lock-badge">BLOQUEADO</span>
+              </div>
             </Form.Group>
 
-            <Form.Group className="mb-3" controlId="nombreUsuario">
-              <Form.Label>Nombre *</Form.Label>
-              <Form.Control
-                type="text"
-                value={nombre}
+            {/* NOMBRE */}
+            <Form.Group className="mb-4">
+              <Form.Label className="gamer-label">Nombre</Form.Label>
+              <Form.Control 
+                type="text" 
+                value={nombre} 
                 onChange={(e) => setNombre(e.target.value)}
+                className="gamer-input"
                 required
               />
             </Form.Group>
 
-            <Form.Group className="mb-3" controlId="edadUsuario">
-              <Form.Label>Edad *</Form.Label>
-              <Form.Control
-                type="number"
+            {/* EDAD */}
+            <Form.Group className="mb-4">
+              <Form.Label className="gamer-label">Edad</Form.Label>
+              <Form.Control 
+                type="number" 
                 min="18"
-                value={edad} // El valor es string aquí
-                onChange={(e) => setEdad(e.target.value)} // Guardamos como string
+                value={edad} 
+                onChange={(e) => setEdad(e.target.value)}
+                className="gamer-input"
                 required
-                className="no-spinners"
               />
             </Form.Group>
 
-            {/* Opcional: Mostrar rol y descuento (no editables aquí) */}
-             <p><small>Rol: {usuario?.isAdmin ? 'Administrador' : 'Cliente'}</small></p>
-             <p><small>Descuento Duoc: {usuario?.descuento ? 'Sí' : 'No'}</small></p>
+            {/* ROL (Select) */}
+            <Form.Group className="mb-4">
+              <Form.Label className="gamer-label">Rol / Permisos</Form.Label>
+              <Form.Select 
+                value={rol} 
+                onChange={(e) => setRol(e.target.value)}
+                className="gamer-input select"
+              >
+                <option value="CLIENTE">CLIENTE</option>
+                <option value="VENDEDOR">VENDEDOR</option>
+                <option value="ADMIN">ADMIN</option>
+              </Form.Select>
+            </Form.Group>
 
+            {/* Descuento (Visual) */}
+            <Form.Group className="mb-5">
+              <Form.Label className="gamer-label">Descuento DUOC</Form.Label>
+               <div className="input-wrapper locked">
+                 <Form.Control 
+                    type="text" 
+                    value={descuento ? "ACTIVO" : "INACTIVO"} 
+                    disabled 
+                    className={`gamer-input disabled ${descuento ? 'text-success' : 'text-secondary'}`} 
+                 />
+              </div>
+            </Form.Group>
 
-            <Button variant="success" type="submit">Guardar Cambios</Button>
+            <div className="text-center">
+              <Button type="submit" className="btn-save-gamer">
+                 <FaSave /> GUARDAR CAMBIOS
+              </Button>
+            </div>
+
           </Form>
         </Card.Body>
-      </Card>
+      </div>
     </Container>
   );
 };

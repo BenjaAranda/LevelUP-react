@@ -5,8 +5,6 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 // --- ESTILOS GLOBALES ---
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css'; 
-// Importa tus estilos personalizados aquí si es necesario, pero asegúrate que existan
-// Si alguno da error 404, coméntalo temporalmente
 import './styles/main.css';
 import './styles/toast.css';
 
@@ -18,7 +16,7 @@ import { AuthProvider } from './context/AuthProvider.jsx';
 import App from './App.jsx';
 import RutaProtegida from './components/RutaProtegida.jsx';
 
-// --- PÁGINAS (Asegúrate que los nombres de archivo coincidan EXACTAMENTE) ---
+// --- PÁGINAS ---
 import Home from './pages/Home.jsx';
 import Productos from './pages/Productos.jsx';
 import DetalleProducto from './pages/DetalleProducto.jsx';
@@ -49,11 +47,11 @@ import GestionOrdenes from './pages/GestionOrdenes.jsx';
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <App />, // App es el layout padre
+    element: <App />, 
     errorElement: <div className="text-center mt-5"><h1>404 - Página no encontrada</h1><a href="/">Volver al inicio</a></div>,
     children: [
       // Rutas Públicas
-      { index: true, element: <Home /> }, // index: true es lo mismo que path: '/'
+      { index: true, element: <Home /> }, 
       { path: 'productos', element: <Productos /> },
       { path: 'producto/:codigo', element: <DetalleProducto /> },
       { path: 'nosotros', element: <Nosotros /> },
@@ -90,8 +88,12 @@ const router = createBrowserRouter([
       { path: 'admin/gestionar-destacados', element: <RutaProtegida requireAdmin={true}><GestionDestacados /></RutaProtegida> },
       { path: 'admin/productos-criticos', element: <RutaProtegida requireAdmin={true}><ProductosCriticos /></RutaProtegida> },
       { path: 'admin/gestionar-categorias', element: <RutaProtegida requireAdmin={true}><GestionCategorias /></RutaProtegida> },
+      
+      // --- SECCIÓN CORREGIDA ---
       { path: 'admin/gestionar-usuarios', element: <RutaProtegida requireAdmin={true}><GestionUsuarios /></RutaProtegida> },
-      { path: 'admin/editar-usuario/:email', element: <RutaProtegida requireAdmin={true}><EditarUsuario /></RutaProtegida> },
+      // Cambio CLAVE: de :email a :id
+      { path: 'admin/editar-usuario/:id', element: <RutaProtegida requireAdmin={true}><EditarUsuario /></RutaProtegida> },
+      
       { path: 'admin/gestionar-ordenes', element: <RutaProtegida requireAdmin={true}><GestionOrdenes /></RutaProtegida> },
     ]
   }

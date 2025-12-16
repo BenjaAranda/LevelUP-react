@@ -8,7 +8,6 @@ import { FaTachometerAlt } from 'react-icons/fa';
 
 const Perfil = () => {
   const { user, updateUser } = useAuth();
-  // const navigate = useNavigate(); // No se usa explícitamente aquí aparte del Link, pero lo dejamos por si acaso
   const [loading, setLoading] = useState(true);
   
   useGoBackOnEsc();
@@ -16,7 +15,6 @@ const Perfil = () => {
   const [errors, setErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState('');
   
-  // Estado simplificado (sin password)
   const [userData, setUserData] = useState({
     nombre: '',
     email: '',
@@ -50,15 +48,11 @@ const Perfil = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setUserData(prev => ({ ...prev, [name]: value }));
-    
+    // Validación al escribir...
     if (name === 'email') {
-      if (!value) {
-        setErrors(prev => ({ ...prev, email: 'El email es requerido' }));
-      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-        setErrors(prev => ({ ...prev, email: 'Email inválido' }));
-      } else {
-        setErrors(prev => ({ ...prev, email: '' }));
-      }
+      if (!value) setErrors(prev => ({ ...prev, email: 'El email es requerido' }));
+      else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) setErrors(prev => ({ ...prev, email: 'Email inválido' }));
+      else setErrors(prev => ({ ...prev, email: '' }));
     } else {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
@@ -72,7 +66,6 @@ const Perfil = () => {
       return;
     }
 
-    // Actualizamos solo los datos de perfil
     const updatedUser = { ...user, ...userData };
     localStorage.setItem('user', JSON.stringify(updatedUser));
     updateUser(updatedUser);
@@ -84,7 +77,8 @@ const Perfil = () => {
     return <div className="text-center py-5 text-white"><p>Cargando perfil...</p></div>;
   }
 
-  const esAdmin = user.role === 'ADMIN' || user.isAdmin === true;
+  // --- CAMBIO AQUÍ: Definimos si tiene acceso al panel ---
+  const tieneAccesoPanel = user.role === 'ADMIN' || user.role === 'VENDEDOR';
 
   return (
     <Container className="py-5">
@@ -93,11 +87,12 @@ const Perfil = () => {
 
       <h1 className="mb-4 text-white">Mi Perfil</h1>
       
-      {esAdmin && (
+      {/* Mostramos el botón si es Admin O Vendedor */}
+      {tieneAccesoPanel && (
         <Link to="/admin/home" className="d-block mb-4 text-decoration-none">
           <Button variant="warning" className="w-100 fw-bold text-uppercase py-2 border border-dark">
             <FaTachometerAlt className="me-2" /> 
-            Volver al Panel de Administrador
+            Volver al Panel de Gestión
           </Button>
         </Link>
       )}
@@ -108,7 +103,7 @@ const Perfil = () => {
         </Alert>
       )}
 
-      {/* Contenedor Oscuro (Dark Mode) */}
+      {/* Formulario */}
       <div className="bg-dark p-4 rounded shadow-sm border border-secondary text-white">
           <Form onSubmit={handleSubmit} className="mb-2">
             <Form.Group className="mb-3">
@@ -118,7 +113,6 @@ const Perfil = () => {
                 name="nombre"
                 value={userData.nombre}
                 onChange={handleChange}
-                data-testid="nombre-input"
                 isInvalid={!!errors.nombre}
                 className="bg-secondary text-white border-secondary"
               />
@@ -132,7 +126,6 @@ const Perfil = () => {
                 name="email"
                 value={userData.email}
                 onChange={handleChange}
-                data-testid="email-input"
                 isInvalid={!!errors.email}
                 disabled 
                 className="bg-secondary text-white border-secondary"
@@ -147,7 +140,6 @@ const Perfil = () => {
                 name="direccion"
                 value={userData.direccion}
                 onChange={handleChange}
-                data-testid="direccion-input"
                 className="bg-secondary text-white border-secondary"
               />
             </Form.Group>
@@ -159,7 +151,6 @@ const Perfil = () => {
                 name="telefono"
                 value={userData.telefono}
                 onChange={handleChange}
-                data-testid="telefono-input"
                 className="bg-secondary text-white border-secondary"
               />
             </Form.Group>

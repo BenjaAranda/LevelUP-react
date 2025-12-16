@@ -1,0 +1,147 @@
+/* src/styles/editUsuario.css */
+
+:root {
+    --edit-bg: #0a0a0a;
+    --edit-panel: #141414;
+    --neon-purple: #8000ff;
+    --neon-green: #39ff14;
+    --border-dim: #333;
+}
+
+.gamer-edit-container {
+    padding-top: 50px;
+    padding-bottom: 50px;
+    min-height: 100vh;
+    background-color: var(--edit-bg);
+    display: flex;
+    justify-content: center;
+}
+
+.gamer-card-frame {
+    width: 100%;
+    max-width: 600px;
+    background-color: var(--edit-panel);
+    border: 2px solid var(--neon-purple);
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(128, 0, 255, 0.15);
+    overflow: hidden;
+}
+
+.gamer-card-header {
+    background-color: var(--neon-purple);
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    border-bottom: 4px solid var(--neon-green);
+}
+
+.gamer-card-header h2 {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.neon-text-green {
+    color: var(--neon-green);
+    text-shadow: 0 0 5px rgba(0,0,0,0.5);
+}
+
+.gamer-card-body {
+    padding: 30px;
+}
+
+.gamer-label {
+    color: var(--neon-green);
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+}
+
+.gamer-input {
+    background-color: #000;
+    border: 1px solid var(--border-dim);
+    color: white;
+    padding: 12px;
+    border-radius: 6px;
+    transition: 0.3s;
+}
+
+.gamer-input:focus {
+    background-color: #050505;
+    border-color: var(--neon-green);
+    box-shadow: 0 0 10px rgba(57, 255, 20, 0.3);
+    color: white;
+    outline: none;
+}
+
+.gamer-input.disabled {
+    background-color: #1a1a1a;
+    border-color: #333;
+    color: #777;
+    cursor: not-allowed;
+}
+
+.input-wrapper.locked {
+    position: relative;
+}
+
+.lock-badge {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #333;
+    color: #aaa;
+    font-size: 0.7rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    pointer-events: none;
+}
+
+/* Alertas */
+.gamer-alert {
+    border-radius: 0;
+    border-left: 5px solid;
+    background-color: #222;
+    color: white;
+}
+.gamer-alert.error { border-color: #ff3333; color: #ffcccc; }
+.gamer-alert.success { border-color: var(--neon-green); color: #ccffcc; }
+
+/* Botón Guardar */
+.btn-save-gamer {
+    background-color: transparent;
+    border: 2px solid var(--neon-green);
+    color: var(--neon-green);
+    font-weight: bold;
+    padding: 12px 40px;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    border-radius: 8px;
+    transition: 0.3s;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.btn-save-gamer:hover {
+    background-color: var(--neon-green);
+    color: black;
+    box-shadow: 0 0 20px rgba(57, 255, 20, 0.6);
+}
+
+.btn-back {
+    border: none;
+    color: #888;
+    margin-bottom: 20px;
+    padding: 0;
+}
+.btn-back:hover {
+    background-color: transparent;
+    color: white;
+    text-decoration: underline;
+}
