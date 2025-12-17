@@ -1,46 +1,50 @@
 import React, { useState, useEffect } from 'react';
 import { CartContext } from './CartContext';
-// Importamos el hook useAuth para obtener el usuario real (user)
 import { useAuth } from '../hooks/useAuth.jsx';
-// Importamos el cliente API para enviar la venta al backend
 import client from '../api/axiosClient';
 
+// Helper para cargar del storage inicial
 const cargarCarritoDesdeStorage = () => {
   try {
     const carritoGuardado = localStorage.getItem('carrito');
     if (carritoGuardado) {
       const parsedCart = JSON.parse(carritoGuardado);
       if (Array.isArray(parsedCart)) {
-        return parsedCart.map(item => ({ ...item, unidades: item.unidades || item.cantidad || 0 }));
-      } else { return []; }
-    } else { return []; }
+        return parsedCart.map(item => ({ 
+            ...item, 
+            unidades: item.unidades || item.cantidad || 0 
+        }));
+      }
+    }
+    return [];
   } catch (error) { return []; }
 };
 
 export const CartProvider = ({ children }) => {
   const [carritoItems, setCarritoItems] = useState(cargarCarritoDesdeStorage);
-  
-  // CORRECCIÓN 1: Usamos 'user' (que es como lo devuelve AuthProvider ahora), no 'usuario'
-  const { user } = useAuth();
-  
+  const { user } = useAuth(); // Obtenemos el usuario real del contexto
   const [toastMessage, setToastMessage] = useState(null);
 
+  // Persistencia en LocalStorage
   useEffect(() => {
     if (Array.isArray(carritoItems)) {
       try {
-        const itemsToSave = carritoItems.map(({ cantidad, ...rest }) => ({ ...rest, unidades: cantidad || rest.unidades }));
+        const itemsToSave = carritoItems.map(({ cantidad, ...rest }) => ({ 
+            ...rest, 
+            unidades: cantidad || rest.unidades 
+        }));
         localStorage.setItem('carrito', JSON.stringify(itemsToSave));
       } catch (error) {
-        console.error("Error al guardar carrito en localStorage ---", error);
+        console.error("Error al guardar carrito:", error);
       }
     }
   }, [carritoItems]);
 
+  // --- Lógica del Carrito (Agregar/Quitar) ---
+
   const agregarAlCarrito = (producto) => {
     if (!producto || !producto.codigo) return;
     
-    // Ya no validamos stock local estricto porque el backend tiene la verdad
-    // pero usamos el stock que viene en el objeto para una validación visual rápida
     const stockActual = producto.stock || 0;
 
     setCarritoItems(prevItems => {
@@ -57,13 +61,14 @@ export const CartProvider = ({ children }) => {
               : item
           );
         } else {
+          // Normalizamos para asegurar que tenga 'unidades'
           const productoParaAgregar = { ...producto, unidades: 1 };
           newCart = [...currentItems, productoParaAgregar];
         }
         setToastMessage(producto.nombre);
         return newCart;
       } else {
-        alert(`No hay suficiente stock para "${producto.nombre}". Stock disponible: ${stockActual}.`);
+        alert(`Stock insuficiente para "${producto.nombre}". Disponible: ${stockActual}.`);
         return currentItems;
       }
     });
@@ -74,6 +79,7 @@ export const CartProvider = ({ children }) => {
       const currentItems = Array.isArray(prevItems) ? prevItems : [];
       const itemExistente = currentItems.find(item => item.codigo === codigo);
       if (!itemExistente) return currentItems;
+      
       if (itemExistente.unidades === 1) {
         return currentItems.filter(item => item.codigo !== codigo);
       } else {
@@ -87,14 +93,16 @@ export const CartProvider = ({ children }) => {
   };
 
   const eliminarDelCarrito = (codigo) => {
-    setCarritoItems(prevItems => (Array.isArray(prevItems) ? prevItems : []).filter(item => item.codigo !== codigo));
+    setCarritoItems(prevItems => 
+        (Array.isArray(prevItems) ? prevItems : []).filter(item => item.codigo !== codigo)
+    );
   };
 
   const vaciarCarrito = () => {
     setCarritoItems([]);
   };
 
-  // --- FUNCIÓN DE CHECKOUT REAL ---
+  // --- CHECKOUT CONECTADO AL BACKEND ---
   const finalizarCompraYActualizarStock = async (direccionEnvio) => {
     const currentCartItems = Array.isArray(carritoItems) ? carritoItems : [];
     
@@ -103,21 +111,29 @@ export const CartProvider = ({ children }) => {
       return { exito: false, ordenId: null };
     }
 
-    // Validación de seguridad: ¿Hay usuario logueado?
     if (!user || !user.email) {
-        alert("Error de sesión: No se detecta el usuario logueado.");
+        alert("Debes iniciar sesión para comprar.");
         return { exito: false, ordenId: null };
     }
 
-    const compraTotal = currentCartItems.reduce((acc, item) => acc + ((item.precio || 0) * (item.unidades || 0)), 0);
+    const compraTotal = currentCartItems.reduce((acc, item) => 
+        acc + ((item.precio || 0) * (item.unidades || 0)), 0);
 
     try {
-      // Payload para el Backend
+      // Construimos el Payload EXACTO que espera el VentaController
       const ventaPayload = {
-        usuarioEmail: user.email, // CORRECCIÓN 2: Usamos user.email real
+        usuarioEmail: user.email,
         totalVenta: compraTotal,
-        // Dirección opcional si tu backend la guarda
-        // direccion: direccionEnvio, 
+        
+        // Mapeamos los datos de dirección que vienen del formulario Checkout
+        calle: direccionEnvio.calle,
+        numero: direccionEnvio.numero,
+        departamento: direccionEnvio.departamento || "",
+        comuna: direccionEnvio.comuna,
+        region: direccionEnvio.region,
+        telefono: direccionEnvio.telefono,
+
+        // Lista de items
         items: currentCartItems.map(item => ({
           productoCodigo: item.codigo,
           cantidad: item.unidades,
@@ -125,18 +141,19 @@ export const CartProvider = ({ children }) => {
         }))
       };
 
-      // POST al Backend
+      // Enviamos al Backend
       const response = await client.post('/ventas', ventaPayload);
       
-      // Éxito
+      // Si llegamos aquí, fue exitoso (200 OK)
       vaciarCarrito();
       
-      // Retornamos el ID real de la base de datos (ej: 1, 2, 3...)
+      // Retornamos el ID real generado por la base de datos
       return { exito: true, ordenId: response.data.id };
 
     } catch (error) {
-      console.error("Error al procesar venta:", error);
-      alert("Error al procesar la compra: " + (error.response?.data || "Error de servidor"));
+      console.error("Error checkout:", error);
+      const msg = error.response?.data || "Error de conexión con el servidor";
+      alert(`Error al procesar la compra: ${msg}`);
       return { exito: false, ordenId: null };
     }
   };
@@ -145,6 +162,7 @@ export const CartProvider = ({ children }) => {
     setToastMessage(null);
   };
 
+  // Totales calculados
   const currentSafeCartItems = Array.isArray(carritoItems) ? carritoItems : [];
   const totalItems = currentSafeCartItems.reduce((acc, item) => acc + (item.unidades || 0), 0);
   const totalPrecio = currentSafeCartItems.reduce((acc, item) => acc + ((item.precio || 0) * (item.unidades || 0)), 0);
@@ -157,7 +175,7 @@ export const CartProvider = ({ children }) => {
     vaciarCarrito,
     totalItems,
     totalPrecio,
-    finalizarCompraYActualizarStock,
+    finalizarCompraYActualizarStock, // Esta es la función clave actualizada
     toastMessage,
     clearToast
   };
